@@ -1,0 +1,153 @@
+$size-xxs : 360px;
+$size-xs : 480px;
+$size-sm : 768px;
+$size-md : 992px;
+$size-lg : 1200px;
+
+$height-xxs : 320px;
+$height-xs : 460px;
+$height-sm : 520px;
+$height-md : 620px;
+$height-lg : 720px;
+
+/*Fuentes*/
+$baseline-px: 16px;
+
+@mixin modular-mq($breakpoint) {
+
+	@if $breakpoint == xxs {
+	  @media (screen and min-width:$size-xxs ) {@content;}
+	}
+	@else { @if $breakpoint == xs {
+	  @media (screen and min-width:$size-xs ) {@content;}
+	}
+	@else { @if $breakpoint == sm {
+	  @media (screen and min-width:$size-sm ) {@content;}
+	}
+	@else { @if $breakpoint == md {
+	  @media (screen and min-width:$size-md) {@content;}
+	}
+	@else { @if $breakpoint == lg {
+	  @media (screen and min-width:$size-lg) {@content;}
+	}}}}}
+
+}
+
+
+@mixin modular-hq($breakpoint) {
+
+	@if $breakpoint == xxs {
+	  @media (screen and min-height:$height-xxs ) {@content;}
+	}
+	@else { @if $breakpoint == xs {
+	  @media (screen and min-height:$height-xs ) {@content;}
+	}
+	@else { @if $breakpoint == sm {
+	  @media (screen and min-height:$height-sm ) {@content;}
+	}
+	@else { @if $breakpoint == md {
+	  @media (screen and min-height:$height-md) {@content;}
+	}
+	@else { @if $breakpoint == lg {
+	  @media (screen and min-height:$height-lg) {@content;}
+	}}}}}
+
+}
+
+//COLORES
+
+//primary
+$cprimary: #A3C642;
+//secundary
+$csecondary: #766054;
+//oppositive
+$copposite: #C38089;
+//Contrast
+$ccontrast:#fff;
+//Primary bright:
+$cprimbr:#73E500;
+//Correcto:
+$csuccess:#2ECC71;
+//error
+$cattent:#E74C3C;
+//Bg mapa
+$bgmap: rgba(84,199,252,0.2);
+//Bg filtros
+$bgfilters: #fff;
+
+
+//Indicador comparativa
+$bg-in-base:#79B042;
+$bg-in-comp:#73E500;
+
+//Indicadores base:
+$odb: #4A4A4A;
+$readliness:#F1C40F;
+$implementation:#92EFDA;
+$impact:#CB97F9;
+
+//Bordes
+$c-borde-1:#ECF0F1;
+$c-borde-2:#D6DBDC;
+$c-borde-3:#FFFFFF;
+$c-borde-4:#f0f0f0;
+
+//Grey scale
+$c-g100:#000;
+$c-g80:#333;
+$c-g60:#666;
+$c-g50:#7F7F7F;
+$c-g40:#999;
+$c-g30:#B2B2B2;
+$c-g20:#CCC;
+$c-g10:#E5E5E5;
+$c-g05:#F2F2F2;
+$c-blueg:#ECF0F1;
+$c-g05:#F2F2F2;
+
+//overlay
+$coverlay:rgba(0,0,0,0.5);
+
+//more
+$c-g25:#F7F7F7;
+$c-g10:#F0F0F0;
+
+//BGCOLORS
+$c-bg-10:$c-g10;
+$c-bg-05:$c-g05;
+$bg-20_50: rgba(239,239,239,0.5);
+$bg-20_20: rgba(239,239,239,0.2);
+$bg-featured: #f8f8f8;
+
+$bg-highlights:#FFEC00;
+$bg-gray:#F3F3F3;
+$bg-selected:#FFEC00;
+
+//Arrows up / down
+$aup:#44DB5E;
+$adw:#FF3824;
+
+//status
+$c-fin:#1ABC9C;
+$c-gen:#E74C3C;
+$c-eje:#F5A623;
+
+//Alertas
+$adv-0:#fcf8e3; //advertencia = amarillo
+$adv-1:#dff0d8; //confirmacion = verde
+$adv-2:#f2dede; //error = rojo
+
+//Estados
+$ckechk:#44DB5E; 
+$cerror:#E74C3C;
+
+$adv-txt-0:#8a6d3b;
+$adv-txt-1:#3c763d;
+$adv-txt-2:#a94442;
+
+//Estados tabla implementation
+$bg-complete:#B8E986;
+$bg-incomplete:#FF8787;
+$bg-updated:#F8E71C;
+
+

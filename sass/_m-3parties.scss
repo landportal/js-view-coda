@@ -1,0 +1,14 @@
+//## 3er PARTIES FIXS ##//
+
+
+//## ACCORDION JS ##//
+[data-accordion] > [data-control]::after {
+	background: none;
+	
+}
+
+[data-control], [data-content] > * {
+	border-bottom: none !important;
+	padding: 0px;
+	line-height: 22px;
+}

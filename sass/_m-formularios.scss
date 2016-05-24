@@ -1,0 +1,298 @@
+//Botones
+
+.cbtn {
+	
+	display: inline-block;
+	padding: 0 1em;
+	
+	
+	text-decoration: none;
+	text-align: center;
+	line-height: 43px;
+	
+	-webkit-transition: background-color 300ms linear;
+    -moz-transition: background-color 300ms linear;
+    -o-transition: background-color 300ms linear;
+    -ms-transition: background-color 300ms linear;
+    transition: background-color 300ms linear;
+
+    border:none;
+    
+    background: transparent;
+    
+    outline: 0 none !important;
+    
+    &:hover, &:active, &:focus, &:visited {
+	    text-decoration: none;
+    }
+    
+}
+
+.ctn-icon {
+	@extend .cbtn;
+	line-height:15px!important;
+}
+
+
+.cbtn-search {
+	height: 45px;
+}
+
+.cbtn-block {
+	width: 100%;
+}
+
+//Ajuste para webkit
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+	.cbtn {
+		line-height: 45px; 
+	}
+}
+
+.cbtn-corner {
+	border-radius: 4px;
+}
+
+.cbtn-round {
+	border-radius: 50em;
+}
+
+.cbtn-round-st {
+	width: 60px;
+	height: 60px;
+	line-height: 60px;
+}
+
+.cbtn-adj-ico-rst-med {
+	position: relative;
+	top: 6px;
+	left: -5px;
+}
+
+.cbtn-st-pos-right {
+	position: fixed;
+	right: 10px;
+	bottom: 10px;
+	z-index: 30;
+
+	box-shadow: 0px 6px 20px 0px rgba(0,0,0,0.30);
+}
+
+.cbtn-rounded {
+	border-radius: 50px;
+}
+
+.cbtn-line {
+	border: 2px solid;
+}
+
+
+
+//BTN LINE
+.cbtn-l-acc {
+	border-color: $cprimary;
+	color: $cprimary;
+	&:hover, &:focus, &:active {
+		border-color:lighten($cprimary, 10%);	
+		background-color: $cprimary;
+		color: $ccontrast;
+	}
+}
+
+.cbtn-l-dis {
+	cursor:default;
+	border-color: $c-g20;
+	color: $c-g20;
+	&:hover, &:focus, &:active {
+		//background-color: $c-g40;
+		color: $c-g20;
+	}
+}
+
+
+
+//BTN SOLID
+//Action
+
+.cbtn-s-sh {
+	position: relative;
+	top:10px;
+	box-shadow: 0px 2px 1px 0px #356300;
+}
+
+.cbtn-s-sh2 {
+	box-shadow: 4px 5px 0px 0px #6E872A;
+}
+
+.cbtn-s-acc {
+	background-color: $cprimary;
+	color: $ccontrast;
+	&:hover, &:focus, &:active {
+		color: $ccontrast;
+		background-color:lighten($cprimary, 10%);
+	}
+	&:active {
+		/* Rectangle 86 Copy 3: */
+		background-color:darken($cprimary, 10%);
+		box-shadow: inset 0px 3px 1px 0px #396407;
+	}
+}
+//Success
+.cbtn-s-succ {
+	background-color: $csuccess;
+	color: $ccontrast;
+	&:hover, &:focus, &:active {
+		color: $ccontrast;
+		background-color:darken($csuccess, 90%);
+	}
+}
+
+
+.cbtn-s-cancel {
+	background-color: $c-g10;
+	color: $c-g60;
+	&:hover, &:focus, &:active {
+		color: $c-g60;
+		background-color: $ccontrast;
+		//background-color:darken($c-g40, 30%);
+	}
+}
+
+//Disabled
+.cbtn-s-dis {
+	cursor:default;
+	background-color: $c-g20;
+	color: $ccontrast;;
+	&:hover, &:focus, &:active {
+		background-color: $c-g20;
+	}
+}
+
+.clbl {
+	padding-left:1em;
+}
+
+//Inputs
+
+.rinput {
+	border-collapse: separate;
+	display:table;
+	position: relative;
+	width: 100%;
+
+	@include modular-mq(xs) {
+		
+	}
+
+	@include modular-mq(md) {
+		max-width:300px;
+	}
+
+	@include modular-mq(lg) {
+		
+	}
+}
+
+.rinputm {
+	border-collapse: separate;
+	display:table;
+	position: relative;
+	width: 100%;
+	z-index: 10;
+
+	@include modular-mq(xs) {
+		
+	}
+
+	@include modular-mq(md) {
+		
+	}
+
+	@include modular-mq(lg) {
+		
+	}
+}
+
+.rinput-button {
+	display: table-cell;
+	vertical-align:bottom;
+	white-space:nowrap;
+}
+
+.rinput-button-search {
+	width:48px;
+}
+
+
+.cinput {
+	
+	width: 100%;
+	
+	padding: 0.5em 1.2em 0.5em 0.5em;
+
+	display: table-cell;
+
+	//font-size: 1.2em;
+	
+	appearance: none;
+	-moz-appearance: none;
+	-webkit-appearance: none!important;
+	
+
+	background: #FFFFFF;
+	//box-shadow: inset 2px -1px 2px 0px rgba(0,0,0,0.10);
+	
+	border:none;
+	border-radius: 0px;
+	
+	&:focus {
+		 outline-width: 0;
+		 outline: 0 none;
+		 outline-color: transparent;
+	}
+}
+
+.cinput-sh {
+	box-shadow: 4px 5px 0px 0px #6E872A;
+}
+
+.cinput-gray {
+	background: #F7F7F7;
+} 
+
+select::-ms-expand {
+    display: none;
+}
+
+.cinput-search {
+	float:left;
+	text-overflow: ellipsis; 
+}
+
+.cinput-table-search {
+	@extend .cinput;
+	padding: 1.2em 1.2em 1em 2em;
+	background-image: url("../img/img-cinput-table-search.svg");
+	background-repeat: no-repeat;
+	background-position: center left;
+}
+
+.cinput-s-arrow {
+	background-image: url("../img/toggle-arrow.png");
+	background-repeat: no-repeat;
+	background-position:right 10px center;
+}
+
+.cinput-b-arrow {
+	background-image: url("../img/toggle-arrow-top.png");
+	background-repeat: no-repeat;
+	background-position:right 5px top 12px;
+}
+
+
+//## AJUSTES ## //
+.adj-rimput-lang {
+	position: relative;
+	top:-2px;
+}
+

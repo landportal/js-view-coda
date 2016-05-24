@@ -1,0 +1,39 @@
+#wrapper-map-location {
+	width: 100%;
+	height: 300px;
+	background-color: #efefef;
+
+	@include modular-mq(sm) {
+		height: 468px;
+	}
+	@include modular-mq(md) {
+		//height: 468px;
+	}
+}
+
+
+#wrapper-igraphics {
+	width: 100%;
+	height: 400px;
+}
+
+#wrapper-mapping {
+	height: 368px;
+	padding: 0px 0px;
+	@include modular-mq(sm) {
+		height: 468px;
+	}
+	@include modular-mq(md) {
+		height: 768px;
+	}
+
+}
+
+
+#wrapper-piechart {
+	height: 300px;
+}
+
+#wrapper-spiderchart {
+	height: 300px;
+}
