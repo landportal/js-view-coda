@@ -58,7 +58,7 @@
 	  
 	  $.each(data, function() {
 	    this.id = this.code;
-	    console.log(this.code);
+	    //console.log(this.code);
 	  });
 
 
@@ -302,8 +302,8 @@
 	  });
 
 	  $('#wrapper-mapping').highcharts().get(country).select();
-	  $('#wrapper-mapping').highcharts().get(country).zoomTo();
-	  $('#wrapper-mapping').highcharts().mapZoom(12);
+	  //$('#wrapper-mapping').highcharts().get(country).zoomTo();
+	  //$('#wrapper-mapping').highcharts().mapZoom(12);
 
 	});
 
@@ -419,3 +419,44 @@
     };
 
     spiderChart_init = new Highcharts.Chart(CharSpiderOp);
+
+
+
+
+
+    //##CARGA DE JSON A VARIABLES ##//
+    var jsonIndicators = 'json/indicators.json'
+	$.ajax({
+          async: false,
+          type: "GET",
+          url: jsonIndicators,
+          dataType: "json",
+          success : function(data) {
+          		window.indicators = data;
+	      }
+    });
+
+
+
+
+    //## CARGA DE SELECTS ##//
+    function setIndicators(sindicator) {
+		var $selIndicator = $(".sindicator");
+		$selIndicator.html('');
+		var bindings = window.indicators["results"]["bindings"];
+		$selIndicator.append('<option value="0">Select indicator ...</option>');
+		$.each(bindings, function( index, val ) {
+			console.log(val["label"].value);
+			$selIndicator.append('<option value="'+val["indicatorUrl"].value+'">'+val["label"].value+'</option>');
+		});
+
+	}
+
+
+
+
+
+
+
+
+

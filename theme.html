@@ -755,6 +755,20 @@
           });
         });
 
+
+        function getUrlVars() {
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+                vars[key] = value;
+            });
+            return vars;
+        }
+
+        var country = getUrlVars()["country"];
+        var lang = getUrlVars()["lang"];
+
+        var country = "TZ";
+
         $(document).ready(function() {
 
 
@@ -809,19 +823,19 @@
                   borderWidth: 0
               },
               series: [{
-                  name: 'Spain',
+                  name: 'Tanzania',
                   data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6],
                   color : color(0) //randomColor({luminosity: 'dark',hue:'random'}) //d3.scale.category20b()
               }, {
-                  name: 'France',
+                  name: 'Colombia',
                   data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5],
                   color : color(1) //randomColor({luminosity: 'dark',hue:'random'})
               }, {
-                  name: 'Germay',
+                  name: 'Kenya',
                   data: [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0],
                   color : color(2)//randomColor({luminosity: 'dark',hue:'random'})
               }, {
-                  name: 'England',
+                  name: 'Uganda',
                   data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8],
                   color : color(3) //randomColor({luminosity: 'dark',hue:'random'})
               }]
@@ -927,7 +941,7 @@
 
             });
 
-            $('#wrapper-mapping').highcharts().get('ES').select();
+            $('#wrapper-mapping').highcharts().get(country).select();
 
           });
 
