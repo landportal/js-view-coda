@@ -398,6 +398,9 @@ th.t-th:last-child, td.t-td:last-child {
 	padding: 5px 10px;
 } 
 
+.t_indicators_body_loader {
+	height: 310px;
+}
 
 //## FAKES ##//
 .fake-header {
@@ -408,7 +411,23 @@ th.t-th:last-child, td.t-td:last-child {
 	background-color: $cprimary;
 }
 
+//## LOADERS DATA ##//
+.pos_loader_data {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top:50%;
+	left: 50%;
+	transform:translate(-50%,-50%);
+	background-color: rgba(255,255,255,0.4);
+}
 
+.pos_spinkit {
+	position: absolute;
+	top:50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+}
 
 //## DROPDOWNS INFO COUNTRY ##//
 .more-info-country {

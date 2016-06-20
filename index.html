@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/jquery.accordion.css">
         <link rel="stylesheet" href="css/owl.carousel.min.css">
+        <link rel="stylesheet" href="css/spinkit.css">
         
         <link rel="stylesheet" href="css/screen.css">
 
@@ -73,14 +74,14 @@
       
       <nav class="nav-top txt-c group m-l-bottom">
           <ul class="nav-inside-country fos">
-            <li class="nic-item"><a href="#" class="a-nic displayb txt-s uppc">The country</a></li>
-            <li class="nic-item"><a href="#indicators" class="a-nic displayb txt-s uppc">Indicators</a></li>
-            <li class="nic-item"><a href="#infographic" class="a-nic displayb txt-s uppc">Infographic</a></li>
-            <li class="nic-item"><a href="#mapping" class="a-nic displayb txt-s uppc">Mapping</a></li>
-            <li class="nic-item"><a href="#rankings" class="a-nic displayb txt-s uppc">Rankings</a></li>
-            <li class="nic-item"><a href="#media" class="a-nic displayb txt-s uppc">Media</a></li>
-            <li class="nic-item"><a href="#partners" class="a-nic displayb txt-s uppc">Partners</a></li>
-            <li class="nic-item"><a href="#library" class="a-nic displayb txt-s uppc">Library</a></li>
+            <li class="nic-item"><a href="#" class="a-nic displayb txt-s uppc" data-localize="global.country">The country</a></li>
+            <li class="nic-item"><a href="#indicators" class="a-nic displayb txt-s uppc" data-localize="global.indicators">Indicators</a></li>
+            <li class="nic-item"><a href="#infographic" class="a-nic displayb txt-s uppc" data-localize="global.infographics">Infographic</a></li>
+            <li class="nic-item"><a href="#mapping" class="a-nic displayb txt-s uppc" data-localize="global.mapping">Mapping</a></li>
+            <li class="nic-item"><a href="#rankings" class="a-nic displayb txt-s uppc" data-localize="global.rankings">Rankings</a></li>
+            <li class="nic-item"><a href="#media" class="a-nic displayb txt-s uppc" data-localize="global.media">Media</a></li>
+            <li class="nic-item"><a href="#partners" class="a-nic displayb txt-s uppc" data-localize="global.partners">Partners</a></li>
+            <li class="nic-item"><a href="#library" class="a-nic displayb txt-s uppc" data-localize="global.library">Library</a></li>
 
           </ul>
       </nav>
@@ -94,7 +95,7 @@
 
             <ul class="more-info-country">
               <li class="mic-item co-m-control r-pos cb-bottom-lh" data-accordion>
-                <a href="#legalinfo" class="mic-i-a fos" data-control>Legal info</a>
+                <a href="#legalinfo" class="mic-i-a fos" data-localize="global.legalinfo" data-control>Legal info</a>
                 <span class="mic-i-control click"></span>
                 <div class="mic-content" data-content>
                   <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis nisi sit amet justo suscipit rutrum. Nullam non tincidunt ipsum, vel interdum leo. Vivamus dignissim feugiat cursus. Proin malesuada justo quis dignissim ultricies.</p>
@@ -102,7 +103,7 @@
               </li>
 
               <li class="mic-item co-m-control r-pos cb-bottom-lh" data-accordion>
-                <a href="#legalinfo" class="mic-i-a fos" data-control>Historical info</a>
+                <a href="#legalinfo" class="mic-i-a fos" data-localize="global.historicalinfo" data-control>Historical info</a>
                 <span class="mic-i-control click"></span>
                 <div class="mic-content" data-content>
                   <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis nisi sit amet justo suscipit rutrum. Nullam non tincidunt ipsum, vel interdum leo. Vivamus dignissim feugiat cursus. Proin malesuada justo quis dignissim ultricies.</p>
@@ -112,7 +113,7 @@
             </ul>
 
             <div class="sources clearb p-l-top p-s-bottom cb-bottom-lh">
-              <span class="txt-s uppc c-g40 displayb fos">Sources</span>
+              <span class="txt-s uppc c-g40 displayb fos" data-localize="global.sources">Sources</span>
               <a href="#">Source one</a>, <a href="#">Source two</a>, <a href="#">Source three</a>, <a href="#">Source four</a>
             </div>
 
@@ -121,10 +122,10 @@
         
         <div class="row p-xxl-top">
             <div class="col-sm-offset-2 col-sm-4 txt-c cb-right-2">
-              <a href="#" class="displayb"><img src="img/ico-download.svg" alt="Download PDF country" class="c-obj"><span class="displayb txt-m m-s-top fos">Download PDF</span></a>
+              <a href="#" class="displayb"><img src="img/ico-download.svg" alt="Download PDF country" class="c-obj"><span class="displayb txt-m m-s-top fos" data-localize="global.download">Download PDF</span></a>
             </div>
             <div class="col-sm-4 txt-c">
-              <a href="#" class="displayb"><img src="img/ico-feedback.svg" alt="Download PDF country" class="c-obj"><span class="displayb txt-m m-s-top fos">Give us your feedback</span></a>
+              <a href="/contact-us" class="displayb"><img src="img/ico-feedback.svg" alt="Download PDF country" class="c-obj"><span class="displayb txt-m m-s-top fos" data-localize="global.feedback">Give us your feedback</span></a>
             </div>
         </div>
 
@@ -142,7 +143,7 @@
             <div class="col-md-offset-2 col-md-8 txt-c">
               <img src="img/ico-h2-indicators.png">
 
-              <h2 class="fos txt-small m-xs-top">Indicators</h2>
+              <h2 class="fos txt-small m-xs-top" data-localize="global.indicators">Indicators</h2>
             </div>
           </div>
         </div>
@@ -155,17 +156,32 @@
               <table class="reset_table c-g60" id="tindicators">
                 <thead>
                   <tr>
-                    <th class="uppc txt-s t-th fos t-th-green">Indicators name</th>
-                    <th class="uppc txt-s t-th fos t-th-green txt-c">Year</th>
-                    <th class="uppc txt-s t-th fos t-th-green txt-c">Value</th>
-                    <th class="uppc txt-s t-th fos t-th-green">Unit</th>
-                    <th class="uppc txt-s t-th fos t-th-green">Dataset/org</th>
-                    <th class="uppc txt-s t-th fos t-th-green txt-c">Remove</th>
+                    <th class="uppc txt-s t-th fos t-th-green" data-localize="label.iname">Indicators name</th>
+                    <th class="uppc txt-s t-th fos t-th-green txt-c" data-localize="label.year">Year</th>
+                    <th class="uppc txt-s t-th fos t-th-green txt-c" data-localize="label.val">Value</th>
+                    <th class="uppc txt-s t-th fos t-th-green" data-localize="label.unit">Unit</th>
+                    <th class="uppc txt-s t-th fos t-th-green" data-localize="label.dataset">Dataset/org</th>
+                    <th class="uppc txt-s t-th fos t-th-green txt-c" data-localize="label.remove">Remove</th>
                   </tr>
                 </thead>
 
                 <tbody>
+                  <!-- <div class="t_indicators_body_loader"></div> -->
                   <tr>
+                    <td class="t_indicators_body_loader r-pos" colspan="6">
+                      <div class="pos_loader_data">
+                        <div class="pos_spinkit">
+                            <div class="sk-three-bounce no-m-bottom">
+                              <div class="sk-child sk-bounce1"></div>
+                              <div class="sk-child sk-bounce2"></div>
+                              <div class="sk-child sk-bounce3"></div>
+                            </div>
+                            <p class="txt-s c-g40 uppc txt-c fos no-m-top m-xs-top" data-localize="feedback.loading">Loading data ...</p>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+<!--                   <tr>
                     <td class="t-td">Name indicator</td>
                     <td class="t-td txt-c">2015</td>
                     <td class="t-td txt-c">34234342.74</td>
@@ -236,35 +252,14 @@
                     <td class="t-td">Rura Idic.(WEB)</td>
                     <td class="t-td txt-c"><a href="#" class="r-row del-row" data-ord=""><img src="img/ico-trash.svg" class="c-obj"></a></td>
                   </tr>
-
+ -->
 
                 </tbody>
 
                 <tfoot>
-                  
                   <tr>
-                    <td class="t-td">
-                      <select class="sindicator fos cinput cinput-s-arrow cinput-sh cinput-gray"></select>
-                    </td>
-                    <td class="t-td">
-                      <select class="syear fos cinput cinput-s-arrow cinput-sh cinput-gray">
-                        <option value="0">Select year ...</option>
-                        <option>2013</option>
-                        <option>2012</option>
-                        <option>2011</option>
-                        <option>2010</option>
-                        <option>2009</option>
-                        <option>2008</option>
-                      </select>
-                    </td>
-                    <td class="t-td" colspan="3"></td>
-                    <td class="t-td"><a href="#" class="txt-s uppc txt-c cbtn cbtn-block cbtn-s-acc cbtn-s-sh2 fos">add indicator</a></td>
-                    
-                  </tr>
-
-                  <tr>
-                    <td colspan="5" class="t-tf t-tf-green txt-c txt-s fos"><strong>Disclaimer:</strong> This page allows you to compare a lot of data from different sources, but be carefull: NOT ALL INDICATORS ARE STATISTICALLY COMPARABLE!!</td>
-                    <td class="t-tf t-tf-dkgreen txt-xs uppc fos txt-c"><a href="#">Download data</a></td>
+                    <td colspan="6" class="t-tf t-tf-green txt-c txt-s fos"><strong data-localize="feedback.disclaimer">Disclaimer:</strong data-localize="feedback.disclaimertxt"> This page allows you to compare a lot of data from different sources, but be carefull: NOT ALL INDICATORS ARE STATISTICALLY COMPARABLE!!</td>
+                    <!--td class="t-tf t-tf-dkgreen txt-xs uppc fos txt-c"><a href="#">Download data</a></td-->
                   </tr>
                 </tfoot>
 
@@ -272,6 +267,25 @@
             </div>
           </div>
         </div>
+
+        <div class="row m-l-top">
+          
+          <div class="col-md-4">
+            <select class="sindicator fos cinput cinput-s-arrow cinput-sh cinput-gray" id="isindicators"></select>
+          </div>
+
+          <div class="col-md-4">
+            <select class="syear fos cinput cinput-s-arrow cinput-sh cinput-gray cinput-disabled" id="isyear" disabled="disabled">
+              <option value="0" data-localize="inputs.nosyear">No indicator selected ...</option>
+            </select>
+          </div>
+          
+          <div class="col-md-4">
+            <a href="#" class="txt-s uppc txt-c cbtn cbtn-block cbtn-s-acc cbtn-s-sh2 fos cbtn-iadd-indicator" data-localize="inputs.addindicator">add indicator</a>
+          </div>
+
+        </div>
+
       </div>
 
     </section>
@@ -284,7 +298,7 @@
           <div class="row">
             <div class="col-md-offset-2 col-md-8 txt-c">
               <img src="img/ico-h2-infographics.png">
-              <h2 class="fos txt-small m-xs-top">Infographics</h2>
+              <h2 class="fos txt-small m-xs-top" data-localize="global.infographics">Infographics</h2>
             </div>
           </div>
         </div>
@@ -293,26 +307,43 @@
       <div class="container">
         <div class="row m-l-top">
           <div class="col-md-3">
-              <select class="sindicator fos cinput cinput-s-arrow cinput-sh"></select>
+              <select class="sindicator fos cinput cinput-s-arrow cinput-sh" id="lsindicador"></select>
           </div>
           <div class="col-md-3">
-              <select class="syear fos cinput cinput-s-arrow cinput-sh">
-                <option value="0">Select country ...</option>
+              <select class="scountry fos cinput cinput-s-arrow cinput-sh cinput-disabled" id="lscountry" disabled="disabled">
+                <option value="0" data-localize="inputs.scountry">Select country ...</option>
               </select>
           </div>
-          <div class="col-md-3">
-              <select class="syear fos cinput cinput-s-arrow cinput-sh">
-                <option value="0">Select year/period ...</option>
+          <div class="col-md-2">
+              <select class="speriod fos cinput cinput-s-arrow cinput-sh cinput-disabled" id="lsperiod_from" disabled="disabled">
+                <option value="0" data-localize="inputs.speriodfrom">From date ...</option>
               </select>
           </div>
-          <div class="col-md-3">
-              <a href="#" class="txt-s uppc txt-c cbtn cbtn-block cbtn-s-acc cbtn-s-sh2 fos">add to compare</a>
+          <div class="col-md-2">
+              <select class="speriod fos cinput cinput-s-arrow cinput-sh cinput-disabled" id="lsperiod_to" disabled="disabled">
+                <option value="0" data-localize="inputs.speriodto">To date ...</option>
+              </select>
+          </div>
+          <div class="col-md-2">
+              <a href="#" class="txt-s uppc txt-c cbtn cbtn-block cbtn-s-acc cbtn-s-sh2 fos cbtn-ladd-compare" data-localize="inputs.addtocompare">add</a>
           </div>
         </div>
         
-        <div class="row m-xl-top">
-          <div class="col-xs-12">
+        <div class="row m-xl-top" id="igraphics">
+          <div class="col-xs-12 r-pos">
             <div id="wrapper-igraphics"></div>
+
+            <div class="pos_loader_data hddn">
+              <div class="pos_spinkit">
+                <div class="sk-three-bounce no-m-bottom">
+                  <div class="sk-child sk-bounce1"></div>
+                  <div class="sk-child sk-bounce2"></div>
+                  <div class="sk-child sk-bounce3"></div>
+                </div>
+                <p class="txt-s c-g40 uppc txt-c fos no-m-top m-xs-top" data-localize="feedback.loading">Loading data ...</p>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -328,7 +359,7 @@
           <div class="row">
             <div class="col-md-offset-2 col-md-8 txt-c">
               <img src="img/ico-h2-mapping.png">
-              <h2 class="fos txt-small m-xs-top">Mapping</h2>
+              <h2 class="fos txt-small m-xs-top" data-localize="global.mapping">Mapping</h2>
             </div>
           </div>
         </div>
@@ -338,23 +369,38 @@
 
         <div class="row m-l-top">
 
-          <div class="col-lg-offset-3 col-lg-4 col-md-offset-2 col-md-6">
-            <select class="sindicator fos cinput cinput-s-arrow cinput-sh cinput-gray"></select>
+          <div class="col-lg-offset-2 col-lg-5 col-md-8">
+            <select class="msindicator fos cinput cinput-s-arrow cinput-sh cinput-gray" id="msindicator"></select>
           </div>
 
-          <div class="col-lg-2 col-md-2">
-            <select class="syear fos cinput cinput-s-arrow cinput-sh cinput-gray">
-                <option value="0">Select year ...</option>
+          <div class="col-lg-3 col-md-4">
+            <select id="msyear" class="msyear fos cinput cinput-s-arrow cinput-sh cinput-gray cinput-disabled" disabled="disabled">
+                <option value="0" data-localize="inputs.syear">Select year ...</option>
               </select>
           </div>
 
         </div>
 
       </div>
+    
+      <div id="maparea" class="r-pos">
 
-      <div id="wrapper-mapping"></div>
+        <div id="wrapper-mapping"></div>
+
+        <div class="pos_loader_data hddn">
+          <div class="pos_spinkit">
+            <div class="sk-three-bounce no-m-bottom">
+              <div class="sk-child sk-bounce1"></div>
+              <div class="sk-child sk-bounce2"></div>
+              <div class="sk-child sk-bounce3"></div>
+            </div>
+            <p class="txt-s c-g40 uppc txt-c fos no-m-top m-xs-top" data-localize="feedback.loading">Loading data ...</p>
+          </div>
+        </div>
+
+      </div>
       
-      <div class="container p-xxl-bottom">
+      <div class="container p-xxl-bottom hddn">
         <div class="row m-l-top">
           <div class="col-xs-12 txt-c">
             <div class="year-navigation c-obj">
@@ -382,7 +428,7 @@
           <div class="row">
             <div class="col-md-offset-2 col-md-8 txt-c">
               <img src="img/ico-h2-rankings.png">
-              <h2 class="fos txt-small m-xs-top">Rankings & Qualitative info</h2>
+              <h2 class="fos txt-small m-xs-top" data-localize="global.rankings">Rankings & Qualitative info</h2>
             </div>
           </div>
         </div>
@@ -392,11 +438,29 @@
 
         <div class="row m-l-top p-xxl-bottom cb-bottom-lh">
           
-          <div class="col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8">
-            <select class="syear fos cinput cinput-s-arrow cinput-sh">
-                <option value="0">Select ELGALF panel ...</option>
+          <div class="col-md-offset-1 col-md-2">
+            <select class="egsyear fos cinput cinput-s-arrow cinput-sh">
+                <option value="0" selected="selected">Select year ...</option>
+                <option value="2013">2013</option>
+                <option value="2016">2016</option>
               </select>
           </div>
+
+          <div class="col-md-4">
+            <select class="egspanel fos cinput cinput-s-arrow cinput-sh cbtn-dis cinput-disabled" disabled="disabled">
+                <option value="0">Select panel...</option>
+              </select>
+          </div>
+
+          <div class="col-md-4">
+            <select class="egsindicator fos cinput cinput-s-arrow cinput-sh cinput-disabled" disabled="disabled">
+                <option value="0">Select indicator ...</option>
+              </select>
+          </div>
+
+        </div>
+
+        <div class="row">
 
           <div class="col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8">
             
@@ -406,14 +470,16 @@
               <li class="item-q fos r-pos"><span class="cqdata cqdata-mid"></span> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
               <li class="item-q fos r-pos"><span class="cqdata cqdata-low"></span> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
             </ul>
-            
-            <div class="quality-legend fos txt-c">
-              <span class="cqdata-il cqdata-na"></span> No data &nbsp; 
-              <span class="cqdata-il cqdata-high"></span> High inequality &nbsp; 
-              <span class="cqdata-il cqdata-mid"></span> Mid inequality &nbsp; 
-              <span class="cqdata-il cqdata-low"></span> Low inequality 
-            </div>
 
+          </div>
+
+          <div class="col-xs-12">
+              <div class="quality-legend fos txt-c">
+                <span class="cqdata-il cqdata-na"></span> <span data-localize="label.ndata">No data</span> &nbsp;
+                <span class="cqdata-il cqdata-high"></span> <span data-localize="label.hine">High inequality</span> &nbsp; 
+                <span class="cqdata-il cqdata-mid"></span> <span data-localize="label.mine">Mid inequality</span> &nbsp; 
+                <span class="cqdata-il cqdata-low"></span> <span data-localize="label.line">Low inequality</span> 
+              </div>
           </div>
 
         </div>
@@ -452,7 +518,7 @@
           <div class="row">
             <div class="col-md-offset-2 col-md-8 txt-c">
               <img src="img/ico-h2-media.png">
-              <h2 class="fos txt-small m-xs-top">Media</h2>
+              <h2 class="fos txt-small m-xs-top" data-localize="global.media">Media</h2>
             </div>
           </div>
         </div>
@@ -466,7 +532,7 @@
           <div class="row">
 
             <div class="col-md-8 col-xs-12 bg-media p-xxl-top p-xxl-bottom">
-                <h3 class="txt-xl fos">Latest news</h3>
+                <h3 class="txt-xl fos" data-localize="global.latest">Latest news</h3>
                 <article class="new p-l-top p-l-bottom group">
                   <div class="sh-img-news group">
                     <figure class="cover-img-news">
@@ -510,7 +576,7 @@
 
             <div class="col-md-4 col-xs-12 p-xxl-top bg-secc-clear">
                 <div class="adj-blog">
-                <h3 class="txt-xl fos">Latest Blog</h3>
+                <h3 class="txt-xl fos" data-localize="global.latestblog">Latest Blog</h3>
                  <article class="blog p-l-top p-l-bottom group">
                     <div class="sh-img-blog group">
                       <figure class="cover-img-blog">
@@ -553,7 +619,7 @@
         <div class="row">
             
             <div class="col-md-6">
-              <h3 class="txt-xl fos">Latest Events</h3>
+              <h3 class="txt-xl fos" data-localize="global.latestevents">Latest Events</h3>
               <article class="new p-l-top p-l-bottom group">
                   <div class="sh-img-news group">
                     <figure class="cover-img-news">
@@ -582,7 +648,7 @@
             </div>
 
             <div class="col-md-6">
-              <h3 class="txt-xl fos">Debate</h3>
+              <h3 class="txt-xl fos" data-localize="global.debate">Debate</h3>
               <article class="new p-l-top p-l-bottom group">
                   <div class="sh-img-news group">
                     <figure class="cover-img-news">
@@ -621,7 +687,7 @@
           <div class="row">
             <div class="col-md-offset-2 col-md-8 txt-c">
               <img src="img/ico-h2-partners.png">
-              <h2 class="fos txt-small m-xs-top">Partners</h2>
+              <h2 class="fos txt-small m-xs-top" data-localize="global.partners">Partners</h2>
             </div>
           </div>
         </div>
@@ -682,7 +748,7 @@
           <div class="row">
             <div class="col-md-offset-2 col-md-8 txt-c">
               <img src="img/ico-h2-library.png">
-              <h2 class="fos txt-small m-xs-top">Library</h2>
+              <h2 class="fos txt-small m-xs-top" data-localize="global.library">Library</h2>
             </div>
           </div>
         </div>
@@ -693,7 +759,7 @@
         <div class="row m-l-top">
 
           <div class="col-md-8">
-            <h3 class="txt-xl fos">Resources from the land library</h3>
+            <h3 class="txt-xl fos" data-localize="global.landlibrary">Resources from the land library</h3>
             <div class="displayb overfh p-s-top p-s-bottom cb-bottom-lh">
               <a href="#" class="fos">Nullam non tincidunt ipsum, vel interdum leo. Vivamus dignissim feugiat cursus.</a>
               <p class="m-xs-top hidden-xs c-g40 m-xs-bottom">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum lobortis....</p>
@@ -733,28 +799,28 @@
           </div>
 
           <div class="col-md-4">
-            <h3 class="txt-xl fos">Redefine results</h3>
+            <h3 class="txt-xl fos" data-localize="global.refiner">Refine results</h3>
             <div class="group p-s-top p-l-bottom">
               <select class="syear fos cinput cinput-s-arrow cinput-sh cinput-gray">
-                <option value="0">Select source ...</option>
+                <option value="0" data-localize="inputs.ssource">Select source ...</option>
               </select>
             </div>
 
             <div class="group p-s-top p-l-bottom">
               <select class="syear fos cinput cinput-s-arrow cinput-sh cinput-gray">
-                <option value="0">Select research type ...</option>
+                <option value="0" data-localize="inputs.sresearch">Select research type ...</option>
               </select>
             </div>
 
             <div class="group p-s-top p-l-bottom">
               <select class="syear fos cinput cinput-s-arrow cinput-sh cinput-gray">
-                <option value="0">Select subjet ...</option>
+                <option value="0" data-localize="inputs.subjet">Select subjet ...</option>
               </select>
             </div>
 
             <div class="group p-s-top p-l-bottom">
               <select class="syear fos cinput cinput-s-arrow cinput-sh cinput-gray">
-                <option value="0">Select year ...</option>
+                <option value="0" data-localize="inputs.syear">Select year ...</option>
               </select>
             </div>
 
@@ -784,7 +850,6 @@
     <!-- HIHGCHARTS -->
     <script src="http://code.highcharts.com/stock/highstock.js"></script>
     <script src="https://code.highcharts.com/maps/modules/map.js"></script>
-    <script src="https://code.highcharts.com/mapdata/custom/world.js"></script>
     <script src="https://code.highcharts.com/highcharts-more.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
 
@@ -793,59 +858,21 @@
     <script src="js/vendor/owl.carousel.min.js"></script>
     <script src="js/vendor/randomColor.js"></script>
     <script src="http://d3js.org/d3.v3.min.js"></script>
-    <script src="js/vendor/lodash.js"></script>
+
+    <script src="js/vendor/jquery.localize.min.js"></script>
+
+
 
 
     <script src="js/main.js"></script>
+    <script src="js/map_data.js"></script>
+    
+    <script src="js/chartsdata.js"></script> 
     <script src="js/dataload.js"></script>
-      
-
+    
     <script type="text/javascript">
 
-        $(document).ready(function() {
 
-          setIndicators();
-
-          $(".a-nic").on("click",function(e){
-            e.preventDefault();
-          })
-            
-          $('.more-info-country [data-accordion]').accordion({
-              "transitionSpeed": 400
-          });
-            
-          $('.carousel-photo-gallery').owlCarousel({
-            center: true,
-            items:3,
-            loop:false,
-            margin:1,
-            responsive:{
-              320:{
-                items:1
-              },
-              768:{
-                items:2
-              },
-              1200:{
-                items:3
-              }
-            }
-          });
-
-        });
-
-        // var rColor = {
-        //     '1': '#C6F9D2',
-        //     '2': '#CCCCB3',
-        //     '3': '#CECEFF', 
-        //     '4': '#FFCAFF', 
-        //     '5': '#D0CCCD', 
-        //     '6': '#FFCC99', 
-        //     '7': '#FFCBB9', 
-        //     '8': '#EAEC93', 
-        //     '9': '#D7FBE6', 
-        //     '10': '#FFCACA'
-        // };
 
     </script>
 

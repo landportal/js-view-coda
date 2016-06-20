@@ -289,6 +289,12 @@ select::-ms-expand {
 	background-position:right 5px top 12px;
 }
 
+.cinput-disabled {
+	background-color: #ededed;
+	opacity: 0.8;
+	pointer-events: none;
+}
+
 
 //## AJUSTES ## //
 .adj-rimput-lang {

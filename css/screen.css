@@ -1337,29 +1337,53 @@ th.t-th:last-child, td.t-td:last-child {
   padding: 5px 10px;
 }
 
-/* line 403, ../sass/_m-generales.scss */
+/* line 401, ../sass/_m-generales.scss */
+.t_indicators_body_loader {
+  height: 310px;
+}
+
+/* line 406, ../sass/_m-generales.scss */
 .fake-header {
   background-image: url("../img/fake-header-repeat.png");
   background-repeat: repeat-x;
 }
 
-/* line 407, ../sass/_m-generales.scss */
+/* line 410, ../sass/_m-generales.scss */
 .fake-footer {
   background-color: #A3C642;
 }
 
-/* line 414, ../sass/_m-generales.scss */
+/* line 415, ../sass/_m-generales.scss */
+.pos_loader_data {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* line 425, ../sass/_m-generales.scss */
+.pos_spinkit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* line 433, ../sass/_m-generales.scss */
 .more-info-country {
   margin: 0;
   padding: 0;
   list-style-type: none;
 }
-/* line 419, ../sass/_m-generales.scss */
+/* line 438, ../sass/_m-generales.scss */
 .more-info-country .mic-i-a {
   display: block;
   padding: 10px 0px;
 }
-/* line 424, ../sass/_m-generales.scss */
+/* line 443, ../sass/_m-generales.scss */
 .more-info-country .mic-i-control {
   display: block;
   position: absolute;
@@ -1645,7 +1669,14 @@ select::-ms-expand {
   background-position: right 5px top 12px;
 }
 
-/* line 294, ../sass/_m-formularios.scss */
+/* line 292, ../sass/_m-formularios.scss */
+.cinput-disabled {
+  background-color: #ededed;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+/* line 300, ../sass/_m-formularios.scss */
 .adj-rimput-lang {
   position: relative;
   top: -2px;
