@@ -196,6 +196,8 @@ li.nic-item:last-child a.a-nic {
 .cqdata {
 	width: 20px;
 	height: 20px;
+	line-height: 20px;
+	text-align: center;
 	border-radius: 50em;
 	display: inline-block;
 	position: absolute;
@@ -210,25 +212,49 @@ li.nic-item:last-child a.a-nic {
 	border-radius: 50em;
 	display: inline-block;
 	position: relative;
-	top:1px;
+	top:2px;
 	left: 0px;
 	
+}
+
+.cqdata-a {
+	background-color: #7ED321;
+}
+
+.cqdata-b {
+	background-color: #F8E71C;
+}
+
+.cqdata-c {
+	background-color: #F5A623;
+}
+
+.cqdata-d {
+	background-color: #F6112D;
 }
 
 .cqdata-na {
 	background-color: $c-g20;
 }
 
-.cqdata-high {
-	background-color: #F5A623;
+/*## half circle left*/
+.cqdata-il-sml, .cqdata-il-smr{
+     width:20px;
+     height:10px;
+     display: block;
+     float: left;
+     border-radius: 20px 20px 0 0;
+     -moz-border-radius: 20px 20px 0 0;
+     -webkit-border-radius: 20px 20px 0 0;
+     transform:rotate(-90deg);
+     margin-left: -35px;
+     position: relative;
+     top:8px;
 }
 
-.cqdata-mid {
-	background-color: #BD10E0;
-}
-
-.cqdata-low {
-	background-color: #009BE2;
+.cqdata-il-smr {
+	 transform:rotate(90deg);
+	 margin-left: -25px;
 }
 
 /*.bg-gray-at60 {

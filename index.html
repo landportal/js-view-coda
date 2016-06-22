@@ -59,7 +59,7 @@
               
               <div class="country-intro txt-c">
                 <div class="country-flag c-obj">
-                  <img src="img/flags/tz.svg" title="Tanzania" width="42" height="42">
+                  <img src="" title="Tanzania" width="42" height="42" id="imgFlag">
                 </div>
                 <div class="country-title"><h2 class="displayb txt-c fos no-m-top">Tanzania</h2></div>
               </div>
@@ -436,13 +436,11 @@
 
       <div class="container p-xxl-bottom">
 
-        <div class="row m-l-top p-xxl-bottom cb-bottom-lh">
+        <div class="row m-l-top p-xl-bottom cb-bottom-lh">
           
           <div class="col-md-offset-1 col-md-2">
             <select class="egsyear fos cinput cinput-s-arrow cinput-sh">
                 <option value="0" selected="selected">Select year ...</option>
-                <option value="2013">2013</option>
-                <option value="2016">2016</option>
               </select>
           </div>
 
@@ -460,32 +458,40 @@
 
         </div>
 
-        <div class="row">
+        <div class="row p-l-bottom">
 
-          <div class="col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8">
+          <div class="col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8 r-pos" id="quality-info">
             
             <ul class="quality-list">
-              <li class="item-q fos r-pos"><span class="cqdata cqdata-na"></span> Nullam non tincidunt ipsum, vel interdum leo. Vivamus dignissim feugiat cursus.</li>
-              <li class="item-q fos r-pos"><span class="cqdata cqdata-high"></span> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-              <li class="item-q fos r-pos"><span class="cqdata cqdata-mid"></span> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
-              <li class="item-q fos r-pos"><span class="cqdata cqdata-low"></span> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>
+              <li class="item-q fos r-pos txt-c c-g40">Please, select year and panels to show the info.</li>
             </ul>
+            <div class="pos_loader_data hddn">
+              <div class="pos_spinkit">
+                  <div class="sk-three-bounce no-m-bottom">
+                    <div class="sk-child sk-bounce1"></div>
+                    <div class="sk-child sk-bounce2"></div>
+                    <div class="sk-child sk-bounce3"></div>
+                  </div>
+                  <p class="txt-s c-g40 uppc txt-c fos no-m-top m-xs-top" data-localize="feedback.loading">Loading data ...</p>
+              </div>
+            </div>
 
           </div>
 
           <div class="col-xs-12">
-              <div class="quality-legend fos txt-c">
-                <span class="cqdata-il cqdata-na"></span> <span data-localize="label.ndata">No data</span> &nbsp;
-                <span class="cqdata-il cqdata-high"></span> <span data-localize="label.hine">High inequality</span> &nbsp; 
-                <span class="cqdata-il cqdata-mid"></span> <span data-localize="label.mine">Mid inequality</span> &nbsp; 
-                <span class="cqdata-il cqdata-low"></span> <span data-localize="label.line">Low inequality</span> 
+              <div class="quality-legend fos txt-c txt-s">
+                <span class="cqdata-il cqdata-a"></span> <span data-localize="label.vgp">Very Good Practice</span> &nbsp; 
+                <span class="cqdata-il cqdata-b"></span> <span data-localize="label.gp">Good Practice</span> &nbsp; 
+                <span class="cqdata-il cqdata-c"></span> <span data-localize="label.wp">Weak Practice</span> &nbsp;
+                <span class="cqdata-il cqdata-d"></span> <span data-localize="label.vwp">Very Weak Practice </span> &nbsp;
+                <span class="cqdata-il cqdata-na"></span> <span data-localize="label.ndata">Missing Value</span> 
               </div>
           </div>
 
         </div>
 
 
-        <div class="row p-xxl-top">
+        <div class="row p-xxl-top m-xl-top">
            
            <div class="col-md-6">
               <div id="wrapper-piechart"></div>

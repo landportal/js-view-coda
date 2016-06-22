@@ -128,7 +128,7 @@
 		});
 	}
 
-
+	window.ELGAF_indicators = new Array();
 	function selectSetIndicators(id) {
 		var $selIndEG = $(".egsindicator");
 		$.getJSON("json/LGAF_indicators.json",function(data){
@@ -136,6 +136,7 @@
 			$selIndEG.append('<option value="0">Select panel ...</option>');
 			$.each(data[id].indicators, function(key,val){
 				$selIndEG.append('<option value="'+val.id+'" name="'+val.name+'">'+val.name+'</option>');
+				window.ELGAF_indicators.push(val.id);
 			});
 			
 		});
@@ -351,6 +352,7 @@
 				selectSetPanels($(this).val());
 				$(".egspanel").removeClass("cinput-disabled");
 				$(".egspanel").prop( "disabled", false );
+				$(".egspanel").eq(0).text("Loading ...");
 			}else{
 				$(".egspanel").val(0);
 				$(".egspanel").addClass("cinput-disabled");
@@ -359,6 +361,9 @@
 				$(".egsindicator").val(0);
 				$(".egsindicator").addClass("cinput-disabled");
 				$(".egsindicator").prop( "disabled", true );
+
+				$(".quality-list").html("");
+				$(".quality-list").append('<li class="item-q fos r-pos txt-c c-g40">Please, select year and panels to show the info.</li>');
 
 			}
 		});
@@ -380,6 +385,7 @@
 			if($(this).val()!=0) {
 				current_elgaf_subindicator = $(this).val();
 				current_elgaf_year = $(".egsyear").val();
+				$("#quality-info .pos_loader_data").removeClass("hddn");
 				setDataURLs();
 				loadELGAFvalues();
 			}

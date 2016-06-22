@@ -1,49 +1,49 @@
 {
     "2013": {
         "panels": [{
-            "name": "LEGAL AND INSTITUTIONAL FRAMEWORK",
+            "name": "Legal and institutional framework",
             "id": "WB-LGAF2013-1"
         }, {
-            "name": "LAND USE PLANNING, MANAGEMENT, AND TAXATION",
+            "name": "Land use planning, management, and taxation",
             "id": "WB-LGAF2013-2"
         }, {
-            "name": "MANAGEMENT OF PUBLIC LAND",
+            "name": "Management of public land",
             "id": "WB-LGAF2013-3"
         }, {
-            "name": "PUBLIC PROVISION OF LAND INFORMATION",
+            "name": "Public provision of land information",
             "id": "WB-LGAF2013-4"
         }, {
-            "name": "DISPUTE RESOLUTION AND CONFLICT MANAGEMENT",
+            "name": "Dispute resolution and conflict management",
             "id": "WB-LGAF2013-5"
         }]
     },
     "2016": {
         "panels": [{
-            "name": "LAND TENURE RECOGNITION",
+            "name": "Land tenure recognition",
             "id": "WB-LGAF2016-1"
         }, {
-            "name": "RIGHTS TO FOREST AND COMMON LANDS & RURAL LAND USE REGULATIONS",
+            "name": "Rights to forest and common lands & rural land use regulations",
             "id": "WB-LGAF2016-2"
         }, {
-            "name": "URBAN LAND USE, PLANNING, AND DEVELOPMENT",
+            "name": "Urban land use, planning, and development",
             "id": "WB-LGAF2016-3"
         }, {
-            "name": "PUBLIC LAND MANAGEMENT",
+            "name": "Public land management",
             "id": "WB-LGAF2016-4"
         }, {
-            "name": "TRANSPARENT PROCESS OF TRANSFER OF PUBLIC LAND TO PRIVATE USE",
+            "name": "Transparent process of transfer of public land to private use",
             "id": "WB-LGAF2016-5"
         }, {
-            "name": "LAND INFORMATION",
+            "name": "Land information",
             "id": "WB-LGAF2016-6"
         }, {
-            "name": "LAND VALUATION AND TAXATION",
+            "name": "Land valuation and taxation",
             "id": "WB-LGAF2016-7"
         }, {
-            "name": "DISPUTE RESOLUTION",
+            "name": "Dispute resolution",
             "id": "WB-LGAF2016-8"
         }, {
-            "name": "INSTITUTIONAL ARRANGEMENTS AND POLICIES",
+            "name": "Institutional arrangements and policies",
             "id": "WB-LGAF2016-9"
         }]
     }

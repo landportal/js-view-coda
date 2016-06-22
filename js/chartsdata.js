@@ -10,7 +10,7 @@ function getUrlVars() {
 var lang = getUrlVars()["lang"];
 
 if(lang ==undefined || lang=="") {
-	lang = "es";
+	lang = "en";
 }
 
 var jsonLGAF_values = 'json/LGAF_values.json'
@@ -30,6 +30,11 @@ var current_country_iso3 = getUrlVars()["_country"]; //"TZA";//"CHN";//"BWA"; //
 var country_URL_root = "http://data.landportal.info/geo/";
 var current_country_URL = country_URL_root + current_country_iso3;
 var series_color = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"];
+
+
+//Cambiar la flag al pais
+$("#imgFlag").attr("src","img/flags/"+current_country_iso3.toLowerCase()+".svg");
+
 
 var query_country_indicators;
 var query_country_indicators_URL;
@@ -70,7 +75,7 @@ var info_indicator_country = new Array();
 var info_all_indicators = new Array();
 var info_country_indicators = new Array();
 var info_countries_per_indicator = new Array();
-var current_indicator_name = "Indicator not set";
+var current_indicator_name = "Rural population"; //Rural population
 var selected_indicator_id = "Indicator not set";
 
 
@@ -676,36 +681,115 @@ loadELGAFyears();
 
 var LGAF_year_value = [];
 
+// function loadELGAFvalues() {
+// 	var row = [];
+// 	$(".quality-list").html("");
+// 	$.getJSON(query_elgaf_values_URL, function (data) {
+
+// 		for(i=0; i < data.results.bindings.length; i++){
+// 			var RawData = data.results.bindings[i].indicatorURL.value;
+// 			var iValue = data.results.bindings[i].value.value;
+// 			var id =  RawData.split("/").pop(); // Extraigo el id tras la última barra "/"
+
+// 			var subpanel = id.substr(0, id.lastIndexOf('.')); //Extraemos el valor antes del último "."
+			
+// 			if(subpanel == current_elgaf_subindicator) {
+	
+// 				var year = parseInt(current_elgaf_year);
+// 				LGAF_year_value = LGAF_values[current_elgaf_year]["values"];
+
+// 				$.each(LGAF_year_value, function( i, val ) {
+			
+// 					if(val.id == id) {
+// 						if(iValue=="")iValue='na';
+// 						console.log("nvalores: "+iValue.length);
+// 						console.log("Indicador: "+val.name+" Id: "+iValue);
+// 						if(iValue.length <= 1) {
+// 							row += '<li class="item-q fos r-pos"><span class="txt-s cqdata cqdata-'+iValue.toLowerCase()+'"></span> '+val.name+'</li>';
+// 						}else{
+// 							var split = iValue.split("-");
+// 							row += '<li class="item-q fos r-pos"><span class="txt-s cqdata-il-sml cqdata-'+split[0].toLowerCase()+'"></span><span class="txt-s cqdata-il-smr cqdata-'+split[1].toLowerCase()+'"></span> '+val.name+'</li>';
+// 						}
+						
+// 						//row += '<li class="item-q fos r-pos"><span class="txt-s cqdata cqdata-'+iValue.toLowerCase()+'"></span> '+val.name+'</li>';
+// 						//row += '<li class="item-q fos r-pos"><span class="txt-s cqdata cqdata-'+iValue.toLowerCase()+'">'+iValue+'</span> '+val.name+'</li>';
+// 					}
+					
+// 				});
+
+
+// 			}
+// 		}
+// 		$("#quality-info .pos_loader_data").addClass("hddn");
+// 		$(".quality-list").html(row);
+// 	});
+//}
+
+
 function loadELGAFvalues() {
+
 	var row = [];
 	$(".quality-list").html("");
+	
 	$.getJSON(query_elgaf_values_URL, function (data) {
 
-		for(i=0; i < data.results.bindings.length; i++){
-			var RawData = data.results.bindings[i].indicatorURL.value;
-			var iValue = data.results.bindings[i].value.value;
-			var id =  RawData.split("/").pop(); // Extraigo el id tras la última barra "/"
-
-			var subpanel = id.substr(0, id.lastIndexOf('.')); //Extraemos el valor antes del último "."
-			
-			if(subpanel == current_elgaf_subindicator) {
-	
-				var year = parseInt(current_elgaf_year);
-				LGAF_year_value = LGAF_values[current_elgaf_year]["values"];
-
-				$.each(LGAF_year_value, function( i, val ) {
+		var LGAF_year_value = LGAF_values[current_elgaf_year]["values"];
+		var indicatorsTotal = new Array();
+		var indicatorsValues = new Array();
 		
-					if(val.id == id) {
-						console.log("Indicador: "+val.name+" Id: "+iValue);
-						row += '<li class="item-q fos r-pos"><span class="cqdata cqdata-na"></span> '+val.name+' - '+iValue+'</li>'
+		for(var j = 0; j < LGAF_year_value.length; j++) {	
+				
+			var jsonIDraw = LGAF_year_value[j].id;
+			var JsonID = jsonIDraw.substr(0, jsonIDraw.lastIndexOf('.')); //Extraemos el valor antes del último "."
+			
+			if(JsonID == current_elgaf_subindicator){
+
+				var title = LGAF_year_value[j].name;
+				indicatorsTotal.push({
+		            id:  JsonID,
+		            name: title
+		        });
+
+				for(var i = 0; i < data.results.bindings.length; i++){
+
+					var indicatorURL = data.results.bindings[i].indicatorURL.value;
+					var iURL = indicatorURL.split("/").pop();
+					var indicatorRoot = iURL.substr(0, iURL.lastIndexOf('.'));
+
+					//console.log(indicatorRoot+"--"+JsonID);
+
+					if(indicatorRoot === JsonID) {
+						if(iURL == jsonIDraw){
+							indicatorsValues.push({
+					            id: iURL, 
+					            value: data.results.bindings[i].value.value
+					        });
+							//console.log(LGAF_year_value[j].name+" ID: "+data.results.bindings[i].value.value)
+						}
 					}
-					
-				});
+				}
+			}
 
+		}
 
+		for(var i = 0; i < indicatorsTotal.length; i ++) {
+			if(indicatorsValues[i]!=undefined){
+				console.log(indicatorsTotal[i].name+"-"+indicatorsValues[i].value);
+				if(indicatorsValues[i].value.length <= 1) {
+					row += '<li class="item-q fos r-pos"><span class="txt-s cqdata cqdata-'+indicatorsValues[i].value.toLowerCase()+'"></span> '+indicatorsTotal[i].name+'</li>';
+				}else{
+					var split = indicatorsValues[i].value.split("-");
+					row += '<li class="item-q fos r-pos"><span class="txt-s cqdata-il-sml cqdata-'+split[0].toLowerCase()+'"></span><span class="txt-s cqdata-il-smr cqdata-'+split[1].toLowerCase()+'"></span> '+indicatorsTotal[i].name+'</li>';
+				}
+			}else{
+				row += '<li class="item-q fos r-pos"><span class="txt-s cqdata cqdata-na"></span> '+indicatorsTotal[i].name+'</li>';
+				console.log(indicatorsTotal[i].name);
 			}
 		}
+
+		$("#quality-info .pos_loader_data").addClass("hddn");
 		$(".quality-list").html(row);
+
 	});
 
 }
@@ -1233,7 +1317,7 @@ function loadLineChart(){
 				x: -20 //center
 			},
 			subtitle: {
-				text: 'Source: '+current_indicator_name,
+				text: 'Current indicator: '+current_indicator_name,
 				x: -20
 			},
 			xAxis: {

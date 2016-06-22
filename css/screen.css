@@ -1111,6 +1111,8 @@ li.nic-item:last-child a.a-nic {
 .cqdata {
   width: 20px;
   height: 20px;
+  line-height: 20px;
+  text-align: center;
   border-radius: 50em;
   display: inline-block;
   position: absolute;
@@ -1118,61 +1120,88 @@ li.nic-item:last-child a.a-nic {
   left: 10px;
 }
 
-/* line 207, ../sass/_m-generales.scss */
+/* line 209, ../sass/_m-generales.scss */
 .cqdata-il {
   width: 14px;
   height: 14px;
   border-radius: 50em;
   display: inline-block;
   position: relative;
-  top: 1px;
+  top: 2px;
   left: 0px;
 }
 
-/* line 218, ../sass/_m-generales.scss */
+/* line 220, ../sass/_m-generales.scss */
+.cqdata-a {
+  background-color: #7ED321;
+}
+
+/* line 224, ../sass/_m-generales.scss */
+.cqdata-b {
+  background-color: #F8E71C;
+}
+
+/* line 228, ../sass/_m-generales.scss */
+.cqdata-c {
+  background-color: #F5A623;
+}
+
+/* line 232, ../sass/_m-generales.scss */
+.cqdata-d {
+  background-color: #F6112D;
+}
+
+/* line 236, ../sass/_m-generales.scss */
 .cqdata-na {
   background-color: #CCC;
 }
 
-/* line 222, ../sass/_m-generales.scss */
-.cqdata-high {
-  background-color: #F5A623;
+/*## half circle left*/
+/* line 241, ../sass/_m-generales.scss */
+.cqdata-il-sml, .cqdata-il-smr {
+  width: 20px;
+  height: 10px;
+  display: block;
+  float: left;
+  border-radius: 20px 20px 0 0;
+  -moz-border-radius: 20px 20px 0 0;
+  -webkit-border-radius: 20px 20px 0 0;
+  transform: rotate(-90deg);
+  margin-left: -35px;
+  position: relative;
+  top: 8px;
 }
 
-/* line 226, ../sass/_m-generales.scss */
-.cqdata-mid {
-  background-color: #BD10E0;
-}
-
-/* line 230, ../sass/_m-generales.scss */
-.cqdata-low {
-  background-color: #009BE2;
+/* line 255, ../sass/_m-generales.scss */
+.cqdata-il-smr {
+  transform: rotate(90deg);
+  margin-left: -25px;
 }
 
 /*.bg-gray-at60 {
     background-color: none;
     //margin: 2px;
 }*/
-/* line 239, ../sass/_m-generales.scss */
+/* line 265, ../sass/_m-generales.scss */
 .bg-gray-at60 {
   background: -moz-linear-gradient(left, #F7F7F7 0, #F7F7F7 40%, transparent 40%);
   background: -webkit-linear-gradient(left, #F7F7F7 0, #F7F7F7 40%, transparent 40%);
   background: linear-gradient(left, #f7f7f7 0%, #f7f7f7 40%, rgba(0, 0, 0, 0) 40%);
 }
 
-/* line 245, ../sass/_m-generales.scss */
+/* line 271, ../sass/_m-generales.scss */
 .bg-media {
   background-color: #F7F7F7;
 }
 
-/* line 249, ../sass/_m-generales.scss */
+/* line 275, ../sass/_m-generales.scss */
 .sh-img-news {
   background: #EFEFEF;
   box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.4);
   margin: 0px 0px 15px 0px;
 }
 @media (min-width: 480px) {
-  /* line 249, ../sass/_m-generales.scss */
+  /* line 275, ../sass/_m-generales.scss */
   .sh-img-news {
     display: inline-block;
     float: left;
@@ -1180,7 +1209,7 @@ li.nic-item:last-child a.a-nic {
   }
 }
 
-/* line 263, ../sass/_m-generales.scss */
+/* line 289, ../sass/_m-generales.scss */
 .cover-img-news {
   width: 100%;
   height: 200px;
@@ -1188,27 +1217,27 @@ li.nic-item:last-child a.a-nic {
   overflow: hidden;
 }
 @media (min-width: 480px) {
-  /* line 263, ../sass/_m-generales.scss */
+  /* line 289, ../sass/_m-generales.scss */
   .cover-img-news {
     width: 218px;
     height: 122px;
   }
 }
 
-/* line 275, ../sass/_m-generales.scss */
+/* line 301, ../sass/_m-generales.scss */
 .blog-intro {
   display: block;
   width: 100%;
 }
 @media (min-width: 992px) {
-  /* line 275, ../sass/_m-generales.scss */
+  /* line 301, ../sass/_m-generales.scss */
   .blog-intro {
     width: 218px;
     display: inline-block;
   }
 }
 
-/* line 284, ../sass/_m-generales.scss */
+/* line 310, ../sass/_m-generales.scss */
 .cover-img-blog {
   width: 100%;
   height: 200px;
@@ -1216,7 +1245,7 @@ li.nic-item:last-child a.a-nic {
   overflow: hidden;
 }
 @media (min-width: 480px) {
-  /* line 284, ../sass/_m-generales.scss */
+  /* line 310, ../sass/_m-generales.scss */
   .cover-img-blog {
     width: 218px;
     height: 122px;
@@ -1224,13 +1253,13 @@ li.nic-item:last-child a.a-nic {
 }
 
 @media (min-width: 768px) {
-  /* line 296, ../sass/_m-generales.scss */
+  /* line 322, ../sass/_m-generales.scss */
   .adj-blog {
     margin-left: 30px;
   }
 }
 
-/* line 303, ../sass/_m-generales.scss */
+/* line 329, ../sass/_m-generales.scss */
 .sh-img-blog {
   background: #EFEFEF;
   box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.4);
@@ -1238,7 +1267,7 @@ li.nic-item:last-child a.a-nic {
   margin: 0px 0px 15px 0px;
 }
 @media (min-width: 480px) {
-  /* line 303, ../sass/_m-generales.scss */
+  /* line 329, ../sass/_m-generales.scss */
   .sh-img-blog {
     display: block;
     float: left;
@@ -1246,7 +1275,7 @@ li.nic-item:last-child a.a-nic {
   }
 }
 @media (min-width: 992px) {
-  /* line 303, ../sass/_m-generales.scss */
+  /* line 329, ../sass/_m-generales.scss */
   .sh-img-blog {
     display: inline-block;
     float: none;
@@ -1260,7 +1289,7 @@ li.nic-item:last-child a.a-nic {
 	background-color: #efefef;
 	overflow: hidden;
 }*/
-/* line 331, ../sass/_m-generales.scss */
+/* line 357, ../sass/_m-generales.scss */
 .ico-cal {
   background-image: url("../img/ico-cal.png");
   background-repeat: no-repeat;
@@ -1268,7 +1297,7 @@ li.nic-item:last-child a.a-nic {
   padding-left: 25px;
 }
 
-/* line 338, ../sass/_m-generales.scss */
+/* line 364, ../sass/_m-generales.scss */
 .ico-loc {
   background-image: url("../img/ico-loc.png");
   background-repeat: no-repeat;
@@ -1276,7 +1305,7 @@ li.nic-item:last-child a.a-nic {
   padding-left: 25px;
 }
 
-/* line 347, ../sass/_m-generales.scss */
+/* line 373, ../sass/_m-generales.scss */
 .reset_table {
   width: 100%;
   height: 100%;
@@ -1292,68 +1321,68 @@ li.nic-item:last-child a.a-nic {
   background-color: #fff;
 }
 
-/* line 364, ../sass/_m-generales.scss */
+/* line 390, ../sass/_m-generales.scss */
 .table-responsive {
   box-shadow: 0px 2px 20px 0px rgba(0, 0, 0, 0.15) !important;
 }
 
-/* line 368, ../sass/_m-generales.scss */
+/* line 394, ../sass/_m-generales.scss */
 .t-th {
   padding: 10px 10px;
   font-weight: lighter;
   border-right: 1px solid #F0F0F0;
 }
 
-/* line 374, ../sass/_m-generales.scss */
+/* line 400, ../sass/_m-generales.scss */
 .t-th-green, .t-tf-green {
   background-color: #A3C642;
   color: #fff;
 }
 
-/* line 379, ../sass/_m-generales.scss */
+/* line 405, ../sass/_m-generales.scss */
 .t-tf-dkgreen {
   background-color: #45551a;
 }
 
-/* line 383, ../sass/_m-generales.scss */
+/* line 409, ../sass/_m-generales.scss */
 tr:nth-child(even) {
   background: #F2F2F2;
 }
 
-/* line 387, ../sass/_m-generales.scss */
+/* line 413, ../sass/_m-generales.scss */
 .t-td {
   padding: 10px 10px;
   border-right: 1px solid #F0F0F0;
   border-bottom: 1px solid #F0F0F0;
 }
 
-/* line 393, ../sass/_m-generales.scss */
+/* line 419, ../sass/_m-generales.scss */
 th.t-th:last-child, td.t-td:last-child {
   border-right: none;
 }
 
-/* line 397, ../sass/_m-generales.scss */
+/* line 423, ../sass/_m-generales.scss */
 .t-tf {
   padding: 5px 10px;
 }
 
-/* line 401, ../sass/_m-generales.scss */
+/* line 427, ../sass/_m-generales.scss */
 .t_indicators_body_loader {
   height: 310px;
 }
 
-/* line 406, ../sass/_m-generales.scss */
+/* line 432, ../sass/_m-generales.scss */
 .fake-header {
   background-image: url("../img/fake-header-repeat.png");
   background-repeat: repeat-x;
 }
 
-/* line 410, ../sass/_m-generales.scss */
+/* line 436, ../sass/_m-generales.scss */
 .fake-footer {
   background-color: #A3C642;
 }
 
-/* line 415, ../sass/_m-generales.scss */
+/* line 441, ../sass/_m-generales.scss */
 .pos_loader_data {
   position: absolute;
   width: 100%;
@@ -1364,7 +1393,7 @@ th.t-th:last-child, td.t-td:last-child {
   background-color: rgba(255, 255, 255, 0.4);
 }
 
-/* line 425, ../sass/_m-generales.scss */
+/* line 451, ../sass/_m-generales.scss */
 .pos_spinkit {
   position: absolute;
   top: 50%;
@@ -1372,18 +1401,18 @@ th.t-th:last-child, td.t-td:last-child {
   transform: translate(-50%, -50%);
 }
 
-/* line 433, ../sass/_m-generales.scss */
+/* line 459, ../sass/_m-generales.scss */
 .more-info-country {
   margin: 0;
   padding: 0;
   list-style-type: none;
 }
-/* line 438, ../sass/_m-generales.scss */
+/* line 464, ../sass/_m-generales.scss */
 .more-info-country .mic-i-a {
   display: block;
   padding: 10px 0px;
 }
-/* line 443, ../sass/_m-generales.scss */
+/* line 469, ../sass/_m-generales.scss */
 .more-info-country .mic-i-control {
   display: block;
   position: absolute;
