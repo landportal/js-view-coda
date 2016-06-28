@@ -1,12 +1,3 @@
-//Funcion para recoger las variables de la URL
-function getUrlVars() {
-	var vars = {};
-	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-    	vars[key] = value;
-	});
-	return vars;
-}
-
 var lang = getUrlVars()["lang"];
 
 if(lang ==undefined || lang=="") {
@@ -32,10 +23,6 @@ var current_country_URL = country_URL_root + current_country_iso3;
 var series_color = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"];
 
 
-//Cambiar la flag al pais
-$("#imgFlag").attr("src","img/flags/"+current_country_iso3.toLowerCase()+".svg");
-
-
 var query_country_indicators;
 var query_country_indicators_URL;
 var query_all_indicators;
@@ -47,6 +34,17 @@ var query_coutries_per_indicator_URL;
 var query_elgaf_country_years;
 var query_elgaf_country_years_URL;
 var elgaf_years = new Array();
+
+
+var query_get_indicator_info;
+var query_get_indicator_info_URL;
+var indicator_info = new Array();
+var indicator_id_more_info;
+
+
+var query_countries_iso3;
+var query_countries_iso3_URL;
+var countrieNameIso3 = new Array();
 
 
 var current_elgaf_subindicator;
@@ -67,6 +65,7 @@ var query_pie_URL;
 var query_map_URL;
 var query_spider_URL;
 var query_line_URL;
+var query_line_chart;
 var query_map_chart;
 var default_table_indicators = new Array();
 var indicators = new Array();
@@ -115,12 +114,14 @@ Array.prototype.containsIndicator = function(indicatorURL) {
 //table_selected_indicator = 'http://data.landportal.info/indicator/FAO-23045-6083';
 //map_current_year = "2000";
 current_compared_countries_iso3 = [current_country_iso3];
-current_range_years_selected = [2000, 2008];//
+//current_range_years_selected = [2000, 2008];//
 map_selected_indicator_URL = 'http://data.landportal.info/indicator/FAO-23045-6083'; 
 line_selected_indicator_URL = 'http://data.landportal.info/indicator/WB-SP.RUR.TOTL.ZS'; 
 //FIN VALORES DE EJEMPLO
 
 function setDataURLs(){
+
+	
 	//SPARQL Querys
 	var query_prefix = 'PREFIX cex: <http://purl.org/weso/ontology/computex#> ' +
 	'PREFIX time: <http://www.w3.org/2006/time#> ' +
@@ -128,6 +129,30 @@ function setDataURLs(){
 
 	var query_prefix_elgaf = 'PREFIX cex: <http://purl.org/weso/ontology/computex#> '+
 	'PREFIX qb: <http://purl.org/linked-data/cube#>';
+
+	query_countries_iso3 = 'PREFIX ex: <http://www.example.org/rdf#> ' + 
+	'SELECT ?countryURL ?countryISO3 ?countryLabel ' +
+	'FROM <http://data.landportal.info> ' +
+	'WHERE { ' +
+	'?countryURL a <http://purl.org/weso/landbook/ontology#Country> ; ' +
+	'ex:label ?countryLabel . ' +
+	'BIND (REPLACE(STR(?countryURL), "http://data.landportal.info/geo/","") AS ?countryISO3) ' +
+	'} ORDER BY ?countryURL ';
+
+
+	query_get_indicator_info = 'PREFIX ex: <http://www.example.org/rdf#> ' +
+	'SELECT ?indicatorLabel ?indicatorDescription ?indicatorUnit ?datasetURL ?datasetLabel ?sourceOrgURL ?sourceOrgLabel '+
+	'FROM <http://data.landportal.info> '+
+	'WHERE { '+
+	'<' + indicator_id_more_info + '> ex:label ?indicatorLabel ; '+
+	'ex:description ?indicatorDescription ; '+
+	'ex:unit ?indicatorUnit ; '+
+	'ex:dataset ?datasetURL . '+
+	'?datasetURL ex:label ?datasetLabel ; '+
+	'ex:org ?sourceOrgURL . '+
+	'?sourceOrgURL ex:label ?sourceOrgLabel. '+
+	'} ';
+
 
 	query_all_indicators = query_prefix + 
 	'SELECT * '+
@@ -161,7 +186,7 @@ function setDataURLs(){
 		'cex:ref-area ?countryURL .' +
 		'?countryURL ex:label ?countryLabel. ' +
 		' BIND (REPLACE(STR(?countryURL), "http://data.landportal.info/geo/","") AS ?countryISO3) ' +
-	'} ';
+	'} ORDER BY ?countryLabel ';
 
 
 
@@ -301,7 +326,7 @@ function setDataURLs(){
 	'FROM <http://data.landportal.info> ' +
 	'WHERE { ' +
 	'?obs cex:ref-area <' + current_country_URL + '> ; ' +
-	'     cex:ref-indicator <http://data.landportal.info/indicator/FAO-LANDANDGENDER.1FB> ; ' +
+	'     cex:ref-indicator <http://data.landportal.info/indicator/FAO-LG.1FB> ; ' +
 	'     cex:ref-time ?time . ' +
 	'?time time:hasBeginning ?timeValue . ' +
 	'?timeValue time:inXSDDateTime ?dateTime } ' +
@@ -322,22 +347,44 @@ function setDataURLs(){
 	'} ' +
 	'ORDER BY DESC(?dateTime)';
 
+	// query_info_indicator_country_year = query_prefix +
+	// 'SELECT ?value ?unitLabel ?datasetURL ?datasetLabel ?sourceOrgURL ?sourceOrgLabel ' +
+	// 'FROM <http://data.landportal.info> ' +
+	// 'WHERE { '+
+	// 	'?obs cex:ref-area <' + current_country_URL + '> ; ' +
+	// 	'cex:ref-indicator <' + table_selected_indicator + '> ; ' +
+	// 	'cex:value ?value ; ' +
+	// 	'cex:ref-time ?time . '+
+	// 	'?time time:hasBeginning ?timeValue . ' +
+	// 	'?timeValue time:inXSDDateTime "' + table_selected_year + '-01-01T00:00:00Z"^^xsd:dateTime . ' +
+	// 	'<' + table_selected_indicator + '> ex:unit ?unitLabel ; ' +
+	// 	'ex:dataset ?datasetURL . ' +
+	// 	'?datasetURL ex:label ?datasetLabel ; ' +
+	// 	'ex:org ?sourceOrgURL . ' +
+	// 	'?sourceOrgURL ex:label ?sourceOrgLabel. ' +
+	// '}';
+
 	query_info_indicator_country_year = query_prefix +
-	'SELECT ?value ?unitLabel ?datasetURL ?datasetLabel ?sourceOrgURL ?sourceOrgLabel ' +
+	'SELECT ?indicatorLabel ?indicatorDescription ?value ?unitLabel ?datasetURL ?datasetLabel ?sourceOrgURL ?sourceOrgLabel ' +
 	'FROM <http://data.landportal.info> ' +
 	'WHERE { '+
 		'?obs cex:ref-area <' + current_country_URL + '> ; ' +
-		'cex:ref-indicator <' + table_selected_indicator + '> ; ' +
+		'cex:ref-indicator ?indicatorURL ; ' +
 		'cex:value ?value ; ' +
 		'cex:ref-time ?time . '+
 		'?time time:hasBeginning ?timeValue . ' +
 		'?timeValue time:inXSDDateTime "' + table_selected_year + '-01-01T00:00:00Z"^^xsd:dateTime . ' +
-		'<' + table_selected_indicator + '> ex:unit ?unitLabel ; ' +
+		'?indicatorURL ex:unit ?unitLabel ; ' +
 		'ex:dataset ?datasetURL . ' +
 		'?datasetURL ex:label ?datasetLabel ; ' +
 		'ex:org ?sourceOrgURL . ' +
 		'?sourceOrgURL ex:label ?sourceOrgLabel. ' +
-	'}';
+		'?indicatorURL ex:label ?indicatorLabel ; ' +
+		'ex:description ?indicatorDescription . ' +
+		'VALUES ?indicatorURL {<' + table_selected_indicator + '>} '+
+	'}';	
+
+
 	
 	var query_pie_chart = query_prefix +
 	'SELECT ?ArableLandPer ?PermanentCropsPer ?PermanentPasturesAndMedowsPer ?ForestLandPer ?OtherPer ?TotalLandHa (year(?maxdateTime) as ?year) ' +
@@ -409,11 +456,11 @@ function setDataURLs(){
 
 
 	var query_spider_chart = query_prefix +
-	'SELECT  ?sigi ?sigiTo100 ?gini ?giniTo100 ?hdi ?hdiTo100  ?ghi ?ghiTo100 ' +
+	'SELECT  ?sigi ?sigiTo100 ?sigiYear ?gini ?giniTo100 ?giniYear ?hdi ?hdiTo100 ?hdiYear ?ghi ?ghiTo100 ?ghiYear ' +
 	'FROM <http://data.landportal.info> ' +
 	'WHERE { ' +
 	'OPTIONAL{ ' +
-	'SELECT ?sigi ' +
+	'SELECT ?sigi (year(?dateTime) as ?sigiYear) ' +
 	'FROM <http://data.landportal.info> ' +
 	'WHERE { ' +
 	'?obs cex:ref-area <' + current_country_URL + '> ; ' +
@@ -426,7 +473,7 @@ function setDataURLs(){
 	'  LIMIT 1 ' +
 	'} ' +
 	'OPTIONAL{ ' +
-	'SELECT ?hdi ' +
+	'SELECT ?hdi (year(?dateTime) as ?hdiYear) ' +
 	'FROM <http://data.landportal.info> ' +
 	'WHERE { ' +
 	'?obs cex:ref-area <' + current_country_URL + '> ; ' +
@@ -439,7 +486,7 @@ function setDataURLs(){
 	'  LIMIT 1 ' +
 	'} ' +
 	'OPTIONAL{ ' +
-	'SELECT ?gini ' +
+	'SELECT ?gini (year(?dateTime) as ?giniYear) ' +
 	'FROM <http://data.landportal.info> ' +
 	'WHERE { ' +
 	'?obs cex:ref-area <' + current_country_URL + '> ; ' +
@@ -452,7 +499,7 @@ function setDataURLs(){
 	'  LIMIT 1 ' +
 	'} ' +
 	'OPTIONAL{ ' +
-	'SELECT ?ghi ' +
+	'SELECT ?ghi (year(?dateTime) as ?ghiYear) ' +
 	'FROM <http://data.landportal.info> ' +
 	'WHERE { ' +
 	'?obs cex:ref-area <' + current_country_URL + '> ; ' +
@@ -471,7 +518,7 @@ function setDataURLs(){
 	'}';
 
 
-	var query_line_chart = query_prefix +
+	query_line_chart = query_prefix +
 	'SELECT ?countryISO3 (year(?dateTime) as ?year) ?value ' + 
 	'FROM <http://data.landportal.info> ' +
 	'WHERE { ' +
@@ -501,6 +548,9 @@ function setDataURLs(){
 	URL_prefix = 'http://landportal.info/sparql?default-graph-uri=&query=';
 	URL_suffix = '&should-sponge=&format=json&timeout=0&debug=on';
 	
+
+	//Consulta que devuelve nombre de paises y su iso3
+	query_countries_iso3_URL = URL_prefix + encodeURIComponent(query_countries_iso3) + URL_suffix; 
 	//Consulta de los indicadores del pais cargado
 	query_country_indicators_URL = URL_prefix + encodeURIComponent(query_country_indicators) + URL_suffix; 
 	//Nos trae todos los indicadores - deshabilitado
@@ -525,8 +575,10 @@ function setDataURLs(){
 	query_elgaf_country_years_URL = URL_prefix + encodeURIComponent(query_elgaf_country_years) + URL_suffix; 
 	//Valores por año ELGAF
 	query_elgaf_values_URL = URL_prefix + encodeURIComponent(query_elgaf_values) + URL_suffix; 
+	//Obtenemos información completa de un indicador
+	query_get_indicator_info_URL = URL_prefix + encodeURIComponent(query_get_indicator_info) + URL_suffix; 
 
-	//console.log(query_pie_URL);
+	//console.log(query_map_URL);
 
 
 }
@@ -561,19 +613,74 @@ setDataURLs();
 //set_all_indicators();
 
 
+
+function getIndicatorInfo() {
+
+	if(indicator_info.length>0){
+		indicator_info.splice(0,indicator_info.length);
+	}
+
+	$.getJSON(query_get_indicator_info_URL, function (data) {
+		for(i=0; i < data.results.bindings.length; i++){
+			indicator_info.push({
+				'name':data.results.bindings[i].indicatorLabel.value,
+				'desc':data.results.bindings[i].indicatorDescription.value,
+				'datasetURL':data.results.bindings[i].datasetURL.value,
+				'datasetLabel':data.results.bindings[i].datasetLabel.value,
+				'sourceOrgURL':data.results.bindings[i].sourceOrgURL.value,
+				'sourceOrgLabel':data.results.bindings[i].sourceOrgLabel.value,
+			});
+		}
+	});
+}
+
+
+
+function loadCountriesIso3() {
+	$.getJSON(query_countries_iso3_URL, function (data) {
+		for(i=0; i < data.results.bindings.length; i++){
+			countrieNameIso3.push({'name':data.results.bindings[i].countryLabel.value,'iso3':data.results.bindings[i].countryISO3.value,'url':data.results.bindings[i].countryURL.value});
+		}
+		//Nombre + bandera del pais
+		//Cambiar la flag al pais
+		$("#imgFlag").attr("src","img/flags/"+current_country_iso3.toLowerCase()+".svg");
+		$(".tit-country").text(setNameCountry(current_country_iso3));
+	});
+
+
+}
+
+loadCountriesIso3();
+
+
+
 function set_country_indicators() {
 
 	
 	$.getJSON(query_country_indicators_URL, function (data) {
 		for(i=0; i < data.results.bindings.length; i++){
-			info_country_indicators.push({'name':data.results.bindings[i].indicatorLabel.value,'URL':data.results.bindings[i].indicatorURL.value});
-			global_select_indicators += '<option value="'+data.results.bindings[i].indicatorURL.value+'">'+data.results.bindings[i].indicatorLabel.value+'</option>';
+			var indicator = data.results.bindings[i].indicatorLabel.value;
+			//var EndIndicator = indicator.split("-").pop();
+			searchfor = 'wb-lgaf';
+			if(indicator.toLowerCase().indexOf(searchfor) === -1){
+				info_country_indicators.push({'name':data.results.bindings[i].indicatorLabel.value,'URL':data.results.bindings[i].indicatorURL.value});
+				global_select_indicators += '<option value="'+data.results.bindings[i].indicatorURL.value+'">'+data.results.bindings[i].indicatorLabel.value+'</option>';
+			}
+			// if(!$.isNumeric(EndIndicator)) {
+			// 	info_country_indicators.push({'name':data.results.bindings[i].indicatorLabel.value,'URL':data.results.bindings[i].indicatorURL.value});
+			// 	global_select_indicators += '<option value="'+data.results.bindings[i].indicatorURL.value+'">'+data.results.bindings[i].indicatorLabel.value+'</option>';
+			// }
+			
 		}
 
 		//Cargamos los indicadores (TODOS CUIDADO)
 		var $selIndicator = $(".sindicator, .msindicator");
 		$selIndicator.html('');
 		$selIndicator.append(global_select_indicators);
+
+		loadMapDefaults();
+		loadLineDefaults();
+
 	});
 
 	
@@ -638,16 +745,20 @@ function loadDefaultTableIndicators(){
 		$("table#tindicators tbody").html("");
 		$.each(default_table_indicators, function( i, val ) {
 			var row = ' <tr>\
-                    <td class="t-td" data-id="'+default_table_indicators[i].url+'">'+default_table_indicators[i].name+'</td>\
+                    <td class="t-td" data-id="'+default_table_indicators[i].url+'"><a href="'+default_table_indicators[i].url+'" target="_blank">'+default_table_indicators[i].name+'</a> <span class="info-bubble txt-s fright" data-toggle="tooltip" data-placement="top" title="'+default_table_indicators[i].description+'">i</span></td>\
                     <td class="t-td txt-c year" data-year="'+default_table_indicators[i].year+'">'+default_table_indicators[i].year+'</td>\
                     <td class="t-td txt-ar">'+default_table_indicators[i].value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>\
                     <td class="t-td">'+default_table_indicators[i].unit_label+'</td>\
-                    <td class="t-td"><a href="'+default_table_indicators[i].source_URL+'" target="_blank">'+default_table_indicators[i].source_label+'</a></td>\
+                    <td class="t-td"><a href="'+default_table_indicators[i].dataset_URL+'" target="_blank">'+default_table_indicators[i].dataset_label+'</a> (<a href="'+default_table_indicators[i].source_URL+'" target="_blank">'+default_table_indicators[i].source_label+'</a>)</td>\
                     <td class="t-td txt-c"><a href="#" class="r-row del-row" data-ord=""><img src="img/ico-trash.svg" class="c-obj"></a></td>\
                   </tr>';
 
             $("table#tindicators tbody").append(row);
 		});
+
+		$(function () {
+		  $('[data-toggle="tooltip"]').tooltip()
+		})
 	});
 }
 
@@ -670,6 +781,8 @@ function loadELGAFyears() {
 		if(egop != "") {
 			$(".egsyear").html(egop);
 		}
+
+		load_lgaf_defaults();
 
 		//alert(egop);
 
@@ -774,7 +887,7 @@ function loadELGAFvalues() {
 
 		for(var i = 0; i < indicatorsTotal.length; i ++) {
 			if(indicatorsValues[i]!=undefined){
-				console.log(indicatorsTotal[i].name+"-"+indicatorsValues[i].value);
+				//console.log(indicatorsTotal[i].name+"-"+indicatorsValues[i].value);
 				if(indicatorsValues[i].value.length <= 1) {
 					row += '<li class="item-q fos r-pos"><span class="txt-s cqdata cqdata-'+indicatorsValues[i].value.toLowerCase()+'"></span> '+indicatorsTotal[i].name+'</li>';
 				}else{
@@ -886,18 +999,25 @@ function loadCountryIndicatorInfo(){
 			info_indicator_country.push(data.results.bindings[i].unitLabel.value);
 			info_indicator_country.push(data.results.bindings[i].sourceOrgLabel.value);
 			info_indicator_country.push(data.results.bindings[i].datasetURL.value);
-			info_indicator_country.push(data.results.bindings[i].sourceOrgURL.value);	
+			info_indicator_country.push(data.results.bindings[i].sourceOrgURL.value);
+			info_indicator_country.push(data.results.bindings[i].indicatorDescription.value);
+				
 		}
 
 		var addrow = '<tr>\
-			<td class="t-td" data-id="'+selected_indicator_id+'">'+current_indicator_name+'</td>\
+			<td class="t-td" data-id="'+selected_indicator_id+'"><a href="'+selected_indicator_id+'" target="_blank">'+current_indicator_name+'</a> <span class="info-bubble txt-s fright" data-toggle="tooltip" data-placement="top" title="'+info_indicator_country["7"]+'">i</span></td>\
 		    <td class="t-td txt-c year" data-year="'+info_indicator_country["1"]+'">'+info_indicator_country["1"]+'</td>\
 		    <td class="t-td txt-ar">'+info_indicator_country["2"].replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>\
 		    <td class="t-td">'+info_indicator_country["3"]+'</td>\
-		    <td class="t-td"><a href="'+info_indicator_country["5"]+'" target="_blank">'+info_indicator_country["4"]+'</a></td>\
+		    <td class="t-td"><a href="'+info_indicator_country["5"]+'" target="_blank">'+info_indicator_country["0"]+'</a> (<a href="'+info_indicator_country["6"]+'" target="_blank">'+info_indicator_country["4"]+'</a>)</td>\
 		    <td class="t-td txt-c"><a href="#" class="r-row del-row" data-ord=""><img src="img/ico-trash.svg" class="c-obj"></a></td>\
 		    </tr>';
 		$("table#tindicators tbody").append(addrow);
+
+		$(function () {
+		  $('[data-toggle="tooltip"]').tooltip()
+		})
+
 	});
 
 }
@@ -989,12 +1109,15 @@ function loadPieChart(){
 				enabled:false
 			},
 			title: {
-				text: '<div class="txt-m displayb txt-c">Total land area: ' + country_land_area_str + ' ha <span class="displayb c-g40">' + data_year + '</span></div>',
+				text: '<span class="displayb txt-c">Land Use</span><div class="txt-m displayb txt-c">Total land area: ' + country_land_area_str + ' Ha <span class="displayb c-g40">' + data_year + '</span></div>',
 				useHTML: true
 			},
 			tooltip: {
 				pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
 			},
+			legend: {
+	            itemWidth: 300
+	        },
 			plotOptions: {
 				pie: {
 					allowPointSelect: true,
@@ -1019,8 +1142,14 @@ function loadPieChart(){
 function loadMapChart(){
 	//#Mapping graph
 	$("#maparea .pos_loader_data").removeClass("hddn");
-	
+
+	indicator_id_more_info = map_selected_indicator_URL;
+	setDataURLs();
+	getIndicatorInfo();
+
 	$.getJSON(query_map_URL, function (data) {
+
+		
 
 		//console.log(data.results.bindings[i].countryISO3.value);
 		//console.log(data);
@@ -1052,9 +1181,6 @@ function loadMapChart(){
 	    this.id = this.code;
 	  });
 		*/
-		
-	  console.log("ok");
-	  
 
 	  $('#wrapper-mapping').highcharts('Map', {
 	    chart: {
@@ -1068,7 +1194,8 @@ function loadMapChart(){
 		},
 		  
 	    title: {
-	      text: ''
+	      text: '<p class="m-s-top m-xs-bottom txt-sh-dark">'+indicator_info["0"].name+'</p><p class="txt-s txt-sh-dark txt-c"><a href="'+indicator_info["0"].datasetURL+'" target="_blank">'+indicator_info["0"].datasetLabel+'</a></p>',
+	      useHTML: true,
 	    },
 
 	    mapNavigation: {
@@ -1121,7 +1248,7 @@ function loadMapChart(){
 	      borderColor: 'white',
 	      mapData: map_data,//Highcharts.maps['custom/world'],
 	      joinBy: ['id', 'code'],
-	      name: current_indicator_name,
+	      name: indicator_info["0"].name, //current_indicator_name,
 	      states: {
 	        hover: {
 	          color: '#F5A623'
@@ -1187,7 +1314,7 @@ function loadSpiderChart(){
 					chart_series.push(parseFloat(serie_value));
 				}
 				else{
-					console.log("pusheando null...");
+					//console.log("pusheando null...");
 					chart_series.push(null);
 				}
 			}
@@ -1207,7 +1334,7 @@ function loadSpiderChart(){
 			},
 
 			title: {
-				text: '<div class="txt-m displayb txt-c">Main Index Ranking <span class="displayb c-g40">2015</span></div>',
+				text: '<div class="txt-m displayb txt-c">Main Indexes</div>',
 				useHTML: true
 			},
 
@@ -1240,7 +1367,7 @@ function loadSpiderChart(){
 			},
 
 			series: [{
-				name: current_country_iso3,
+				name: setNameCountry(current_country_iso3),
 				data: chart_series,
 				pointPlacement: 'on'
 			}]
@@ -1255,10 +1382,17 @@ function loadLineChart(){
 //## LINE CHART
 	
 	$("#igraphics .pos_loader_data").removeClass("hddn");
+	
+	if (table_selected_indicator == "") {
+		indicator_id_more_info = line_selected_indicator_URL;
+	}else{
+		indicator_id_more_info = table_selected_indicator;
+	}
+	setDataURLs();
+	getIndicatorInfo();
 
 	$.getJSON(query_line_URL, function (data) {
-		//console.log("line_data =")
-		//console.log(data);
+
 		var serie_categories = new Array();
 		var serie_values = new Array();
 		var serie_value = new Object();
@@ -1277,7 +1411,8 @@ function loadLineChart(){
 		//console.log(serie_categories);
 		for(j=0; j<current_compared_countries_iso3.length; j++){
 			//Para cada País, inicializo la serie a null, recorro valores y si pertenecen al país y están dentro del rango de años correspondiente, pongo el valor en su lugar.
-			serie_value.name = current_compared_countries_iso3[j];
+			serie_value.name = setNameCountry(current_compared_countries_iso3[j]);
+			serie_value.niso3 = current_compared_countries_iso3[j];
 			serie_value.data = new Array();
 			serie_value.color = series_color[j]
 			for(k=0; k<num_years; k++){
@@ -1288,7 +1423,7 @@ function loadLineChart(){
 				_iso3 = data.results.bindings[h].countryISO3.value; 
 				_year = parseFloat(data.results.bindings[h].year.value);
 
-				if((_iso3 == serie_value.name)&&(_year <= last_year)&&(_year >= first_year)){
+				if((_iso3 == serie_value.niso3)&&(_year <= last_year)&&(_year >= first_year)){
 					serie_value.data[_year - first_year] = parseFloat(data.results.bindings[h].value.value);
 				}
 			}
@@ -1298,12 +1433,14 @@ function loadLineChart(){
 			serie_value = {};
 		}
 
-
+		var chart_type = "column";
+		if(serie_values[0].data.length != 1) chart_type = "line";
 
 		var lineChart_init;
 		var $divIgraphics = $('#wrapper-igraphics');
 		var CharLineOp = {
 		  chart: {
+		  	  type: chart_type,
 			  backgroundColor: "transparent",
 			  renderTo: $divIgraphics[0],
 			},
@@ -1313,11 +1450,12 @@ function loadLineChart(){
 			},
 
 			title: {
-				text: '',
+				text: '<span class="m-s-top m-xs-bottom txt-sh-dark">'+indicator_info["0"].name+'</span>',
 				x: -20 //center
 			},
 			subtitle: {
-				text: 'Current indicator: '+current_indicator_name,
+				text: '<a href="'+indicator_info["0"].datasetURL+'" target="_blank">'+indicator_info["0"].datasetLabel+'</a>',
+				useHTML: true,
 				x: -20
 			},
 			xAxis: {
@@ -1351,10 +1489,12 @@ function loadLineChart(){
 }
 
 function loadAllCharts(){
+	
 	loadPieChart();
 	loadMapChart();	
 	loadSpiderChart();
 	loadLineChart();
+
 	$("[data-localize]").localize("lang/lp_labels", { language: lang });
 }
 

@@ -1,11 +1,11 @@
 {
     "global": {
         "intro": "Intro",
-        "country": "The country",
+        "country": "Country Narrative",
         "indicators": "Indicators",
-        "infographic": "Infographic",
+        "infographic": "Compare Countries",
         "mapping": "Mapping",
-        "rankings": "Rankings",
+        "rankings": "Infographic",
         "media": "Media",
         "partners": "Partners",
         "library": "Library",
@@ -28,7 +28,7 @@
         "text": "text"
     },
     "label": {
-        "iname": "Indicators name",
+        "iname": "Indicators",
         "year": "Year",
         "val": "Value",
         "unit": "Unit",
@@ -50,14 +50,14 @@
         "addtocompare": "add to compare",
         "sindicator": "Select indicator ...",
         "syear": "Select year ...",
-        "nosyear": "No indicator selected ...",
+        "nosyear": "Select year...",
         "scountry": "Select country ...",
         "speriod": "Select period ...",
         "ssource": "Select source ...",
         "sresearch": "Select research type ...",
         "subjet": "Select subjet ...",
-        "speriodfrom": "From date...",
-        "speriodto": "To date...",
+        "speriodfrom": "From year...",
+        "speriodto": "To year...",
         "text": "text"
     },
     "feedback": {

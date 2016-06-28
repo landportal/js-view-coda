@@ -124,7 +124,6 @@
 			$.each(data[year].panels, function(key,val){
 				$selPanels.append('<option value="'+val.id+'" name="'+val.name+'">'+val.name+'</option>');
 			});
-			
 		});
 	}
 
@@ -145,6 +144,8 @@
 
 	$(document).ready(function() {
 
+		
+
 		//Anclas
 		$(".a-nic").on("click",function(e){
 			e.preventDefault();
@@ -155,8 +156,8 @@
 		$('.more-info-country [data-accordion]').accordion({
 			"transitionSpeed": 400
 		});
-		
 
+		
 		//Iniciamos el carousel de fotos de country
 		$('.carousel-photo-gallery').owlCarousel({
 			center: true,
@@ -177,13 +178,14 @@
 		});
 
 
-		//###EVENTOS####//
 
+		//###EVENTOS####//
 		//Borramos item de la tabla indicadores
 		$(document).delegate(".del-row","click", function(e) {
 			e.preventDefault();
 			$(this).parent().parent().remove().fadeOut("fast");
 		})
+
 
 
 		//Agregamos años
@@ -208,9 +210,11 @@
 		});
 
 
+
 		$(document).delegate("#isyear", "change", function(){
 			table_selected_indicator = $("#isindicators").val();
 		});
+
 
 
 		//Agregamos indicador
@@ -251,6 +255,7 @@
 		})
 
 
+
 		//Sección infographics
 		$(document).delegate("#lsindicador", "change", function(){
 			if($(this).val()!=0){
@@ -265,6 +270,7 @@
 				$(".speriod").prop( "disabled", true );
 
 				table_selected_indicator = $(this).val();
+				line_selected_indicator_URL = $(this).val();
 				setDataURLs();
 				loadCountriesPerIndicators();
 				loadYearsIndicatorCountryCompare();
@@ -281,6 +287,8 @@
 			}
 		});
 
+
+
 		$(document).delegate("#lscountry", "change", function(){
 
 			if($(this).val()!=0){
@@ -292,6 +300,7 @@
 				$(".speriod").addClass("cinput-disabled");
 			}
 		});
+
 
 		
 		//Agregamos el comparador si todos los campos están correctamente rellenados.
@@ -312,8 +321,18 @@
 				current_range_years_selected.length = 0;
 				current_indicator_name = $("#lsindicador").find("option:selected").text();
 				current_compared_countries_iso3.push(newCountry);
-				current_range_years_selected.push(dateFrom);
-				current_range_years_selected.push(dateTo);
+				
+				if(dateFrom > dateTo) {
+					current_range_years_selected.push(dateTo);
+					current_range_years_selected.push(dateFrom);
+				}else{
+					current_range_years_selected.push(dateFrom);
+					current_range_years_selected.push(dateTo);
+				}
+				
+
+				var label = '<span class="label-compare displayib fos txt-s">'+$("#lscountry option:selected").text()+' <a href="#" class="close-label" data-iso3="'+$("#lscountry option:selected").val()+'"><img src="img/close-label.svg"></a></span>';
+				$("#labels-compare").append(label)
 
 				setDataURLs();
 				loadLineChart();
@@ -324,8 +343,23 @@
 		});
 
 
+		$(document).delegate(".close-label", "click", function(e){
+			e.preventDefault();
+			var stringToArray = current_compared_countries_iso3;
+			var removeItem = $(this).attr("data-iso3");
+			stringToArray = jQuery.grep(stringToArray, function(value) {
+				return value != removeItem;
+			});
+	        //Refrescamos el array existente donde se añaden
+	        $(this).parent().remove();
+	        current_compared_countries_iso3 = stringToArray;
+	        setDataURLs();
+			loadLineChart();
+		})
 
-		//Agregamos años en Mapping
+
+
+		//## MAPPING EVENTS
 		$(document).delegate("#msindicator", "change", function(e){
 			e.preventDefault();
 			if($(this).val()!=0){
@@ -346,6 +380,22 @@
 		});
 
 
+		$(document).delegate("#msyear", "change", function(e){
+			e.preventDefault();
+			if($(this).val()!=0){
+				map_current_year = $(this).val();
+				setDataURLs();
+				loadMapChart();
+			}
+
+		});
+
+
+		
+
+
+
+		//##LGAF EVENTS
 		$(document).delegate(".egsyear", "change", function(e){
 			e.preventDefault();
 			if($(this).val()!=0) {
@@ -368,6 +418,8 @@
 			}
 		});
 
+
+
 		$(document).delegate(".egspanel", "change", function(e){
 			e.preventDefault();
 			if($(this).val()!=0) {
@@ -381,6 +433,8 @@
 			}
 		});
 
+
+
 		$(document).delegate(".egsindicator", "change", function(e){
 			if($(this).val()!=0) {
 				current_elgaf_subindicator = $(this).val();
@@ -392,18 +446,5 @@
 		});
 
 
-		
-
-
-		$(document).delegate("#msyear", "change", function(e){
-			e.preventDefault();
-			if($(this).val()!=0){
-				map_current_year = $(this).val();
-				setDataURLs();
-				loadMapChart();
-			}
-
-		});
-
-
     });//End document ready
+

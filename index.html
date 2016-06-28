@@ -25,6 +25,12 @@
         <![endif]-->
     </head>
     <body>
+
+    <div class ="share-buttons">
+      <a href="#" class="share-b share-b-facebook"><img src="img/sh-facebook.png" alt="share on facebook"></a>
+      <a href="#" class="share-b share-b-twitter"><img src="img/sh-twitter.png" alt="share on twitter"></a>
+      <a href="#" class="share-b share-b-googleplus"><img src="img/sh-googleplus.png" alt="share on google plus"></a>
+    </div>
     
     <section class="fake-header txt-c">
       <img src="img/fake-header.png" class="c-obj img-responsive">
@@ -42,7 +48,7 @@
                   <div class="c-item">
                     <figure class="fig-carousel r-pos group">
                       <img src="img/land-01.jpg" class="img-responsive">
-                      <figcaption class="pos-txt-img-carousel c-contrast fos">Suspendisse potenti. Ut ac mi massa. Etiam ac eros vel arcu pellentesque iaculis nec et elit. Maecenas tincidunt ultrices lobortis. Maecenas vestibulum nisl et semper laoreet.</figcaption>
+                      <figcaption class="pos-txt-img-carousel  fos"><a href="#" class="c-contrast acontrast">Suspendisse potenti. Ut ac mi massa. Etiam ac eros vel arcu pellentesque iaculis nec et elit. Maecenas tincidunt ultrices lobortis. Maecenas vestibulum nisl et semper laoreet.</a></figcaption>
                       <div class="cover-img-carousel"></div>
                     </figure>
                   </div>
@@ -50,7 +56,7 @@
                   <div class="c-item">
                     <figure class="fig-carousel r-pos group">
                       <img src="img/land-02.jpg" class="img-responsive">
-                      <figcaption class="pos-txt-img-carousel c-contrast fos">Suspendisse potenti. Ut ac mi massa. Etiam ac eros vel arcu pellentesque iaculis nec et elit.</figcaption>
+                      <figcaption class="pos-txt-img-carousel fos"><a href="#" class="c-contrast acontrast">Suspendisse potenti. Ut ac mi massa. Etiam ac eros vel arcu pellentesque iaculis nec et elit.</a></figcaption>
                       <div class="cover-img-carousel"></div>
                     </figure>
                   </div>
@@ -61,7 +67,7 @@
                 <div class="country-flag c-obj">
                   <img src="" title="Tanzania" width="42" height="42" id="imgFlag">
                 </div>
-                <div class="country-title"><h2 class="displayb txt-c fos no-m-top">Tanzania</h2></div>
+                <div class="country-title"><h2 class="displayb txt-c fos no-m-top tit-country">...</h2></div>
               </div>
             </div>
 
@@ -74,11 +80,11 @@
       
       <nav class="nav-top txt-c group m-l-bottom">
           <ul class="nav-inside-country fos">
-            <li class="nic-item"><a href="#" class="a-nic displayb txt-s uppc" data-localize="global.country">The country</a></li>
+            <li class="nic-item"><a href="#" class="a-nic displayb txt-s uppc" data-localize="global.country">Country narrative</a></li>
             <li class="nic-item"><a href="#indicators" class="a-nic displayb txt-s uppc" data-localize="global.indicators">Indicators</a></li>
-            <li class="nic-item"><a href="#infographic" class="a-nic displayb txt-s uppc" data-localize="global.infographics">Infographic</a></li>
+            <li class="nic-item"><a href="#infographic" class="a-nic displayb txt-s uppc" data-localize="global.infographics">Compare countries</a></li>
             <li class="nic-item"><a href="#mapping" class="a-nic displayb txt-s uppc" data-localize="global.mapping">Mapping</a></li>
-            <li class="nic-item"><a href="#rankings" class="a-nic displayb txt-s uppc" data-localize="global.rankings">Rankings</a></li>
+            <li class="nic-item"><a href="#rankings" class="a-nic displayb txt-s uppc" data-localize="global.rankings">Infographic</a></li>
             <li class="nic-item"><a href="#media" class="a-nic displayb txt-s uppc" data-localize="global.media">Media</a></li>
             <li class="nic-item"><a href="#partners" class="a-nic displayb txt-s uppc" data-localize="global.partners">Partners</a></li>
             <li class="nic-item"><a href="#library" class="a-nic displayb txt-s uppc" data-localize="global.library">Library</a></li>
@@ -134,16 +140,26 @@
       </div>
 
     </section>
-
+    
+    <div class="main-disclaimer p-m-top p-m-bottom txt-s txt-c">
+      <strong data-localize="feedback.disclaimer">Disclaimer:</strong></span data-localize="feedback.disclaimertxt" class="c-g40"> This page allows you to compare a lot of data from different sources, but be carefull: NOT ALL INDICATORS ARE STATISTICALLY COMPARABLE!!</span>
+    </div>
+    
     <a name="indicators"></a>
     <section class="p-sep-secc-top p-sep-secc-bottom bg-secc-clear cb-bottom-lh">
       <div class="header-section">
         <div class="container">
+<!--          <div class="row">
+            <div class="no-m-top col-xs-12 txt-s fos txt-c p-m-bottom">
+                <p><strong data-localize="feedback.disclaimer">Disclaimer:</strong></span data-localize="feedback.disclaimertxt"> This page allows you to compare a lot of data from different sources, but be carefull: NOT ALL INDICATORS ARE STATISTICALLY COMPARABLE!!</span></p>
+            </div>
+          </div> -->
           <div class="row">
             <div class="col-md-offset-2 col-md-8 txt-c">
               <img src="img/ico-h2-indicators.png">
 
               <h2 class="fos txt-small m-xs-top" data-localize="global.indicators">Indicators</h2>
+<!--               <p><strong data-localize="feedback.disclaimer">Disclaimer:</strong></span data-localize="feedback.disclaimertxt" class="c-g40"> This page allows you to compare a lot of data from different sources, but be carefull: NOT ALL INDICATORS ARE STATISTICALLY COMPARABLE!!</span></p> -->
             </div>
           </div>
         </div>
@@ -156,7 +172,7 @@
               <table class="reset_table c-g60" id="tindicators">
                 <thead>
                   <tr>
-                    <th class="uppc txt-s t-th fos t-th-green" data-localize="label.iname">Indicators name</th>
+                    <th class="uppc txt-s t-th fos t-th-green" data-localize="label.iname">Indicators</th>
                     <th class="uppc txt-s t-th fos t-th-green txt-c" data-localize="label.year">Year</th>
                     <th class="uppc txt-s t-th fos t-th-green txt-c" data-localize="label.val">Value</th>
                     <th class="uppc txt-s t-th fos t-th-green" data-localize="label.unit">Unit</th>
@@ -258,7 +274,7 @@
 
                 <tfoot>
                   <tr>
-                    <td colspan="6" class="t-tf t-tf-green txt-c txt-s fos"><strong data-localize="feedback.disclaimer">Disclaimer:</strong data-localize="feedback.disclaimertxt"> This page allows you to compare a lot of data from different sources, but be carefull: NOT ALL INDICATORS ARE STATISTICALLY COMPARABLE!!</td>
+                    <td colspan="6" class="t-tf t-tf-green txt-c txt-s fos"></td>
                     <!--td class="t-tf t-tf-dkgreen txt-xs uppc fos txt-c"><a href="#">Download data</a></td-->
                   </tr>
                 </tfoot>
@@ -298,7 +314,7 @@
           <div class="row">
             <div class="col-md-offset-2 col-md-8 txt-c">
               <img src="img/ico-h2-infographics.png">
-              <h2 class="fos txt-small m-xs-top" data-localize="global.infographics">Infographics</h2>
+              <h2 class="fos txt-small m-xs-top" data-localize="global.infographics">Compare countries</h2>
             </div>
           </div>
         </div>
@@ -328,7 +344,11 @@
               <a href="#" class="txt-s uppc txt-c cbtn cbtn-block cbtn-s-acc cbtn-s-sh2 fos cbtn-ladd-compare" data-localize="inputs.addtocompare">add</a>
           </div>
         </div>
-        
+        <div class="row">
+          <div class="col-xs-12 txt-c p-l-top p-l-bottom" id="labels-compare">
+            <!--span class="label-compare displayib fos txt-s" data-iso3="CHN">China <a href="#" class="close-label"><img src="img/close-label.svg"></a></span-->
+          </div>
+        </div>
         <div class="row m-xl-top" id="igraphics">
           <div class="col-xs-12 r-pos">
             <div id="wrapper-igraphics"></div>
@@ -428,7 +448,7 @@
           <div class="row">
             <div class="col-md-offset-2 col-md-8 txt-c">
               <img src="img/ico-h2-rankings.png">
-              <h2 class="fos txt-small m-xs-top" data-localize="global.rankings">Rankings & Qualitative info</h2>
+              <h2 class="fos txt-small m-xs-top" data-localize="global.rankings">Infographic</h2>
             </div>
           </div>
         </div>
@@ -437,6 +457,10 @@
       <div class="container p-xxl-bottom">
 
         <div class="row m-l-top p-xl-bottom cb-bottom-lh">
+
+          <div class="col-xs-12 m-l-top m-s-bottom">
+            <p class="displayb txt-c fos">Land Governance Assessment Framework (LGAF)</p>
+          </div>
           
           <div class="col-md-offset-1 col-md-2">
             <select class="egsyear fos cinput cinput-s-arrow cinput-sh">
@@ -452,7 +476,7 @@
 
           <div class="col-md-4">
             <select class="egsindicator fos cinput cinput-s-arrow cinput-sh cinput-disabled" disabled="disabled">
-                <option value="0">Select indicator ...</option>
+                <option value="0">Select Sub-panel ...</option>
               </select>
           </div>
 
@@ -491,26 +515,34 @@
         </div>
 
 
-        <div class="row p-xxl-top m-xl-top">
+        <div class="row p-xxl-top m-xl-top cb-top-2">
            
            <div class="col-md-6">
               <div id="wrapper-piechart"></div>
            </div>
 
-           <div class="col-md-6">
+           <div class="col-md-6 sep-left-charts">
               <div id="wrapper-spiderchart"></div>
+
+              <div class="txt-s txt-c c-g40 fos">Note: This spider chart reflects the level of development of a country on four dimensions, which are measured using four internationally accepted indexes:
+                <p class="m-xs-top no-m-bottom"><a href="https://landportal.info/book/indicators/oecd-sigi">The Social Institutions and Gender Index (SIGI) by OECD</a></p>
+                <p class="no-m-top no-m-bottom"><a href="https://landportal.info/book/indicators/wb-sipovgini">The GINI Index by the World Bank</a></p>
+                <p class="no-m-top no-m-bottom"><a href="https://landportal.info/book/indicators/undp-hdi-index">The Human Development Index (HDI) by UNDP</a></p>
+                <p class="no-m-top no-m-bottom"><a href="https://landportal.info/book/indicators/ifpri-ghi">The Global Hunger Index (GHI) by IFPRI</a></p>
+                <p class="m-xs-top no-m-bottom">All original values for the indexes have been rescaled from 0 to 100, where 0 reflects low development levels and 100 reflects high development levels.For each index the value for the most recent available year is selected by default".</p>
+             </div>
            </div>
 
         </div>
 
-        <div class="row p-xxl-top"> 
+<!--         <div class="row p-xxl-top"> 
           <div class="col-md-6">
-            <div class="txt-s txt-c c-g40 fos">Disclaimer: <a href="#">ELFAG</a>. There are mergin values from ....</div>
+            
           </div>
           <div class="col-md-6">
-             <div class="txt-s txt-c c-g40 fos">Disclaimer: <a href="#">ELFAG</a>. There are mergin values from ....</div>
+
           </div>
-      </div>
+      </div> -->
 
     </section> 
 
