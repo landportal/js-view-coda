@@ -28,11 +28,11 @@
         "text": "text"
     },
     "label": {
-        "iname": "Indicators",
+        "iname": "Indicator",
         "year": "Year",
         "val": "Value",
         "unit": "Unit",
-        "dataset": "Dataset/org",
+        "dataset": "Dataset(org)",
         "remove": "Remove",
         "ndata": "No data",
         "hine": "High inequality",

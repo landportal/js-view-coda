@@ -141,8 +141,14 @@
 
     </section>
     
-    <div class="main-disclaimer p-m-top p-m-bottom txt-s txt-c">
-      <strong data-localize="feedback.disclaimer">Disclaimer:</strong></span data-localize="feedback.disclaimertxt" class="c-g40"> This page allows you to compare a lot of data from different sources, but be carefull: NOT ALL INDICATORS ARE STATISTICALLY COMPARABLE!!</span>
+    <div class="main-disclaimer p-m-top p-m-bottom txt-s">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-offset-1 col-xs-10">
+            <strong data-localize="feedback.disclaimer">Disclaimer:</strong></span data-localize="feedback.disclaimertxt" class="c-g40">The data displayed on the Land Portal is provided by third parts indicated as the data source or as the data provider. The Land Portal team is constantly working to ensure the highest possible standard of data quality and accuracy, yet the data is by its nature approximate and will contain some inaccuracies. The data may contain errors introduced by the data provider(s) and/or by the Land Portal team. In addition, this page allows you to compare data from different sources, but not all indicators are necessarily statistically comparable. The Land Portal Foundation (A) expressly disclaims the accuracy, adequacy, or completeness of any data and (B) shall not be liable for any errors, omissions or other defects in, delays or interruptions in such data, or for any actions taken in reliance thereon. Neither the Land Portal Foundation nor any of its data providers will be liable for any damages relating to your use of the data provided herein</span>
+          </div>
+        </div>
+      </div>
     </div>
     
     <a name="indicators"></a>
@@ -346,6 +352,7 @@
         </div>
         <div class="row">
           <div class="col-xs-12 txt-c p-l-top p-l-bottom" id="labels-compare">
+            <span class="displayb c-g40 txt-xs uppc fos m-xs-bottom">Remove countries added</span>
             <!--span class="label-compare displayib fos txt-s" data-iso3="CHN">China <a href="#" class="close-label"><img src="img/close-label.svg"></a></span-->
           </div>
         </div>
@@ -519,12 +526,13 @@
            
            <div class="col-md-6">
               <div id="wrapper-piechart"></div>
+               <div class="txt-s c-g40 fos">Note: Some Indicators might have multiple values (e.g. Green-Orange), which might refers to different localities or categories of people. For more information please refers to specific country reports and to the methodology made available by the original data source/provider: <a href="http://go.worldbank.org/21M7S7AZO0" target="_blank">The Land GovernanceAssessment Framework (LGAF) website of the World Bank</a></div>
            </div>
 
            <div class="col-md-6 sep-left-charts">
               <div id="wrapper-spiderchart"></div>
 
-              <div class="txt-s txt-c c-g40 fos">Note: This spider chart reflects the level of development of a country on four dimensions, which are measured using four internationally accepted indexes:
+              <div class="txt-s c-g40 fos">Note: This spider chart reflects the level of development of a country on four dimensions, which are measured using four internationally accepted indexes:
                 <p class="m-xs-top no-m-bottom"><a href="https://landportal.info/book/indicators/oecd-sigi">The Social Institutions and Gender Index (SIGI) by OECD</a></p>
                 <p class="no-m-top no-m-bottom"><a href="https://landportal.info/book/indicators/wb-sipovgini">The GINI Index by the World Bank</a></p>
                 <p class="no-m-top no-m-bottom"><a href="https://landportal.info/book/indicators/undp-hdi-index">The Human Development Index (HDI) by UNDP</a></p>

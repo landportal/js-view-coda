@@ -80,7 +80,10 @@ function loadLineDefaults() {
 
 	current_range_years_selected.length=0;
 
+	$("#lsindicador").find("option[value='"+line_selected_indicator_URL+"']").prop("selected",true);
+
 	setTimeout(function(){
+		$("#lscountry").find("option[value='"+current_country_iso3+"']").prop("selected",true);
 		var date_ini = years_indicator_country["0"];
 		var date_end = years_indicator_country[years_indicator_country.length - 1];
 		current_range_years_selected.push(parseInt(date_end),parseInt(date_ini));
