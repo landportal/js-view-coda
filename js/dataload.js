@@ -132,7 +132,7 @@
 		var $selIndEG = $(".egsindicator");
 		$.getJSON("json/LGAF_indicators.json",function(data){
 			$selIndEG.html('');
-			$selIndEG.append('<option value="0">Select panel ...</option>');
+			$selIndEG.append('<option value="0">Select Sub-panel ...</option>');
 			$.each(data[id].indicators, function(key,val){
 				$selIndEG.append('<option value="'+val.id+'" name="'+val.name+'">'+val.name+'</option>');
 				window.ELGAF_indicators.push(val.id);
@@ -330,9 +330,12 @@
 					current_range_years_selected.push(dateTo);
 				}
 				
-
 				var label = '<span class="label-compare displayib fos txt-s">'+$("#lscountry option:selected").text()+' <a href="#" class="close-label" data-iso3="'+$("#lscountry option:selected").val()+'"><img src="img/close-label.svg"></a></span>';
 				$("#labels-compare").append(label)
+
+				if($("#labels-compare > span.label-compare").length > 0) {
+					$("span.remove-text").removeClass("hddn");
+				}
 
 				setDataURLs();
 				loadLineChart();
@@ -352,6 +355,11 @@
 			});
 	        //Refrescamos el array existente donde se añaden
 	        $(this).parent().remove();
+
+	        if($("#labels-compare > span.label-compare").length == 0) {
+				$("span.remove-text").addClass("hddn");
+			}
+
 	        current_compared_countries_iso3 = stringToArray;
 	        setDataURLs();
 			loadLineChart();

@@ -664,7 +664,7 @@ function set_country_indicators() {
 			searchfor = 'wb-lgaf';
 			if(indicator.toLowerCase().indexOf(searchfor) === -1){
 				info_country_indicators.push({'name':data.results.bindings[i].indicatorLabel.value,'URL':data.results.bindings[i].indicatorURL.value});
-				global_select_indicators += '<option value="'+data.results.bindings[i].indicatorURL.value+'">'+data.results.bindings[i].indicatorLabel.value+'</option>';
+				global_select_indicators += '<option value="'+data.results.bindings[i].indicatorURL.value+'">'+truncateString(data.results.bindings[i].indicatorLabel.value, 40, ' ', '...')+'</option>';
 			}
 			// if(!$.isNumeric(EndIndicator)) {
 			// 	info_country_indicators.push({'name':data.results.bindings[i].indicatorLabel.value,'URL':data.results.bindings[i].indicatorURL.value});
@@ -1194,7 +1194,7 @@ function loadMapChart(){
 		},
 		  
 	    title: {
-	      text: '<p class="m-s-top m-xs-bottom txt-sh-dark">'+indicator_info["0"].name+'</p><p class="txt-s txt-sh-dark txt-c"><a href="'+indicator_info["0"].datasetURL+'" target="_blank">'+indicator_info["0"].datasetLabel+'</a></p>',
+	      text: '<p class="m-s-top m-xs-bottom txt-sh-dark displayb txt-c">'+indicator_info["0"].name+'</p><p class="txt-s txt-sh-dark txt-c"><a href="'+indicator_info["0"].datasetURL+'" target="_blank">'+indicator_info["0"].datasetLabel+'</a> (<a href="'+indicator_info["0"].sourceOrgURL+'" target="_blank">'+indicator_info["0"].sourceOrgLabel+'</a>)</p>',
 	      useHTML: true,
 	    },
 
@@ -1454,7 +1454,7 @@ function loadLineChart(){
 				x: -20 //center
 			},
 			subtitle: {
-				text: '<a href="'+indicator_info["0"].datasetURL+'" target="_blank">'+indicator_info["0"].datasetLabel+'</a>',
+				text: '<a href="'+indicator_info["0"].datasetURL+'" target="_blank">'+indicator_info["0"].datasetLabel+'</a> (<a href="'+indicator_info["0"].sourceOrgURL+'" target="_blank">'+indicator_info["0"].sourceOrgLabel+'</a>)',
 				useHTML: true,
 				x: -20
 			},

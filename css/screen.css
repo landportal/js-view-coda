@@ -1413,7 +1413,7 @@ th.t-th:last-child, td.t-td:last-child {
   width: 45px;
   position: fixed;
   top: 50%;
-  left: 0px;
+  right: 0px;
   transform: translate(0, -50%);
   z-index: 50;
 }
