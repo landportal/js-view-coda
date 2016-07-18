@@ -625,6 +625,7 @@ function getIndicatorInfo() {
 			indicator_info.push({
 				'name':data.results.bindings[i].indicatorLabel.value,
 				'desc':data.results.bindings[i].indicatorDescription.value,
+				'unit':data.results.bindings[i].indicatorUnit.value,
 				'datasetURL':data.results.bindings[i].datasetURL.value,
 				'datasetLabel':data.results.bindings[i].datasetLabel.value,
 				'sourceOrgURL':data.results.bindings[i].sourceOrgURL.value,
@@ -782,8 +783,9 @@ function loadELGAFyears() {
 			$(".egsyear").html(egop);
 		}
 
-		load_lgaf_defaults();
-
+		setTimeout(function(){
+			load_lgaf_defaults();
+		},750);
 		//alert(egop);
 
 	});
@@ -978,8 +980,8 @@ function loadYearsIndicatorCountryCompare(){
 			iop += '<option value="'+val+'">'+val+'</option>';
 			//console.log(iop);
 		});
-		$("#lsperiod_from").html('<option value="0" data-localize="inputs.speriodfrom">From date ...</option>');
-		$("#lsperiod_to").html('<option value="0" data-localize="inputs.speriodto">To date ...</option>');
+		$("#lsperiod_from").html('<option value="0" data-localize="inputs.speriodfrom">From year ...</option>');
+		$("#lsperiod_to").html('<option value="0" data-localize="inputs.speriodto">To year ...</option>');
 		$("#lsperiod_from, #lsperiod_to").append(iop);
 	});
 }
@@ -1109,7 +1111,7 @@ function loadPieChart(){
 				enabled:false
 			},
 			title: {
-				text: '<span class="displayb txt-c">Land Use</span><div class="txt-m displayb txt-c">Total land area: ' + country_land_area_str + ' Ha <span class="displayb c-g40">' + data_year + '</span></div>',
+				text: '<span class="displayb txt-c">Land Use</span><div class="txt-m displayb txt-c">Total land area: ' + country_land_area_str + '  (1000 Ha) <span class="displayb c-g40">' + data_year + '</span></div>',
 				useHTML: true
 			},
 			tooltip: {
@@ -1150,6 +1152,7 @@ function loadMapChart(){
 	$.getJSON(query_map_URL, function (data) {
 
 		
+		$(".tit-mapping").html('<p class="m-s-top m-xs-bottom txt-sh-dark displayb txt-c fos">'+indicator_info["0"].name+' ('+map_current_year+')</p><p class="txt-sh-dark txt-c fos"><a href="'+indicator_info["0"].datasetURL+'" target="_blank">'+indicator_info["0"].datasetLabel+'</a> (<a href="'+indicator_info["0"].sourceOrgURL+'" target="_blank">'+indicator_info["0"].sourceOrgLabel+'</a>)</p>');
 
 		//console.log(data.results.bindings[i].countryISO3.value);
 		//console.log(data);
@@ -1194,7 +1197,8 @@ function loadMapChart(){
 		},
 		  
 	    title: {
-	      text: '<p class="m-s-top m-xs-bottom txt-sh-dark displayb txt-c">'+indicator_info["0"].name+'</p><p class="txt-s txt-sh-dark txt-c"><a href="'+indicator_info["0"].datasetURL+'" target="_blank">'+indicator_info["0"].datasetLabel+'</a> (<a href="'+indicator_info["0"].sourceOrgURL+'" target="_blank">'+indicator_info["0"].sourceOrgLabel+'</a>)</p>',
+	      //text: '<p class="m-s-top m-xs-bottom txt-sh-dark displayb txt-c">'+indicator_info["0"].name+' ('+map_current_year+')</p><p class="txt-s txt-sh-dark txt-c"><a href="'+indicator_info["0"].datasetURL+'" target="_blank">'+indicator_info["0"].datasetLabel+'</a> (<a href="'+indicator_info["0"].sourceOrgURL+'" target="_blank">'+indicator_info["0"].sourceOrgLabel+'</a>)</p>',
+	      text:'',
 	      useHTML: true,
 	    },
 
@@ -1260,7 +1264,7 @@ function loadMapChart(){
 	        }
 	      },
 	      tooltip: {
-	        pointFormat: '{point.name} <b>' + '{point.value}'.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</b>',
+	        pointFormat: '{point.name} <b>' + '{point.value}'.replace(/\B(?=(\d{3})+(?!\d))/g, ",")+' '+indicator_info["0"].unit+'</b>',
 	        //valueSuffix: '/km²'
 	      }
 	    }]
@@ -1288,20 +1292,31 @@ function loadSpiderChart(){
 		var chart_series_labels = data.head.vars;
 		var serie_name;
 		var serie_value;
+		var serie_year;
 		var categories_names = new Array();
+		
 		for(i=0; i<chart_series_labels.length; i++){
 			switch (chart_series_labels[i]){
-				case "sigiTo100":	serie_name = "SIGI";
+				case "sigiTo100":	serie_name = "SIGI "+"("+data.results.bindings[0][chart_series_labels[2]].value+")";
 									break;
-				case "giniTo100": 	serie_name = "GINI Index";
+				// case "sigiYear":	serie_year = "("+data.results.bindings[0][chart_series_labels[i]].value+")";
+				// 					break;
+				case "giniTo100": 	serie_name = "GINI Index "+"("+data.results.bindings[0][chart_series_labels[5]].value+")";
 									break;
-				case "hdiTo100": 	serie_name = "HDI";
+				// case "giniYear":	serie_year = chart_series_labels[i].value;
+				// 					break;
+				case "hdiTo100": 	serie_name = "HDI "+"("+data.results.bindings[0][chart_series_labels[8]].value+")";
 									break;
-				case "ghiTo100": 	serie_name = "GHI";
+				// case "hdiYear":		serie_year = chart_series_labels[i].value;
+				// 					break;
+				case "ghiTo100": 	serie_name = "GHI "+"("+data.results.bindings[0][chart_series_labels[11]].value+")";
 									break;
+				// case "ghiYear":		serie_year = chart_series_labels[i].value;
+				// 					break;
 				default:			serie_name = "notused";
 									break;
 			}
+
 			if(serie_name!="notused"){
 				categories_names.push(serie_name);
 				if(data.results.bindings[0][chart_series_labels[i]]!=undefined){
@@ -1319,6 +1334,7 @@ function loadSpiderChart(){
 				}
 			}
 		}
+		//alert(chart_series);
 		var spiderChart_init;
 		var $divSpider = $('#wrapper-spiderchart');
 		var CharSpiderOp = {
@@ -1367,6 +1383,7 @@ function loadSpiderChart(){
 			},
 
 			series: [{
+				showInLegend:false,
 				name: setNameCountry(current_country_iso3),
 				data: chart_series,
 				pointPlacement: 'on'
@@ -1450,11 +1467,12 @@ function loadLineChart(){
 			},
 
 			title: {
-				text: '<span class="m-s-top m-xs-bottom txt-sh-dark">'+indicator_info["0"].name+'</span>',
+				text: '<span class="m-s-top m-xs-bottom txt-sh-dark txt-l">'+indicator_info["0"].name+'</span>',
+				useHTML: true,
 				x: -20 //center
 			},
 			subtitle: {
-				text: '<a href="'+indicator_info["0"].datasetURL+'" target="_blank">'+indicator_info["0"].datasetLabel+'</a> (<a href="'+indicator_info["0"].sourceOrgURL+'" target="_blank">'+indicator_info["0"].sourceOrgLabel+'</a>)',
+				text: '<a href="'+indicator_info["0"].datasetURL+'" target="_blank" class="txt-l">'+indicator_info["0"].datasetLabel+'</a> (<a href="'+indicator_info["0"].sourceOrgURL+'" target="_blank" class="txt-l">'+indicator_info["0"].sourceOrgLabel+'</a>)',
 				useHTML: true,
 				x: -20
 			},

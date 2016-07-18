@@ -129,6 +129,7 @@
 
 	window.ELGAF_indicators = new Array();
 	function selectSetIndicators(id) {
+
 		var $selIndEG = $(".egsindicator");
 		$.getJSON("json/LGAF_indicators.json",function(data){
 			$selIndEG.html('');
@@ -137,8 +138,8 @@
 				$selIndEG.append('<option value="'+val.id+'" name="'+val.name+'">'+val.name+'</option>');
 				window.ELGAF_indicators.push(val.id);
 			});
-			
-		});
+		})
+		
 	}
 
 

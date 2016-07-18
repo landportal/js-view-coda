@@ -33,6 +33,14 @@ function setNameCountry(iso3) {
 function load_lgaf_defaults () {
 	$(".egsyear").prop('selectedIndex', 1);
 	var yearsel = $(".egsyear").prop('selectedIndex', 1).val();
+
+	if(yearsel == undefined || yearsel == "") {
+		$(".LGAF_area").addClass("hddn");
+		return false;
+	}else{
+		$(".LGAF_area").removeClass("hddn");
+	}
+
 	setTimeout(function() {
 		selectSetPanels(yearsel);
 	},300);

@@ -338,12 +338,12 @@
           </div>
           <div class="col-md-2">
               <select class="speriod fos cinput cinput-s-arrow cinput-sh cinput-disabled" id="lsperiod_from" disabled="disabled">
-                <option value="0" data-localize="inputs.speriodfrom">From date ...</option>
+                <option value="0" data-localize="inputs.speriodfrom">From year ...</option>
               </select>
           </div>
           <div class="col-md-2">
               <select class="speriod fos cinput cinput-s-arrow cinput-sh cinput-disabled" id="lsperiod_to" disabled="disabled">
-                <option value="0" data-localize="inputs.speriodto">To date ...</option>
+                <option value="0" data-localize="inputs.speriodto">To year ...</option>
               </select>
           </div>
           <div class="col-md-2">
@@ -392,7 +392,7 @@
         </div>
       </div>
 
-      <div class="container p-xxl-bottom">
+      <div class="container p-l-bottom">
 
         <div class="row m-l-top">
 
@@ -411,7 +411,7 @@
       </div>
     
       <div id="maparea" class="r-pos">
-
+        <div class="tit-mapping">--</div>
         <div id="wrapper-mapping"></div>
 
         <div class="pos_loader_data hddn">
@@ -462,65 +462,69 @@
       </div>
 
       <div class="container p-xxl-bottom">
+        
+        <div class="LGAF_area hddn">
 
-        <div class="row m-l-top p-xl-bottom cb-bottom-lh">
+          <div class="row m-l-top p-xl-bottom cb-bottom-lh">
 
-          <div class="col-xs-12 m-l-top m-s-bottom">
-            <p class="displayb txt-c fos">Land Governance Assessment Framework (LGAF)</p>
-          </div>
-          
-          <div class="col-md-offset-1 col-md-2">
-            <select class="egsyear fos cinput cinput-s-arrow cinput-sh">
-                <option value="0" selected="selected">Select year ...</option>
-              </select>
-          </div>
-
-          <div class="col-md-4">
-            <select class="egspanel fos cinput cinput-s-arrow cinput-sh cbtn-dis cinput-disabled" disabled="disabled">
-                <option value="0">Select panel...</option>
-              </select>
-          </div>
-
-          <div class="col-md-4">
-            <select class="egsindicator fos cinput cinput-s-arrow cinput-sh cinput-disabled" disabled="disabled">
-                <option value="0">Select Sub-panel ...</option>
-              </select>
-          </div>
-
-        </div>
-
-        <div class="row p-l-bottom">
-
-          <div class="col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8 r-pos" id="quality-info">
+            <div class="col-xs-12 m-l-top m-s-bottom">
+              <p class="displayb txt-c fos">Land Governance Assessment Framework (LGAF)</p>
+            </div>
             
-            <ul class="quality-list">
-              <li class="item-q fos r-pos txt-c c-g40">Please, select year and panels to show the info.</li>
-            </ul>
-            <div class="pos_loader_data hddn">
-              <div class="pos_spinkit">
-                  <div class="sk-three-bounce no-m-bottom">
-                    <div class="sk-child sk-bounce1"></div>
-                    <div class="sk-child sk-bounce2"></div>
-                    <div class="sk-child sk-bounce3"></div>
-                  </div>
-                  <p class="txt-s c-g40 uppc txt-c fos no-m-top m-xs-top" data-localize="feedback.loading">Loading data ...</p>
-              </div>
+            <div class="col-md-offset-1 col-md-2">
+              <select class="egsyear fos cinput cinput-s-arrow cinput-sh">
+                  <option value="0" selected="selected">Select year ...</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+              <select class="egspanel fos cinput cinput-s-arrow cinput-sh cbtn-dis cinput-disabled" disabled="disabled">
+                  <option value="0">Select panel...</option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+              <select class="egsindicator fos cinput cinput-s-arrow cinput-sh cinput-disabled" disabled="disabled">
+                  <option value="0">Select Sub-panel ...</option>
+                </select>
             </div>
 
           </div>
 
-          <div class="col-xs-12">
-              <div class="quality-legend fos txt-c txt-s">
-                <span class="cqdata-il cqdata-a"></span> <span data-localize="label.vgp">Very Good Practice</span> &nbsp; 
-                <span class="cqdata-il cqdata-b"></span> <span data-localize="label.gp">Good Practice</span> &nbsp; 
-                <span class="cqdata-il cqdata-c"></span> <span data-localize="label.wp">Weak Practice</span> &nbsp;
-                <span class="cqdata-il cqdata-d"></span> <span data-localize="label.vwp">Very Weak Practice </span> &nbsp;
-                <span class="cqdata-il cqdata-na"></span> <span data-localize="label.ndata">Missing Value</span> 
-              </div>
-          </div>
+          <div class="row p-l-bottom">
 
-          <div class="col-xs-12 m-l-top">
-              <div class="txt-s c-g40 fos">Note: Some Indicators might have multiple values (e.g. Green-Orange), which might refers to different localities or categories of people. For more information please refers to specific country reports and to the methodology made available by the original data source/provider: <a href="http://go.worldbank.org/21M7S7AZO0" target="_blank">The Land GovernanceAssessment Framework (LGAF) website of the World Bank</a></div>
+            <div class="col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8 r-pos" id="quality-info">
+              
+              <ul class="quality-list">
+                <li class="item-q fos r-pos txt-c c-g40">Please, select year and panels to show the info.</li>
+              </ul>
+              <div class="pos_loader_data hddn">
+                <div class="pos_spinkit">
+                    <div class="sk-three-bounce no-m-bottom">
+                      <div class="sk-child sk-bounce1"></div>
+                      <div class="sk-child sk-bounce2"></div>
+                      <div class="sk-child sk-bounce3"></div>
+                    </div>
+                    <p class="txt-s c-g40 uppc txt-c fos no-m-top m-xs-top" data-localize="feedback.loading">Loading data ...</p>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="col-xs-12">
+                <div class="quality-legend fos txt-c txt-s">
+                  <span class="cqdata-il cqdata-a"></span> <span data-localize="label.vgp">Very Good Practice</span> &nbsp; 
+                  <span class="cqdata-il cqdata-b"></span> <span data-localize="label.gp">Good Practice</span> &nbsp; 
+                  <span class="cqdata-il cqdata-c"></span> <span data-localize="label.wp">Weak Practice</span> &nbsp;
+                  <span class="cqdata-il cqdata-d"></span> <span data-localize="label.vwp">Very Weak Practice </span> &nbsp;
+                  <span class="cqdata-il cqdata-na"></span> <span data-localize="label.ndata">Missing Value</span> 
+                </div>
+            </div>
+
+            <div class="col-xs-12 m-l-top">
+                <div class="txt-s c-g40 fos">Note: Some Indicators might have multiple values (e.g. Green-Orange), which might refers to different localities or categories of people. For more information please refers to specific country reports and to the methodology made available by the original data source/provider: <a href="http://go.worldbank.org/21M7S7AZO0" target="_blank">The Land GovernanceAssessment Framework (LGAF) website of the World Bank</a></div>
+            </div>
+            
           </div>
 
         </div>

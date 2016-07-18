@@ -810,7 +810,7 @@ body {
 
 /* line 20, ../sass/_layout.scss */
 #wrapper-mapping {
-  height: 368px;
+  height: 380px;
   padding: 0px 0px;
 }
 @media (min-width: 768px) {
@@ -832,8 +832,8 @@ body {
 }
 
 /* line 37, ../sass/_layout.scss */
-#wrapper-spiderchart  {
-  height: 300px;
+#wrapper-spiderchart {
+  height: 320px;
 }
 
 /* line 5, ../sass/_m-3parties.scss */
