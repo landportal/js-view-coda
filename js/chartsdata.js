@@ -81,17 +81,17 @@ var selected_indicator_id = "Indicator not set";
 
 //VARIABLES DE FORMULARIOS
 var table_selected_indicator;
-//AÑO SELECCIONADO EN EL MAPA
+//ANO SELECCIONADO EN EL MAPA
 var map_current_year;
 //URL DEL INDICADOR SELECCIONADO EN EL MAPA
 var map_selected_indicator_URL;
-//PAISES COMPARADOS EN EL GRÁFICO DE LÍNEAS
+//PAISES COMPARADOS EN EL GRAFICO DE LINEAS
 var current_compared_countries_iso3 = [current_country_iso3];
-//RANGO DE AÑOS COMPARADOS EN EL GRÁFICO DE LÍNEAS
+//RANGO DE ANOS COMPARADOS EN EL GRAFICO DE LINEAS
 var current_range_years_selected = new Array();
-//URL DEL INDICADOR SELECCIONADO EN EL GRÁFICO DE LÍNEAS
+//URL DEL INDICADOR SELECCIONADO EN EL GRAFICO DE LINEAS
 var line_selected_indicator_URL;
-//AÑO POR DEFECTO
+//ANO POR DEFECTO
 var table_selected_year = 2011;
 //FIN DE VARIABLES DE FORMULARIO
 var global_select_indicators = '<option value="0" data-localize="inputs.sindicator">Select indicator ...</option>';
@@ -110,7 +110,7 @@ Array.prototype.containsIndicator = function(indicatorURL) {
     return -1;
 }
 
-//VALORES DE EJEMPLO (HAN DE CARGARSE DESDE LOS FORMULARIOS DE SELECIÓN
+//VALORES DE EJEMPLO (HAN DE CARGARSE DESDE LOS FORMULARIOS DE SELECION
 //table_selected_indicator = 'http://data.landportal.info/indicator/FAO-23045-6083';
 //map_current_year = "2000";
 current_compared_countries_iso3 = [current_country_iso3];
@@ -544,7 +544,7 @@ function setDataURLs(){
 	'} ' +
 	'} ORDER BY ?dateTime ?countryURL';
 
-	//GENERACIÓN DE URLs
+	//GENERACION DE URLs
 	URL_prefix = 'http://landportal.info/sparql?default-graph-uri=&query=';
 	URL_suffix = '&should-sponge=&format=json&timeout=0&debug=on';
 	
@@ -557,9 +557,9 @@ function setDataURLs(){
 	query_all_indicators_URL = URL_prefix + encodeURIComponent(query_all_indicators) + URL_suffix;
 	//Consulta de indicadores que se precargan por defecto en la tabla indicadores
 	query_default_table_indicators_URL = URL_prefix + encodeURIComponent(query_default_table_indicators) + URL_suffix;
-	//Consulta de años disponibles por indicador del pais
+	//Consulta de anos disponibles por indicador del pais
 	query_years_indicator_country_URL = URL_prefix + encodeURIComponent(query_years_indicator_country) + URL_suffix;
-	//Información de la consulta dado un año y un indicador
+	//Informacion de la consulta dado un ano y un indicador
 	query_info_indicator_country_year_URL = URL_prefix + encodeURIComponent(query_info_indicator_country_year) + URL_suffix;
 	//Consulta de indicadores por pais
 	query_coutries_per_indicator_URL = URL_prefix + encodeURIComponent(query_coutries_per_indicator) + URL_suffix;
@@ -573,9 +573,9 @@ function setDataURLs(){
 	query_line_URL = URL_prefix + encodeURIComponent(query_line_chart) + URL_suffix;
 	//Consulta ELGAF
 	query_elgaf_country_years_URL = URL_prefix + encodeURIComponent(query_elgaf_country_years) + URL_suffix; 
-	//Valores por año ELGAF
+	//Valores por ano ELGAF
 	query_elgaf_values_URL = URL_prefix + encodeURIComponent(query_elgaf_values) + URL_suffix; 
-	//Obtenemos información completa de un indicador
+	//Obtenemos informacion completa de un indicador
 	query_get_indicator_info_URL = URL_prefix + encodeURIComponent(query_get_indicator_info) + URL_suffix; 
 
 	//console.log(query_map_URL);
@@ -690,7 +690,7 @@ function set_country_indicators() {
 set_country_indicators();
 
 
-//CARGA DE VARIABLES INDICADORES; AÑOS...
+//CARGA DE VARIABLES INDICADORES; ANOS...
 function loadDefaultTableIndicators(){
 	$.getJSON(query_default_table_indicators_URL, function (data) {
 		var newIndicator = new Object();
@@ -804,9 +804,9 @@ var LGAF_year_value = [];
 // 		for(i=0; i < data.results.bindings.length; i++){
 // 			var RawData = data.results.bindings[i].indicatorURL.value;
 // 			var iValue = data.results.bindings[i].value.value;
-// 			var id =  RawData.split("/").pop(); // Extraigo el id tras la última barra "/"
+// 			var id =  RawData.split("/").pop(); // Extraigo el id tras la ultima barra "/"
 
-// 			var subpanel = id.substr(0, id.lastIndexOf('.')); //Extraemos el valor antes del último "."
+// 			var subpanel = id.substr(0, id.lastIndexOf('.')); //Extraemos el valor antes del ultimo "."
 			
 // 			if(subpanel == current_elgaf_subindicator) {
 	
@@ -855,7 +855,7 @@ function loadELGAFvalues() {
 		for(var j = 0; j < LGAF_year_value.length; j++) {	
 				
 			var jsonIDraw = LGAF_year_value[j].id;
-			var JsonID = jsonIDraw.substr(0, jsonIDraw.lastIndexOf('.')); //Extraemos el valor antes del último "."
+			var JsonID = jsonIDraw.substr(0, jsonIDraw.lastIndexOf('.')); //Extraemos el valor antes del ultimo "."
 			
 			if(JsonID == current_elgaf_subindicator){
 
@@ -873,7 +873,7 @@ function loadELGAFvalues() {
 
 					//console.log(indicatorRoot+"--"+JsonID);
 
-					if(indicatorRoot === JsonID) {
+					if(indicatorRoot === JsonID) {
 						if(iURL == jsonIDraw){
 							indicatorsValues.push({
 					            id: iURL, 
@@ -928,7 +928,7 @@ function loadYearsIndicatorCountry(){
 			//console.log(iop);
 		});
 		$("#isyear").append(iop);
-		if(iop!="") {
+		if(iop!="") {
 			$("#isyear").removeClass("cinput-disabled");
 			$("#isyear").prop( "disabled", false );
 		}
@@ -955,7 +955,7 @@ function loadYearsIndicatorMap(){
 		});
 		$("#msyear").html('<option value="0" data-localize="inputs.syear">Select year ...</option>');
 		$("#msyear").append(miop);
-		if(miop!="") {
+		if(miop!="") {
 			$("#msyear").removeClass("cinput-disabled");
 			$("#msyear").prop( "disabled", false );
 		}
@@ -1043,7 +1043,7 @@ function loadCountriesPerIndicators(){
 
 		$("#lscountry").append(iop);
 
-		if(iop!="") {
+		if(iop!="") {
 			$("#lscountry").removeClass("cinput-disabled");
 			$("#lscountry").prop( "disabled", false );
 		}
@@ -1054,7 +1054,7 @@ function loadCountriesPerIndicators(){
 
 
 //console.log(default_table_indicators);
-//GENERACIÓN DE GRÁFICAS
+//GENERACION DE GRAFICAS
 
 function loadPieChart(){
 	//PIE CHART
@@ -1225,11 +1225,11 @@ function loadMapChart(){
 	      enableMouseWheelZoom: false,
 	      enableDoubleClickZoom: false,
 	      buttons: {
-	          zoomIn: {
+	          zoomIn: {
 	              y: 20,
 	              x: 20
 	          },
-	          zoomOut: {
+	          zoomOut: {
 	              y: 50,
 	              x: 20
 	          }
@@ -1265,7 +1265,7 @@ function loadMapChart(){
 	      },
 	      tooltip: {
 	        pointFormat: '{point.name} <b>' + '{point.value}'.replace(/\B(?=(\d{3})+(?!\d))/g, ",")+' '+indicator_info["0"].unit+'</b>',
-	        //valueSuffix: '/km²'
+	        //valueSuffix: '/km?'
 	      }
 	    }]
 
@@ -1427,7 +1427,7 @@ function loadLineChart(){
 		}
 		//console.log(serie_categories);
 		for(j=0; j<current_compared_countries_iso3.length; j++){
-			//Para cada País, inicializo la serie a null, recorro valores y si pertenecen al país y están dentro del rango de años correspondiente, pongo el valor en su lugar.
+			//Para cada Pais, inicializo la serie a null, recorro valores y si pertenecen al pais y estan dentro del rango de anos correspondiente, pongo el valor en su lugar.
 			serie_value.name = setNameCountry(current_compared_countries_iso3[j]);
 			serie_value.niso3 = current_compared_countries_iso3[j];
 			serie_value.data = new Array();
@@ -1490,7 +1490,7 @@ function loadLineChart(){
 				// }]
 			},
 			tooltip: {
-				//valueSuffix: '°C'
+				//valueSuffix: '?C'
 			},
 			legend: {
 				//layout: 'vertical',

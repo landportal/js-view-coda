@@ -30,11 +30,11 @@ function setNameCountry(iso3) {
 
 
 //##Inicializamos LGAF##//
-function load_lgaf_defaults () {
+function load_lgaf_defaults () {
 	$(".egsyear").prop('selectedIndex', 1);
 	var yearsel = $(".egsyear").prop('selectedIndex', 1).val();
 
-	if(yearsel == undefined || yearsel == "") {
+	if(yearsel == undefined || yearsel == "") {
 		$(".LGAF_area").addClass("hddn");
 		return false;
 	}else{
@@ -67,7 +67,7 @@ function load_lgaf_defaults () {
 }
 
 
-//Inicializamos el mapa según el indicador por defecto facilitado: WB-SP.RUR.TOTL.ZS (Rural population)
+//Inicializamos el mapa segun el indicador por defecto facilitado: WB-SP.RUR.TOTL.ZS (Rural population)
 function loadMapDefaults() {
 	$("select#msindicator option").each(function(){
 		//console.log("here");

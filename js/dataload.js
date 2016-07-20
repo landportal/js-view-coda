@@ -65,11 +65,11 @@
 	      enableMouseWheelZoom: false,
 	      enableDoubleClickZoom: false,
 	      buttons: {
-	          zoomIn: {
+	          zoomIn: {
 	              y: 20,
 	              x: 20
 	          },
-	          zoomOut: {
+	          zoomOut: {
 	              y: 50,
 	              x: 20
 	          }
@@ -105,7 +105,7 @@
 	      },
 	      tooltip: {
 	        pointFormat: '{point.name} <b>' + '{point.value}'.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</b>',
-	        //valueSuffix: '/km²'
+	        //valueSuffix: '/km?'
 	      }
 	    }]
 
@@ -153,7 +153,7 @@
 		})
 
 
-		//Desplegables de más información
+		//Desplegables de mas informacion
 		$('.more-info-country [data-accordion]').accordion({
 			"transitionSpeed": 400
 		});
@@ -182,14 +182,14 @@
 
 		//###EVENTOS####//
 		//Borramos item de la tabla indicadores
-		$(document).delegate(".del-row","click", function(e) {
+		$(document).delegate(".del-row","click", function(e) {
 			e.preventDefault();
 			$(this).parent().parent().remove().fadeOut("fast");
 		})
 
 
 
-		//Agregamos años
+		//Agregamos anos
 		$(document).delegate("#isindicators", "change", function(){
 
 			if($(this).val()!=0){
@@ -234,7 +234,7 @@
 					var indicatorTable = $(this).find("td").attr("data-id");
 					var yearTable = parseInt($(this).find("td.year").text());
 					console.log(yearsel+':'+indicatorsel+" - "+yearTable+':'+indicatorTable);
-					if (indicatorTable == indicatorsel && yearTable == yearsel) {
+					if (indicatorTable == indicatorsel && yearTable == yearsel) {
 						exist ++;
 					}
 				});
@@ -257,7 +257,7 @@
 
 
 
-		//Sección infographics
+		//Seccion infographics
 		$(document).delegate("#lsindicador", "change", function(){
 			if($(this).val()!=0){
 				$("#lscountry").html("");
@@ -304,7 +304,7 @@
 
 
 		
-		//Agregamos el comparador si todos los campos están correctamente rellenados.
+		//Agregamos el comparador si todos los campos estan correctamente rellenados.
 		$(document).delegate(".cbtn-ladd-compare", "click", function(e){
 			e.preventDefault();
 
@@ -334,7 +334,7 @@
 				var label = '<span class="label-compare displayib fos txt-s">'+$("#lscountry option:selected").text()+' <a href="#" class="close-label" data-iso3="'+$("#lscountry option:selected").val()+'"><img src="img/close-label.svg"></a></span>';
 				$("#labels-compare").append(label)
 
-				if($("#labels-compare > span.label-compare").length > 0) {
+				if($("#labels-compare > span.label-compare").length > 0) {
 					$("span.remove-text").removeClass("hddn");
 				}
 
@@ -354,10 +354,10 @@
 			stringToArray = jQuery.grep(stringToArray, function(value) {
 				return value != removeItem;
 			});
-	        //Refrescamos el array existente donde se añaden
+	        //Refrescamos el array existente donde se anaden
 	        $(this).parent().remove();
 
-	        if($("#labels-compare > span.label-compare").length == 0) {
+	        if($("#labels-compare > span.label-compare").length == 0) {
 				$("span.remove-text").addClass("hddn");
 			}
 
