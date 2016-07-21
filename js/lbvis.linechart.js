@@ -59,7 +59,7 @@ function loadYearsIndicatorCountryCompare(){
 function loadCountriesPerIndicators(){
     var query_url = LBD.sparqlURL(LBD.query_countries_per_indicator(LBLC.selected_indicator));
     //console.log('CPI', LBLC.selected_indicator, query_url,
-                LBD.query_years_indicator_country(LBLC.selected_indicator));
+                // LBD.query_years_indicator_country(LBLC.selected_indicator));
 
     $.getJSON(query_url, function (data) {
         var info_countries_per_indicator = [];

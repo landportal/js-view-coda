@@ -22,7 +22,7 @@ var lbvis = (function (args = {}) {
         
         // Public methods
         init: function () {
-            console.log('init app');
+            //console.log('init app');
         }
     };
 
@@ -49,7 +49,7 @@ function getIndicatorInfo(indicator) {
     }
 
     var query_get_indicator_info_URL = LBD.sparqlURL(LBD.query_get_indicator_info(indicator));
-    console.log('getIndicatorInfo', indicator, query_get_indicator_info_URL);
+    //console.log('getIndicatorInfo', indicator, query_get_indicator_info_URL);
     $.getJSON(query_get_indicator_info_URL, function (data) {
 	for(var i=0; i < data.results.bindings.length; i++){
 	    LBV.indicator_info.push({
@@ -62,7 +62,7 @@ function getIndicatorInfo(indicator) {
 		'sourceOrgLabel':data.results.bindings[i].sourceOrgLabel.value,
 	    });
 	}
-        console.log(LBV.indicator_info);
+        //console.log(LBV.indicator_info);
     });
 }
 
@@ -83,7 +83,7 @@ function loadCountriesIso3() {
 // FIX: doing ui stuff here? / split up
 function set_country_indicators() {
     var query_country_indicators_URL = LBD.sparqlURL(LBD.queries.country_indicators);
-    console.log(query_country_indicators_URL);
+    //console.log(query_country_indicators_URL);
     $.getJSON(query_country_indicators_URL, function (data) {
 	for(var i=0; i < data.results.bindings.length; i++){
 	    var indicator = data.results.bindings[i].indicatorLabel.value;
