@@ -251,7 +251,7 @@ WHERE{ \
 } ORDER BY ?dateTime ?countryURL';
     };
 
-    var _map_chart =  function (map_selected_indicator_URL) {
+    var _map_chart =  function (indicator) {
         return query.prefix + " \
 SELECT ?countryISO3 (year(?dateTime) as ?year) ?value \
 FROM <http://data.landportal.info> \
@@ -262,7 +262,7 @@ WHERE { \
      cex:value ?value. \
 ?time time:hasBeginning ?timeValue . \
 ?timeValue time:inXSDDateTime ?dateTime . \
-VALUES ?indicatorURL {<" + map_selected_indicator_URL + ">} \
+VALUES ?indicatorURL {<" + lod.uri.indicator + indicator + ">} \
 BIND (REPLACE(STR(?countryURL), 'http://data.landportal.info/geo/','') AS ?countryISO3) \
 } ORDER BY ?dateTime ?countryURL";
     };
