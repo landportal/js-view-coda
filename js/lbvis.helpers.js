@@ -31,9 +31,9 @@ function truncateString (string, limit, breakChar, rightPad) {
 // };
 
 function setNameCountry(iso3) {
-    for(var i = 0; i < countrieNameIso3.length; i++ ){
-	if (countrieNameIso3[i].iso3 == iso3){
-	    return countrieNameIso3[i].name;
+    for(var i = 0; i < LBV.countries.length; i++ ){
+	if (LBV.countries[i].iso3 == iso3){
+	    return LBV.countries[i].name;
 	}
     }
     return false;
