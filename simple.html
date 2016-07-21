@@ -465,6 +465,7 @@
       var LBD = new lbvisDATA({
         iso3: COUNTRY_ISO3
       });
+
       var LBLC = new lbvisLC({
         iso3: COUNTRY_ISO3
       });
@@ -477,21 +478,20 @@
         indicator: 'WB-SP.RUR.TOTL.ZS'
       });
 
-      //setDataURLs();
       loadCountriesIso3();
       set_country_indicators();
 
-      loadMapDefaults();
-
-      loadLineDefaults();
-      loadELGAFyears();
       loadDefaultTableIndicators();
 
-      loadPieChart();
-      loadMapChart();	
-      loadSpiderChart();
+      loadMapDefaults();
+      loadMapChart();
+
+      loadLineDefaults();
       loadLineChart();
 
+      loadELGAFyears();
+      loadPieChart();
+      loadSpiderChart();
 
       
       $('#wrapper-map-location').highcharts().get(LBV.ISO3).select();
