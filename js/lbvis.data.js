@@ -39,7 +39,7 @@ ex:org ?sourceOrgURL . \
 SELECT DISTINCT ?countryURL ?countryISO3 ?countryLabel \
 FROM <http://data.landportal.info> \
 WHERE { \
-?obs cex:ref-indicator <" + selected_indicator + "> ; \
+?obs cex:ref-indicator <" + lod.uri.indicator + selected_indicator + "> ; \
 cex:ref-area ?countryURL . \
 ?countryURL ex:label ?countryLabel. \
  BIND (REPLACE(STR(?countryURL),'http://data.landportal.info/geo/','') AS ?countryISO3) \
@@ -215,7 +215,7 @@ SELECT (year(?dateTime) as ?year) \
 FROM <http://data.landportal.info> \
 WHERE { \
 ?obs cex:ref-area <" + lod.uri.country + ISO3 + "> ; \
-     cex:ref-indicator <" + indicator + "> ; \
+     cex:ref-indicator <" +  lod.uri.indicator + indicator + "> ; \
      cex:ref-time ?time . \
 ?time time:hasBeginning ?timeValue . \
 ?timeValue time:inXSDDateTime ?dateTime \
@@ -223,9 +223,8 @@ WHERE { \
 ORDER BY DESC(?dateTime)";
     };    
 
-
-    var _line_chart = function (line_selected_indicator_URL, current_compared_countries_iso3) {
-        var query = query.prefix + " \
+    var _line_chart = function (indicator, countries_iso3) {
+        var sparql = query.prefix + " \
 SELECT ?countryISO3 (year(?dateTime) as ?year) ?value \
 FROM <http://data.landportal.info> \
 WHERE { \
@@ -239,14 +238,14 @@ WHERE { \
 SELECT ?obs \
 FROM <http://data.landportal.info> \
 WHERE{ \
-  ?obs cex:ref-indicator <" + line_selected_indicator_URL + "> . \
+  ?obs cex:ref-indicator <" + lod.uri.indicator + indicator + "> . \
   ?obs cex:ref-area ?country . \
   VALUES ?country { \
    <" + lod.uri.country + ISO3 + ">";
-        for(var i=0; i<current_compared_countries_iso3.length; i++){
-		query += " <" + lod.uri.country + current_compared_countries_iso3[i] + ">";
+        for(var i=0; i<countries_iso3.length; i++){
+		sparql += " <" + lod.uri.country + countries_iso3[i] + ">";
 	}
-	return query + '} \
+	return sparql + '} \
 } \
 } \
 } ORDER BY ?dateTime ?countryURL';
