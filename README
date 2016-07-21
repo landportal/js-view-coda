@@ -1,0 +1,41 @@
+JavaScript Visualizations for the Land Portal
+
+
+Installation
+============
+
+# npm install [project_path OR GIT_url]
+# to deploy / get locally all dependencies (from package.json)
+
+
+Requirements
+------------
+
+JS libs:
+ - jquery
+   - jquery.accordion
+   - jquery.localize
+ - highcharts
+   - highstock
+   - map
+   - highcharts-more
+   - exporting (optional?)
+
+ - boostrap
+ - owl.carousel
+ - randomColor
+ - d3js
+
+
+Source
+======
+GIT repository:
+Issues list:
+
+Authors
+=======
+Simbiosys - 2016
+
+Licence
+=======
+This project is licensed under the terms of the MIT license.

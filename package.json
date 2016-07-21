@@ -1,0 +1,23 @@
+{
+    "name": "lb-visualization",
+    "version": "0.1.0",
+    "scripts": {
+        "install": "echo \"Install app (maybe build sass here?)\"",
+        "test": "echo \"Warning: no tests\""
+    },
+    "dependencies": {
+        "jquery": "1.11.*",
+        "d3": "4.1.*",
+        "bootstrap-sass": "3.3.*",
+        "highcharts-release": "4.2.*",
+        "highstock-release": "4.2.*",
+        "highmaps-release": "4.2.*",
+        "randomcolor": "0.4.*"
+    },
+    "license": "MIT",
+    "author": "simbiosys",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/landportal/lb-visualization.git"
+    }
+}
