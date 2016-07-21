@@ -2,7 +2,7 @@
 var lbvisMap = (function (args = {}) {
     var ISO3 = args.iso3;
     return {
-        current_year: args.year || null,
+        current_year: args.year || 2014,
         current_indicator: {},
         selected_indicator: args.indicator || 'FAO-23045-6083',
         years: []
@@ -77,12 +77,12 @@ function loadMapChart(){
 	//console.log(data.results.bindings[i].countryISO3.value);
 	//console.log(data);
 	var data_values = new Array();
-	var data_value;
 	var data_value_min;
 	var data_value_max;
 	for(i=0; i < data.results.bindings.length; i++){
-	    if(data.results.bindings[i].year.value == map_current_year){
+	    if(data.results.bindings[i].year.value == LBM.current_year){
 		var data_value = parseFloat(data.results.bindings[i].value.value);
+                // TODO FIX: use damnit min/max fx to do that!
 		if ((data_value>data_value_max)||(data_value_max == null)){
 		    data_value_max = data_value;
 		}
@@ -276,25 +276,22 @@ $(document).ready(function() {
 	    $("#msyear").html("");
 	    $("#msyear").removeClass("cinput-disabled");
 	    $("#msyear").prop( "disabled", false );
-	    current_indicator_name = $(this).find("option:selected").text();
-	    table_selected_indicator = $(this).val();
-	    map_selected_indicator_URL = $(this).val();
-	    setDataURLs();
+	    LBM.current_indicator.name = $(this).find("option:selected").text();
+	    LBM.selected_indicator = $(this).val();
+	    //setDataURLs();
 	    loadYearsIndicatorMap();
 	}else{
 	    $("#msyear").val(0);
 	    $("#msyear").addClass("cinput-disabled");
 	    $("#msyear").prop( "disabled", true );
 	}
-
     });
-
 
     $(document).delegate("#msyear", "change", function(e){
 	e.preventDefault();
 	if($(this).val()!=0){
-	    map_current_year = $(this).val();
-	    setDataURLs();
+	    LBM.current_year = $(this).val();
+	    //setDataURLs();
 	    loadMapChart();
 	}
 
