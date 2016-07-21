@@ -4,6 +4,7 @@ var lbvisLC = (function (args = {}) {
     return {
         series_color: args.colors || ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"],
         selected_indicator: args.indicator || 'WB-SP.RUR.TOTL.ZS',
+        indicator_info: {},
         current_indicator: {},
         compared_countries: [args.iso3],
         years: []
@@ -83,12 +84,14 @@ function loadCountriesPerIndicators(){
     function loadLineChart(){
 	$("#igraphics .pos_loader_data").removeClass("hddn");
 	
-	getIndicatorInfo(LBLC.selected_indicator);
+	getIndicatorInfo(LBLC.selected_indicator, LBLC);
+        //LBLC.current_indicator = LBV.indicator_info[0];
         var query_line_URL = LBD.sparqlURL(LBD.query_line_chart(
             LBLC.selected_indicator, LBLC.compared_countries
         ));
 
 	$.getJSON(query_line_URL, function (data) {
+            //console.log(LBLC);
             
 	    var serie_categories = new Array();
 	    var serie_values = new Array();
@@ -146,12 +149,12 @@ function loadCountriesPerIndicators(){
 		    enabled:false
 		},
 		title: {
-		    text: '<span class="m-s-top m-xs-bottom txt-sh-dark txt-l">'+LBV.indicator_info[0].name+'</span>',
+		    text: '<span class="m-s-top m-xs-bottom txt-sh-dark txt-l">'+LBLC.current_indicator.name+'</span>',
 		    useHTML: true,
 		    x: -20 //center
 		},
 		subtitle: {
-		    text: '<a href="'+LBV.indicator_info["0"].datasetURL+'" target="_blank" class="txt-l">'+LBV.indicator_info["0"].datasetLabel+'</a> (<a href="'+LBV.indicator_info["0"].sourceOrgURL+'" target="_blank" class="txt-l">'+LBV.indicator_info["0"].sourceOrgLabel+'</a>)',
+		    text: '<a href="'+LBLC.current_indicator.datasetURL+'" target="_blank" class="txt-l">'+LBLC.current_indicator.datasetLabel+'</a> (<a href="'+LBLC.current_indicator.sourceOrgURL+'" target="_blank" class="txt-l">'+LBLC.current_indicator.sourceOrgLabel+'</a>)',
 		    useHTML: true,
 		    x: -20
 		},

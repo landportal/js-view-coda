@@ -42,12 +42,8 @@ var lbvis = (function (args = {}) {
 // var countrieNameIso3 = [];
 // var global_select_indicators = '<option value="0" data-localize="inputs.sindicator">Select indicator ...</option>';
 
-function getIndicatorInfo(indicator) {
-    // WTF?
-    if(LBV.indicator_info.length>0){
-	LBV.indicator_info.splice(0,LBV.indicator_info.length);
-    }
-
+function getIndicatorInfo(indicator, ptr=null) {
+    LBV.indicator_info = [];
     var query_get_indicator_info_URL = LBD.sparqlURL(LBD.query_get_indicator_info(indicator));
     //console.log('getIndicatorInfo', indicator, query_get_indicator_info_URL);
     $.getJSON(query_get_indicator_info_URL, function (data) {
@@ -62,7 +58,8 @@ function getIndicatorInfo(indicator) {
 		'sourceOrgLabel':data.results.bindings[i].sourceOrgLabel.value,
 	    });
 	}
-        //console.log(LBV.indicator_info);
+        //console.log('LBV getInfo: ' + indicator, LBV.indicator_info);
+        if (ptr) { ptr.current_indicator = LBV.indicator_info[0]; }
     });
 }
 
@@ -89,11 +86,14 @@ function set_country_indicators() {
 	    var indicator = data.results.bindings[i].indicatorLabel.value;
 	    var searchfor = 'wb-lgaf';
 	    if(indicator.toLowerCase().indexOf(searchfor) === -1){
-		LBV.country_indicators.push({'name':data.results.bindings[i].indicatorLabel.value,'URL':data.results.bindings[i].indicatorURL.value});
-                // That's likely wrong, the right way is to bind UI components
-                //  to data models so they're always in sync
-                // This should also probably be handled by style/UI
-		LBV.country_indicators_select += '<option value="'+data.results.bindings[i].indicatorURL.value+'">'+truncateString(data.results.bindings[i].indicatorLabel.value, 40, ' ', '...')+'</option>';
+                var ind = {
+                    'name': data.results.bindings[i].indicatorLabel.value,
+                    'URL':  data.results.bindings[i].indicatorURL.value
+                };
+                ind.id = ind.URL.slice(ind.URL.lastIndexOf('/') + 1);
+                //console.log(data.results.bindings[i]);
+		LBV.country_indicators.push(ind);
+		LBV.country_indicators_select += '<option value="'+ind.id+'">'+truncateString(ind.name, 40, ' ', '...')+'</option>';
 	    }
 	}
         // TODO: FIX / WTF
