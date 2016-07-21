@@ -123,7 +123,7 @@ function loadCountryIndicatorInfo(){
 	    info_indicator_country.push(data.results.bindings[i].indicatorDescription.value);
 	    
 	}
-
+        console.log(LBT.selected_indicator, LBT.selected_year, info_indicator_country);
 	var addrow = '<tr>\
 	    <td class="t-td" data-id="'+LBT.current_indicator.id+'"><a href="'+LBT.current_indicator.id+'" target="_blank">'+LBT.current_indicator.name+'</a> <span class="info-bubble txt-s fright" data-toggle="tooltip" data-placement="top" title="'+info_indicator_country["7"]+'">i</span></td>\
 	    <td class="t-td txt-c year" data-year="'+info_indicator_country["1"]+'">'+info_indicator_country["1"]+'</td>\
@@ -188,7 +188,7 @@ $(document).ready(function() {
 	    $("#tindicators tbody tr").each(function(){
 		var indicatorTable = $(this).find("td").attr("data-id");
 		var yearTable = parseInt($(this).find("td.year").text());
-		console.log(yearsel+':'+indicatorsel+" - "+yearTable+':'+indicatorTable);
+		//console.log(yearsel+':'+indicatorsel+" - "+yearTable+':'+indicatorTable);
 		if (indicatorTable == indicatorsel && yearTable == yearsel) {
 		    exist ++;
 		}

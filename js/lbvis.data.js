@@ -205,7 +205,7 @@ ex:org ?sourceOrgURL . \
 ?sourceOrgURL ex:label ?sourceOrgLabel. \
 ?indicatorURL ex:label ?indicatorLabel ; \
 ex:description ?indicatorDescription . \
-VALUES ?indicatorURL {<" + indicator + ">} \
+VALUES ?indicatorURL {<" + lod.uri.indicator + indicator + ">} \
 }";
     };
 
