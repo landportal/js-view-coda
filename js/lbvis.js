@@ -2,7 +2,6 @@
 'use strict';
 
 var lbvis = (function (args = {}) {
-
     var options = {
         lod: args.lod_url || 'data.landportal.info'
     };
@@ -19,30 +18,14 @@ var lbvis = (function (args = {}) {
         countries: [],
         indicator_info: [],
         country_indicators: [],
-        
         // Public methods
         init: function () {
             //console.log('init app');
         }
     };
-
-
-
 });
 
-// // TODO : cleanup globals
-// var years_indicator_country = new Array();
-// var current_indicator_name = "Rural population"; //Rural population
-// var indicator_info = new Array();
-// var indicators = new Array();
-// var info_all_indicators = new Array();
-// var info_countries_per_indicator = new Array();
-// var info_country_indicators = new Array();
-// var selected_indicator_id = "Indicator not set";
-// var countrieNameIso3 = [];
-// var global_select_indicators = '<option value="0" data-localize="inputs.sindicator">Select indicator ...</option>';
-
-function getIndicatorInfo(indicator, ptr=null) {
+function getIndicatorInfo(indicator, ptr) {
     LBV.indicator_info = [];
     var query_get_indicator_info_URL = LBD.sparqlURL(LBD.query_get_indicator_info(indicator));
     //console.log('getIndicatorInfo', indicator, query_get_indicator_info_URL);
