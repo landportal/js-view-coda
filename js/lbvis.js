@@ -16,8 +16,9 @@ var lbvis = (function (args = {}) {
         options: options,
         lod: lod,
         // Shared data / sort of internal cache
+        countries: [],
         indicator_info: [],
-        
+        country_indicators: [],
         
         // Public methods
         init: function () {
@@ -29,17 +30,17 @@ var lbvis = (function (args = {}) {
 
 });
 
-// TODO : cleanup globals
-var years_indicator_country = new Array();
-var current_indicator_name = "Rural population"; //Rural population
-var indicator_info = new Array();
-var indicators = new Array();
-var info_all_indicators = new Array();
-var info_countries_per_indicator = new Array();
-var info_country_indicators = new Array();
-var selected_indicator_id = "Indicator not set";
-var countrieNameIso3 = [];
-var global_select_indicators = '<option value="0" data-localize="inputs.sindicator">Select indicator ...</option>';
+// // TODO : cleanup globals
+// var years_indicator_country = new Array();
+// var current_indicator_name = "Rural population"; //Rural population
+// var indicator_info = new Array();
+// var indicators = new Array();
+// var info_all_indicators = new Array();
+// var info_countries_per_indicator = new Array();
+// var info_country_indicators = new Array();
+// var selected_indicator_id = "Indicator not set";
+// var countrieNameIso3 = [];
+// var global_select_indicators = '<option value="0" data-localize="inputs.sindicator">Select indicator ...</option>';
 
 function getIndicatorInfo(indicator) {
     // WTF?
@@ -71,7 +72,7 @@ function loadCountriesIso3() {
     var query_countries_iso3_URL = LBD.sparqlURL(LBD.queries.countries_iso3);
     $.getJSON(query_countries_iso3_URL, function (data) {
 	for(var i=0; i < data.results.bindings.length; i++){
-	    countrieNameIso3.push({'name':data.results.bindings[i].countryLabel.value,'iso3':data.results.bindings[i].countryISO3.value,'url':data.results.bindings[i].countryURL.value});
+	    LBV.countries.push({'name':data.results.bindings[i].countryLabel.value,'iso3':data.results.bindings[i].countryISO3.value,'url':data.results.bindings[i].countryURL.value});
 	}
     });
 }
@@ -88,17 +89,18 @@ function set_country_indicators() {
 	    var indicator = data.results.bindings[i].indicatorLabel.value;
 	    var searchfor = 'wb-lgaf';
 	    if(indicator.toLowerCase().indexOf(searchfor) === -1){
-		info_country_indicators.push({'name':data.results.bindings[i].indicatorLabel.value,'URL':data.results.bindings[i].indicatorURL.value});
+		LBV.country_indicators.push({'name':data.results.bindings[i].indicatorLabel.value,'URL':data.results.bindings[i].indicatorURL.value});
                 // That's likely wrong, the right way is to bind UI components
                 //  to data models so they're always in sync
                 // This should also probably be handled by style/UI
-		global_select_indicators += '<option value="'+data.results.bindings[i].indicatorURL.value+'">'+truncateString(data.results.bindings[i].indicatorLabel.value, 40, ' ', '...')+'</option>';
+		LBV.country_indicators_select += '<option value="'+data.results.bindings[i].indicatorURL.value+'">'+truncateString(data.results.bindings[i].indicatorLabel.value, 40, ' ', '...')+'</option>';
 	    }
 	}
         // TODO: FIX / WTF
+        // This is changing both mapping AND table UI
 	//Cargamos los indicadores (TODOS CUIDADO)
 	var $selIndicator = $(".sindicator, .msindicator");
 	$selIndicator.html('');
-	$selIndicator.append(global_select_indicators);
+	$selIndicator.append(LBV.country_indicators_select);
     });
 }
