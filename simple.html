@@ -428,20 +428,27 @@
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-
     <script src="//code.highcharts.com/stock/highstock.js"></script>
     <script src="//code.highcharts.com/maps/modules/map.js"></script>
     <script src="//code.highcharts.com/highcharts-more.js"></script>
     <script src="//code.highcharts.com/modules/exporting.js"></script>
-    <script src="//d3js.org/d3.v3.min.js"></script>
-
     <script src="//cdnjs.cloudflare.com/ajax/libs/randomcolor/0.4.4/randomColor.min.js"></script>
+
+
+    <!-- <script src="js/vendor/jquery.min.js"></script> -->
+    <!-- <script src="js/vendor/bootstrap.min.js"></script> -->
+    <!-- <script src="js/vendor/stock/highstock.js"></script> -->
+    <!-- <script src="js/vendor/maps/modules/map.js"></script> -->
+    <!-- <script src="js/vendor/highcharts-more.js"></script> -->
+    <!-- <script src="js/vendor/modules/exporting.js"></script> -->
+    <!-- <script src="js/vendor/randomColor.min.js"></script> -->
+
+    
+    <!-- <script src="//d3js.org/d3.v3.min.js"></script> -->
     <!-- <script src="js/vendor/jquery.localize.min.js"></script> -->
     
     <script src="js/lbvis.helpers.js"></script>
-    <script src="js/lbvis.BORKEN.js"></script>
-    <script src="js/lbvis.data.js"></script>
-    <script src="js/lbvis.BORKEN2.js"></script>
+    <script src="js/lbvis.js"></script>
 
     <script src="js/lbvis.lgaf.js"></script>
     <script src="js/map_data.js"></script>
@@ -451,15 +458,48 @@
     <script src="js/lbvis.pie.js"></script>
     <script src="js/lbvis.spider.js"></script>
 
-    <script type="text/javascript">    
-    function loadAllCharts(){
+    <script src="js/lbvis.data.js"></script>
+    <script type="text/javascript">
+      var COUNTRY_ISO3 = 'VNM';
+      var LBV = new lbvis({iso3: COUNTRY_ISO3});
+      var LBD = new lbvisDATA({
+        iso3: COUNTRY_ISO3
+      });
+      var LBLC = new lbvisLC({
+        iso3: COUNTRY_ISO3
+      });
+      var LBT = new lbvisT({
+        iso3: COUNTRY_ISO3,
+        //indicators: []
+      });
+      var LBM = new lbvisMap({
+        iso3: COUNTRY_ISO3,
+        indicator: 'WB-SP.RUR.TOTL.ZS'
+      });
+
+      //setDataURLs();
+      loadCountriesIso3();
+      set_country_indicators();
+
+      loadMapDefaults();
+
+      loadLineDefaults();
+      loadELGAFyears();
+      loadDefaultTableIndicators();
+
       loadPieChart();
       loadMapChart();	
       loadSpiderChart();
       loadLineChart();
-    //$("[data-localize]").localize("lang/lp_labels", { language: lang });
-    }
-    loadAllCharts();
+
+
+      
+      $('#wrapper-map-location').highcharts().get(LBV.ISO3).select();
+      $('#wrapper-map-location').highcharts().get(LBV.ISO3).zoomTo();
+      $('#wrapper-map-location').highcharts().mapZoom(3);
+
+      //var lang = getUrlVars()["lang"] || 'en';
+      //$("[data-localize]").localize("lang/lp_labels", { language: lang });
     </script>
     
     <!-- <script src="js/main.js"></script> -->
