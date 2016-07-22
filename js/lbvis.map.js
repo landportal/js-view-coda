@@ -1,283 +1,313 @@
 
+'use strict';
+
+/* LB vis map class/module
+ *
+ * Params:
+ - type         # mandatory MUST be either 'local' or 'global'
+ - vis          # mandatory MUST be a <lbvis> instance
+ - indicator    # optional , default indicator
+ * other global (bad) var used:
+ - map_data     # mandatory MUST exist
+
+ */
 var lbvisMap = (function (args = {}) {
-    var ISO3 = args.iso3;
-    return {
-        current_year: args.year || 2014,
-        current_indicator: {},
-        selected_indicator: args.indicator || 'FAO-23045-6083',
-        years: []
+    var LBVIS = args.vis;
+    var _options = {
+        type: args.type, // global or local
+        target: args.target || '#map-' + args.type,
+        mapTarget: args.mapTarget || '#map-' + args.type + '-wrapper',
+        selected: args.indicator || 'FAO-23045-6083',
+        year: args.year || 2014
+    };
+    var _data = {
+        map: args.map_data || null,
+        chart: null,
+        min: 0,
+        max: 0,
+        years: [],
+        indicator: {}
     };
 
+    var loadYears = function () {
+        _data.years = [];
+        var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.query_years_indicator_country(_options.selected));
+        console.log('LBM YIM', LBVIS.DATA.query_years_indicator_country(_options.selected), query_url);
+        return $.getJSON(query_url, function (data) {
+            data.results.bindings.forEach(function (item) {
+                _data.years.push(item.year.value);
+            });
+            console.log('got years', _options.selected, _data.years);
+            getOptionsYears();
+        });
+    };
+
+    var loadChartData = function () {
+        var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.query_map_chart(_options.selected));
+        return $.getJSON(query_url, function (data) {
+            _data.chart = [];
+            // call back
+            data.results.bindings.forEach(function (country_value) {
+                if (country_value.year.value != _options.year) return;
+                var v = parseFloat(country_value.value.value);
+	        _data.chart.push({
+                    code: country_value.countryISO3.value,
+                    value: v
+                });
+                if (v > _data.max) _data.max = v;
+                if (v < _data.min) _data.min = v;
+            });
+        });
+    };
+
+    // UI / build options for years selection
+    var getOptionsYears = function () {
+        var str = '';
+        _data.years.forEach(function(year) {
+            str += '<option value="'+year+'">'+year+'</option>';
+        });
+        console.log('options', str, _data.years);
+        // TODO: bad , separate UI
+	$(_options.target + ' select.years').html('<option value="0" data-localize="inputs.syear">Select year ...</option>');
+	if(str.length) {
+	    $(_options.target + ' select.years').append(str);
+	    $(_options.target + ' select.years').removeClass("cinput-disabled");
+	    $(_options.target + ' select.years').prop( "disabled", false );
+	}
+        return str;
+    };
+
+    var initMapGlobal = function () {
+        console.log('Map init global', _options);
+
+        // 1) Indicators available for this country
+        // Fill up select menu once indicators are loaded
+        LBVIS.defers.indicators.done(function () {
+            var opts = LBVIS.getOptionsIndicators();
+            $(_options.target + ' select.indicators').html(opts);
+        });
+        // 2) Load selected indicator
+        // BAD BORKEN DEFER
+        LBVIS.getIndicatorInfo(_options.selected);
+        _data.indicators = LBVIS.indicators_info();
+        //_data.indicator = _data.indicators[_options.selected];
+
+        // check defer LBVIS.defer.indicator_info
+        loadYears();
+        
+        $(_options.target + " .pos_loader_data").removeClass("hddn");
+        loadChartData().done(function () {
+            console.log('got chart data', _data.chart);
+            drawMapGlobal(_options.mapTarget, _data);
+	    $(_options.target + " .pos_loader_data").addClass("hddn");
+        });
+    };
+
+    /*
+     * Events
+     */
+    var bindUI = function () {
+        // Country Indicators select
+        $(_options.target).delegate(".indicators", "change", function(e) {
+	    e.preventDefault();
+	    if ($(this).val()!=0) {
+	        $(_options.target + ' .years').html("");
+	        $(_options.target + ' .years').removeClass("cinput-disabled");
+	        $(_options.target + ' .years').prop("disabled", false);
+	        //_data.indicator.name = $(this).find("option:selected").text();
+	        _options.selected = $(this).val();
+	        loadYears();
+	    } else {
+	        $(_options.target + ' .years').val(0);
+	        $(_options.target).addClass("cinput-disabled");
+	        $(_options.target).prop( "disabled", true );
+	    }
+        });
+
+        $(_options.target).delegate(".years", "change", function(e){
+	    e.preventDefault();
+	    if ($(this).val()!=0) {
+	        _options.year = $(this).val();
+	        initMapGlobal();
+	    }
+        });
+    };
+
+    /*
+     * Public methods
+     */
+    return {
+        // TODO: remove OPTS once all fx in module
+        OPTS: _options,
+        DATA: _data,
+        init: function () {
+            console.log('Map init', _options, LBVIS);
+            if (_options.type === 'global') {
+                initMapGlobal();
+                bindUI();
+            } else {
+                drawMapLocal(_options.mapTarget);
+                $(_options.mapTarget).highcharts().get(LBVIS.ISO3).select();
+                $(_options.mapTarget).highcharts().get(LBVIS.ISO3).zoomTo();
+                $(_options.mapTarget).highcharts().mapZoom(3);
+            }
+        }
+    };
 });
 
 
-//Inicializamos el mapa segun el indicador por defecto facilitado: WB-SP.RUR.TOTL.ZS (Rural population)
-function loadMapDefaults() {
-    $("select#msindicator option").each(function() {
-	var indicatorID = $(this).val();
-	if(indicatorID === "WB-SP.RUR.TOTL.ZS") {
-	    $(this).prop("selected",true);
-	    LBM.selected_indicator = $(this).val();
-	    loadYearsIndicatorMap();
-	    setTimeout(function(){
-		$("select#msyear").prop('selectedIndex', 1);
-		LBM.current_indicator.name = $("select#msindicator").find("option:selected").text();
-		LBM.current_year = $("select#msyear").val();
-		//setDataURLs();
-		loadMapChart();
-	    },600);
-	} 
-    });
-}
 
-
-function loadYearsIndicatorMap(){
-    LBM.years = [];
-    var query_url = LBD.sparqlURL(LBD.query_years_indicator_country(LBM.selected_indicator));
-    //console.log('LBM YIM', LBD.query_years_indicator_country(LBM.selected_indicator));
-    $.getJSON(query_url, function (data) {
-	for(i=0; i < data.results.bindings.length; i++){
-	    LBM.years.push(data.results.bindings[i].year.value);
-	}
-
-	var miop;
-	$.each(LBM.years, function( i, val ) {
-	    miop += '<option value="'+val+'">'+val+'</option>';
-	    //console.log(iop);
-	});
-	$("#msyear").html('<option value="0" data-localize="inputs.syear">Select year ...</option>');
-	$("#msyear").append(miop);
-	if(miop!="") {
-	    $("#msyear").removeClass("cinput-disabled");
-	    $("#msyear").prop( "disabled", false );
-	}
-    });
-}
-
-
-
-function loadMapChart(){
-    //#Mapping graph
-    $("#maparea .pos_loader_data").removeClass("hddn");
-
-    //indicator_id_more_info = map_selected_indicator_URL;
-    //setDataURLs();
-    getIndicatorInfo(LBM.selected_indicator, LBM);
-    
-    var query_url = LBD.sparqlURL(LBD.query_map_chart(LBM.selected_indicator));
-    $.getJSON(query_url, function (data) {
-
-	$(".tit-mapping").html('<p class="m-s-top m-xs-bottom txt-sh-dark displayb txt-c fos">'+LBM.current_indicator.name+' ('+LBM.current_year+')</p><p class="txt-sh-dark txt-c fos"><a href="'+LBM.current_indicator.datasetURL+'" target="_blank">'+LBM.current_indicator.datasetLabel+'</a> (<a href="'+LBM.current_indicator.sourceOrgURL+'" target="_blank">'+LBM.current_indicator.sourceOrgLabel+'</a>)</p>');
-
-	//console.log(data.results.bindings[i].countryISO3.value);
-	//console.log(data);
-	var data_values = new Array();
-	var data_value_min;
-	var data_value_max;
-	for(i=0; i < data.results.bindings.length; i++){
-	    if(data.results.bindings[i].year.value == LBM.current_year){
-		var data_value = parseFloat(data.results.bindings[i].value.value);
-                // TODO FIX: use damnit min/max fx to do that!
-		if ((data_value>data_value_max)||(data_value_max == null)){
-		    data_value_max = data_value;
-		}
-		if ((data_value<data_value_min)||(data_value_min == null)){
-		    data_value_min = data_value;
-		}
-		data_values.push({code:data.results.bindings[i].countryISO3.value, value:data_value});
-	    }
-	}
-
-	$('#wrapper-mapping').highcharts('Map', {
-	    chart: {
-	        backgroundColor: '#ffffff',
-	        margin: 0,
-	    },	    
-	    credits:{
-		enabled:false
-	    },	    
-	    title: {
-	        text:'',
-	        useHTML: true,
-	    },
-	    mapNavigation: {
-	        enabled: true,
-	        buttonOptions: {
-	            theme: {
-	                fill: 'white',
-	                'stroke-width': 1,
-	                stroke: 'silver',
-	                r: 0,
-	                states: {
-	                    hover: {
-	                        fill: '#79B042'
-	                    },
-	                    select: {
-	                        stroke: '#039',
-	                        fill: '#bada55'
-	                    }
+/******************************************
+ * Drawing
+ */
+function drawMapGlobal(target, data) {
+    $(target).highcharts('Map', {
+	chart: {
+	    backgroundColor: '#ffffff',
+	    margin: 0
+	},
+	credits:{
+	    enabled:false
+	},
+	title: {
+	    text:'',
+	    useHTML: true
+	},
+	mapNavigation: {
+	    enabled: true,
+	    buttonOptions: {
+	        theme: {
+	            fill: 'white',
+	            'stroke-width': 1,
+	            stroke: 'silver',
+	            r: 0,
+	            states: {
+	                hover: {
+	                    fill: '#79B042'
+	                },
+	                select: {
+	                    stroke: '#039',
+	                    fill: '#bada55'
 	                }
-	            },
-	            verticalAlign: 'top'
-	        },
-	        enableMouseWheelZoom: false,
-	        enableDoubleClickZoom: false,
-	        buttons: {
-	            zoomIn: {
-	                y: 20,
-	                x: 20
-	            },
-	            zoomOut: {
-	                y: 50,
-	                x: 20
-	            }
-	        }
-	    },
-	    colorAxis: {
-	        min: data_value_min,
-	        max: data_value_max,
-	        minorTickLength: 0,
-	        //type: 'logarithmic',
-	        maxColor: "#45551A",
-	        minColor: "#D9ED7E"
-	    },
-	    series: [{
-	        data: data_values,
-	        allowPointSelect: true,
-	        nullColor: '#bbd6d8',
-	        borderColor: 'white',
-	        mapData: map_data,//Highcharts.maps['custom/world'],
-	        joinBy: ['id', 'code'],
-	        name: LBM.current_indicator.name, //current_indicator_name,
-	        states: {
-	            hover: {
-	                color: '#F5A623'
-	            },
-	            select: {
-	                color: '#F5A623'
 	            }
 	        },
-	        tooltip: {
-	            pointFormat: '{point.name} <b>' + '{point.value}'.replace(/\B(?=(\d{3})+(?!\d))/g, ",")+' '+LBM.current_indicator.unit+'</b>'
+	        verticalAlign: 'top'
+	    },
+	    enableMouseWheelZoom: false,
+	    enableDoubleClickZoom: false,
+	    buttons: {
+	        zoomIn: {
+	            y: 20,
+	            x: 20
+	        },
+	        zoomOut: {
+	            y: 50,
+	            x: 20
 	        }
-	    }]
-	});
-	$("#maparea .pos_loader_data").addClass("hddn");
+	    }
+	},
+	colorAxis: {
+	    min: data.min,
+	    max: data.max,
+	    minorTickLength: 0,
+	    maxColor: "#45551A",
+	    minColor: "#D9ED7E"
+	},
+	series: [{
+	    data: data.chart,
+	    allowPointSelect: true,
+	    nullColor: '#bbd6d8',
+	    borderColor: 'white',
+	    mapData: data.map,
+	    joinBy: ['id', 'code'],
+	    name: 'blablabal',//data.indicator.name,
+	    states: {
+	        hover: {
+	            color: '#F5A623'
+	        },
+	        select: {
+	            color: '#F5A623'
+	        }
+	    },
+	    tooltip: {
+	        pointFormat: '{point.name} <b>' + '{point.value}'.replace(/\B(?=(\d{3})+(?!\d))/g, ",")+' @@@unit@@@'+'</b>'
+	    }
+	}]
     });
 }
 
 
 
-//## Location map ##//
-$('#wrapper-map-location').highcharts('Map', {	
-    chart: {
-	backgroundColor: '#ffffff',
-	margin: 0,
-    },    
-    credits:{
-	enabled:false
-    },
-    title: {
-	text: ''
-    },
-    mapNavigation: {
-	enabled: true,
-	buttonOptions: {
-	    theme: {
-	        fill: 'white',
-	        'stroke-width': 1,
-	        stroke: 'silver',
-	        r: 0,
-	        states: {
-	            hover: {
-	                fill: '#79B042'
-	            },
-	            select: {
-	                stroke: '#039',
-	                fill: '#bada55'
+function drawMapLocal(target) {
+    //## Location map ##//
+    $(target).highcharts('Map', {
+        chart: {
+	    backgroundColor: '#ffffff',
+	    margin: 0
+        },
+        credits: {
+	    enabled:false
+        },
+        title: {
+	    text: ''
+        },
+        mapNavigation: {
+	    enabled: true,
+	    buttonOptions: {
+	        theme: {
+	            fill: 'white',
+	            'stroke-width': 1,
+	            stroke: 'silver',
+	            r: 0,
+	            states: {
+	                hover: {
+	                    fill: '#79B042'
+	                },
+	                select: {
+	                    stroke: '#039',
+	                    fill: '#bada55'
+	                }
 	            }
+	        },
+	        verticalAlign: 'top'
+	    },
+	    enableMouseWheelZoom: false,
+	    enableDoubleClickZoom: false,
+	    buttons: {
+	        zoomIn: {
+	            y: 20,
+	            x: 20
+	        },
+	        zoomOut: {
+	            y: 50,
+	            x: 20
+	        }
+	    }
+        },
+        colorAxis: {
+	    minorTickLength: 0,
+	    maxColor: "#45551A",
+	    minColor: "#D9ED7E"
+        },
+        series: [{
+	    data: [],
+	    allowPointSelect: true,
+	    nullColor: '#bbd6d8',
+	    borderColor: 'white',
+	    mapData: map_data,
+	    joinBy: ['id', 'code'],
+	    name: '',
+	    states: {
+	        hover: {
+	            color: '#BADA55'
+	        },
+	        select: {
+	            color: '#B1D748'
 	        }
 	    },
-	    verticalAlign: 'top'
-	},
-	enableMouseWheelZoom: false,
-	enableDoubleClickZoom: false,
-	buttons: {
-	    zoomIn: {
-	        y: 20,
-	        x: 20
-	    },
-	    zoomOut: {
-	        y: 50,
-	        x: 20
+	    tooltip: {
+	        pointFormat: '{point.name} <b>' + '{point.value}'.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</b>'
 	    }
-	}
-    },
-
-    colorAxis: {
-	// min: data_value_min,
-	// max: data_value_max,
-	minorTickLength: 0,
-	//type: 'logarithmic',
-	maxColor: "#45551A",
-	minColor: "#D9ED7E"
-    },
-
-    series: [{
-	data: [],
-	allowPointSelect: true,
-	nullColor: '#bbd6d8',
-	borderColor: 'white',
-	mapData: map_data,
-	joinBy: ['id', 'code'],
-	name: '',
-	states: {
-	    hover: {
-	        color: '#BADA55'
-	    },
-	    select: {
-	        color: '#B1D748'
-	        //borderColor: '#F5A623',
-	        //borderWidth: 2
-	    }
-	},
-	tooltip: {
-	    pointFormat: '{point.name} <b>' + '{point.value}'.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</b>',
-	    //valueSuffix: '/km?'
-	}
-    }]
-
-});
-
-
-
-//## MAPPING EVENTS
-$(document).ready(function() {
-
-    $(document).delegate("#msindicator", "change", function(e){
-	e.preventDefault();
-	if($(this).val()!=0){
-	    $("#msyear").html("");
-	    $("#msyear").removeClass("cinput-disabled");
-	    $("#msyear").prop( "disabled", false );
-	    LBM.current_indicator.name = $(this).find("option:selected").text();
-	    LBM.selected_indicator = $(this).val();
-	    //setDataURLs();
-	    loadYearsIndicatorMap();
-	}else{
-	    $("#msyear").val(0);
-	    $("#msyear").addClass("cinput-disabled");
-	    $("#msyear").prop( "disabled", true );
-	}
+        }]
     });
-
-    $(document).delegate("#msyear", "change", function(e){
-	e.preventDefault();
-	if($(this).val()!=0){
-	    LBM.current_year = $(this).val();
-	    //setDataURLs();
-	    loadMapChart();
-	}
-    });
-
-});
+}
