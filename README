@@ -13,18 +13,14 @@ Requirements
 
 JS libs:
  - jquery
-   - jquery.accordion
-   - jquery.localize
+   - jquery.localize (optional)
  - highcharts
    - highstock
-   - map
+   - highmaps
    - highcharts-more
-   - exporting (optional?)
-
+   - exporting (optional)
  - boostrap
- - owl.carousel
  - randomColor
- - d3js
 
 
 Source
@@ -39,3 +35,4 @@ Simbiosys - 2016
 Licence
 =======
 This project is licensed under the terms of the MIT license.
+

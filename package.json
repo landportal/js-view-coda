@@ -7,7 +7,6 @@
     },
     "dependencies": {
         "jquery": "1.11.*",
-        "d3": "4.1.*",
         "bootstrap-sass": "3.3.*",
         "highcharts-release": "4.2.*",
         "highstock-release": "4.2.*",
