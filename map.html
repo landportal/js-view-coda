@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Simple vis</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/spinkit.css">
+    <link rel="stylesheet" href="css/screen.css">
+  </head>
+  <body>
+
+    <section class="top-hero group r-pos" id="map-local">
+      <div id="map-local-wrapper"></div>
+    </section>  
+
+    <a name="mapping"></a>
+    <section class="p-sep-secc-top p-sep-secc-bottom bg-secc-clear cb-bottom-lh" id="map-global">
+      <div class="header-section">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-offset-2 col-md-8 txt-c">
+              <img src="img/ico-h2-mapping.png">
+              <h2 class="fos txt-small m-xs-top" data-localize="global.mapping">Mapping</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container p-l-bottom">
+        <div class="row m-l-top">
+          <div class="col-lg-offset-2 col-lg-5 col-md-8">
+            <select class="indicators msindicator fos cinput cinput-s-arrow cinput-sh cinput-gray" id="msindicator"></select>
+          </div>
+          <div class="col-lg-3 col-md-4">
+            <select id="msyear" class="years msyear fos cinput cinput-s-arrow cinput-sh cinput-gray cinput-disabled" disabled="disabled">
+                <option value="0" data-localize="inputs.syear">Select year ...</option>
+              </select>
+          </div>
+
+        </div>
+
+      </div>
+    
+      <div id="maparea" class="r-pos">
+        <div class="tit-mapping">--</div>
+        <div id="map-global-wrapper"></div>
+
+        <div class="pos_loader_data hddn">
+          <div class="pos_spinkit">
+            <div class="sk-three-bounce no-m-bottom">
+              <div class="sk-child sk-bounce1"></div>
+              <div class="sk-child sk-bounce2"></div>
+              <div class="sk-child sk-bounce3"></div>
+            </div>
+            <p class="txt-s c-g40 uppc txt-c fos no-m-top m-xs-top" data-localize="feedback.loading">Loading data ...</p>
+          </div>
+        </div>
+
+      </div>
+      
+      <div class="container p-xxl-bottom hddn">
+        <div class="row m-l-top">
+          <div class="col-xs-12 txt-c">
+            <div class="year-navigation c-obj">
+              <ul class="nav-years fos">
+                <li class="i-years"><a href="#" class="a-i-years">2008</a></li>
+                <li class="i-years"><a href="#" class="a-i-years">2009</a></li>
+                <li class="i-years"><a href="#" class="a-i-years">2010</a></li>
+                <li class="i-years"><a href="#" class="a-i-years">2011</a></li>
+                <li class="i-years"><a href="#" class="a-i-years">2012</a></li>
+                <li class="i-years"><a href="#" class="a-i-years">2013</a></li>
+                <li class="i-years"><a href="#" class="a-i-years a-i-acc">2014</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>  
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="//code.highcharts.com/stock/highstock.js"></script>
+    <script src="//code.highcharts.com/maps/modules/map.js"></script>
+    <script src="//code.highcharts.com/highcharts-more.js"></script>
+    <script src="//code.highcharts.com/modules/exporting.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/randomcolor/0.4.4/randomColor.min.js"></script>
+
+
+    <!-- <script src="js/vendor/jquery.min.js"></script> -->
+    <!-- <script src="js/vendor/bootstrap.min.js"></script> -->
+    <!-- <script src="js/vendor/stock/highstock.js"></script> -->
+    <!-- <script src="js/vendor/maps/modules/map.js"></script> -->
+    <!-- <script src="js/vendor/highcharts-more.js"></script> -->
+    <!-- <script src="js/vendor/modules/exporting.js"></script> -->
+    <!-- <script src="js/vendor/randomColor.min.js"></script> -->
+
+    
+    <!-- <script src="//d3js.org/d3.v3.min.js"></script> -->
+    <!-- <script src="js/vendor/jquery.localize.min.js"></script> -->
+    
+    <script src="js/lbvis.helpers.js"></script>
+    <script src="js/lbvis.js"></script>
+
+    <script src="js/lbvis.lgaf.js"></script>
+    <script src="js/map_data.js"></script>
+    <script src="js/lbvis.map.js"></script>
+    <script src="js/lbvis.linechart.js"></script>
+    <script src="js/lbvis.table.js"></script>
+    <script src="js/lbvis.pie.js"></script>
+    <script src="js/lbvis.spider.js"></script>
+
+    <script src="js/lbvis.data.js"></script>
+    <script type="text/javascript">
+      var COUNTRY_ISO3 = 'FRA';
+      var LBV = new lbvis({iso3: COUNTRY_ISO3});
+      LBV.init();
+      var LBML = new lbvisMap({
+        type: 'local',
+        map_data: map_data,
+        //target: '#wrapper-map-location',
+        vis: LBV
+      });
+      LBML.init()
+      var LBMG = new lbvisMap({
+        type: 'global',
+        map_data: map_data,
+        //target: '#wrapper-map',
+        vis: LBV
+      });
+      LBMG.init()
+      
+      /*
+      loadCountriesIso3();
+      set_country_indicators();
+      loadMapDefaults();
+      loadMapChart();
+      */
+      //var lang = getUrlVars()["lang"] || 'en';
+      //$("[data-localize]").localize("lang/lp_labels", { language: lang });
+    </script>
+    
+  </body>
+</html>
