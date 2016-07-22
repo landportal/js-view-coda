@@ -790,6 +790,7 @@ body {
 }
 
 /* line 1, ../sass/_layout.scss */
+#map-local-wrapper,
 #wrapper-map-location {
   width: 100%;
   height: 300px;
@@ -797,41 +798,45 @@ body {
 }
 @media (min-width: 768px) {
   /* line 1, ../sass/_layout.scss */
+  #map-local-wrapper,
   #wrapper-map-location {
     height: 468px;
   }
 }
 
-/* line 15, ../sass/_layout.scss */
+/* line 16, ../sass/_layout.scss */
 #wrapper-igraphics {
   width: 100%;
   height: 400px;
 }
 
-/* line 20, ../sass/_layout.scss */
+/* line 21, ../sass/_layout.scss */
+#map-global-wrapper,
 #wrapper-mapping {
   height: 380px;
   padding: 0px 0px;
 }
 @media (min-width: 768px) {
-  /* line 20, ../sass/_layout.scss */
+  /* line 21, ../sass/_layout.scss */
+  #map-global-wrapper,
   #wrapper-mapping {
     height: 468px;
   }
 }
 @media (min-width: 992px) {
-  /* line 20, ../sass/_layout.scss */
+  /* line 21, ../sass/_layout.scss */
+  #map-global-wrapper,
   #wrapper-mapping {
     height: 768px;
   }
 }
 
-/* line 33, ../sass/_layout.scss */
+/* line 35, ../sass/_layout.scss */
 #wrapper-piechart {
   height: 400px;
 }
 
-/* line 37, ../sass/_layout.scss */
+/* line 39, ../sass/_layout.scss */
 #wrapper-spiderchart {
   height: 320px;
 }
@@ -1791,3 +1796,5 @@ select::-ms-expand {
   position: relative;
   top: -2px;
 }
+
+/*# sourceMappingURL=screen.css.map */
