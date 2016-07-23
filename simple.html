@@ -1,17 +1,17 @@
 <!doctype html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Simple vis</title>
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-        <link rel="stylesheet" href="css/spinkit.css">
-        <link rel="stylesheet" href="css/screen.css">
-    </head>
-    <body>
+  <head>
+    <meta charset="utf-8">
+    <title>Simple vis</title>
+    <!-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/spinkit.css">
+    <link rel="stylesheet" href="css/screen.css">
+  </head>
+  <body>
 
-
-    <section class="top-hero group r-pos">
-      <div id="wrapper-map-location"></div>
+    <section class="top-hero group r-pos" id="map-local">
+      <div id="map-local-wrapper"></div>
     </section>  
 
 
@@ -244,7 +244,7 @@
 
 
     <a name="mapping"></a>
-    <section class="p-sep-secc-top p-sep-secc-bottom bg-secc-clear cb-bottom-lh">
+    <section class="p-sep-secc-top p-sep-secc-bottom bg-secc-clear cb-bottom-lh" id="map-global">
       <div class="header-section">
         <div class="container">
           <div class="row">
@@ -261,7 +261,7 @@
         <div class="row m-l-top">
 
           <div class="col-lg-offset-2 col-lg-5 col-md-8">
-            <select class="msindicator fos cinput cinput-s-arrow cinput-sh cinput-gray" id="msindicator"></select>
+            <select class="indicators msindicator fos cinput cinput-s-arrow cinput-sh cinput-gray" id="msindicator"></select>
           </div>
 
           <div class="col-lg-3 col-md-4">
@@ -276,7 +276,7 @@
     
       <div id="maparea" class="r-pos">
         <div class="tit-mapping">--</div>
-        <div id="wrapper-mapping"></div>
+        <div id="map-global-wrapper"></div>
 
         <div class="pos_loader_data hddn">
           <div class="pos_spinkit">
@@ -435,24 +435,20 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/randomcolor/0.4.4/randomColor.min.js"></script>
 
 
-    <!-- <script src="js/vendor/jquery.min.js"></script> -->
+    <!-- <script src="js/vendor/jquery-1.11.2.min.js"></script> -->
     <!-- <script src="js/vendor/bootstrap.min.js"></script> -->
     <!-- <script src="js/vendor/stock/highstock.js"></script> -->
     <!-- <script src="js/vendor/maps/modules/map.js"></script> -->
     <!-- <script src="js/vendor/highcharts-more.js"></script> -->
     <!-- <script src="js/vendor/modules/exporting.js"></script> -->
-    <!-- <script src="js/vendor/randomColor.min.js"></script> -->
-
-    
-    <!-- <script src="//d3js.org/d3.v3.min.js"></script> -->
+    <!-- <script src="js/vendor/randomColor.js"></script> -->
     <!-- <script src="js/vendor/jquery.localize.min.js"></script> -->
     
     <script src="js/lbvis.helpers.js"></script>
     <script src="js/lbvis.js"></script>
-
-    <script src="js/lbvis.lgaf.js"></script>
     <script src="js/map_data.js"></script>
     <script src="js/lbvis.map.js"></script>
+    <script src="js/lbvis.lgaf.js"></script>
     <script src="js/lbvis.linechart.js"></script>
     <script src="js/lbvis.table.js"></script>
     <script src="js/lbvis.pie.js"></script>
@@ -462,51 +458,42 @@
     <script type="text/javascript">
       var COUNTRY_ISO3 = 'VNM';
       var LBV = new lbvis({iso3: COUNTRY_ISO3});
-      var LBD = new lbvisDATA({
-        iso3: COUNTRY_ISO3
-      });
+      LBV.init();
 
+      var LBML = new lbvisMap({
+        type: 'local',
+        //target: '#wrapper-map-location',
+        vis: LBV
+      });
+      LBML.init();
+
+      var LBS = new lbvisSpider({
+        vis: LBV
+      });
+      LBS.init();
+
+      var LBP = new lbvisPie({
+        vis: LBV
+      });
+      LBP.init();
+
+      /*
       var LBLC = new lbvisLC({
-        iso3: COUNTRY_ISO3
+        iso3: COUNTRY_ISO3,
+        vis: LBV
       });
       var LBT = new lbvisT({
         iso3: COUNTRY_ISO3,
         //indicators: []
       });
-      var LBM = new lbvisMap({
-        iso3: COUNTRY_ISO3,
-        indicator: 'WB-SP.RUR.TOTL.ZS'
-      });
-
-      loadCountriesIso3();
-      set_country_indicators();
-
       loadDefaultTableIndicators();
-
-      loadMapDefaults();
-      loadMapChart();
-
       loadLineDefaults();
       loadLineChart();
-
       loadELGAFyears();
-      loadPieChart();
-      loadSpiderChart();
-
-      
-      $('#wrapper-map-location').highcharts().get(LBV.ISO3).select();
-      $('#wrapper-map-location').highcharts().get(LBV.ISO3).zoomTo();
-      $('#wrapper-map-location').highcharts().mapZoom(3);
-
+      */
       //var lang = getUrlVars()["lang"] || 'en';
       //$("[data-localize]").localize("lang/lp_labels", { language: lang });
     </script>
     
-    <!-- <script src="js/main.js"></script> -->
-    <!-- <script src="js/map_data.js"></script> -->
-    <!-- <script src="js/chartsdata.js"></script>  -->
-    <!-- <script src="js/dataload.js"></script> -->
-
-
-    </body>
+  </body>
 </html>
