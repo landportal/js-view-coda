@@ -316,8 +316,9 @@ WHERE { \
 qb:dataSet ?dataset. \
 VALUES ?dataset {<http://data.landportal.info/dataset/WB-LGAF2013> <http://data.landportal.info/dataset/WB-LGAF2016>}\
 }",
+            // TODO remove HARDCODED VAR, make this query dynamic
 	    pie_chart: query.prefix + " \
-SELECT ?ArableLandPer ?PermanentCropsPer ?PermanentPasturesAndMedowsPer ?ForestLandPer ?OtherPer ?TotalLandHa (year(?maxdateTime) as ?year) \
+SELECT ?ArableLandPer ?PermanentCropsPer ?PermanentPasturesAndMedowsPer ?ForestLandPer ?mainInd ?other (year(?maxdateTime) as ?year) \
 FROM <http://data.landportal.info> \
 WHERE { \
 ?obs1 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6621-5110> ; \
@@ -338,15 +339,15 @@ WHERE { \
      cex:ref-time ?time . \
 ?obs5 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6601-5110> ; \
      cex:ref-area <" + lod.uri.country + ISO3 + "> ; \
-     cex:value ?TotalLandHa; \
+     cex:value ?mainInd; \
      cex:ref-time ?time . \
      ?time time:hasBeginning ?timeValue . \
      ?timeValue time:inXSDDateTime ?maxdateTime . \
-BIND ((xsd:double(xsd:float(?ArableLandHa)*100/xsd:float(?TotalLandHa))) AS ?ArableLandPer) \
-BIND ((xsd:double(xsd:float(?PermanentCropsHa)*100/xsd:float(?TotalLandHa))) AS ?PermanentCropsPer) \
-BIND ((xsd:double(xsd:float(?PermanentPasturesAndMedowsHa)*100/xsd:float(?TotalLandHa))) AS ?PermanentPasturesAndMedowsPer) \
-BIND ((xsd:double(xsd:float(?ForestLandHa)*100/xsd:float(?TotalLandHa))) AS ?ForestLandPer) \
-BIND ((100 - ?ArableLandPer  - ?PermanentCropsPer - ?PermanentPasturesAndMedowsPer - ?ForestLandPer) AS ?OtherPer) \
+BIND ((xsd:double(xsd:float(?ArableLandHa)*100/xsd:float(?mainInd))) AS ?ArableLandPer) \
+BIND ((xsd:double(xsd:float(?PermanentCropsHa)*100/xsd:float(?mainInd))) AS ?PermanentCropsPer) \
+BIND ((xsd:double(xsd:float(?PermanentPasturesAndMedowsHa)*100/xsd:float(?mainInd))) AS ?PermanentPasturesAndMedowsPer) \
+BIND ((xsd:double(xsd:float(?ForestLandHa)*100/xsd:float(?mainInd))) AS ?ForestLandPer) \
+BIND ((100 - ?ArableLandPer  - ?PermanentCropsPer - ?PermanentPasturesAndMedowsPer - ?ForestLandPer) AS ?other) \
 { \
  SELECT DISTINCT max(?dateTime) as ?maxdateTime \
  FROM <http://data.landportal.info> \
@@ -368,6 +369,7 @@ BIND ((100 - ?ArableLandPer  - ?PermanentCropsPer - ?PermanentPasturesAndMedowsP
  } \
 } \
 }",
+
 	    spider_chart: query.prefix + " \
 SELECT  ?sigi ?sigiTo100 ?sigiYear ?gini ?giniTo100 ?giniYear ?hdi ?hdiTo100 ?hdiYear ?ghi ?ghiTo100 ?ghiYear \
 FROM <http://data.landportal.info> \
