@@ -21,75 +21,9 @@ body {
 
 //## Header ##//
 
-.top-hero {
-	margin-bottom: 220px;
-}
-
-.photo-gallery {
-	position: absolute;
-	bottom:-131px;
-	left: 0;
-	width: 100%;
-	height: 260px;
-	//background-color: #ccc;
-}
-
-.carousel-photo-gallery {
-	width: 100%;
-	height: 260px;
-	background-color: transparent;
-}
-
 .c-item {
 	height: 260px;
 }
-
-.fig-carousel {
-	height: 260px;
-}
-
-.pos-txt-img-carousel {
-	position: absolute;
-	left: 15px;
-	bottom: 30px;
-	z-index: 12;
-}
-
-.cover-img-carousel {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	top:0;
-	left:0;
-	background-color: rgba(0,0,0,.4);
-}
-
-.cover-pg .country-intro {
-	width: 320px;
-	position: absolute;
-	left: 50%;
-	transform: translate(-50%,0);
-	bottom: -75px;
-	z-index: 5;
-
-	@include modular-mq(sm) {
-		width: 468px;
-	}
-
-	@include modular-mq(md) {
-		width: 768px;
-	}
-}
-
-.country-flag {
-	width: 50px;
-	height: 50px;
-	border-radius: 50em;
-	overflow: hidden;
-	border: 4px solid #fff;
-	box-shadow: 0px 2px 20px 0px rgba(0,0,0,0.50);
-}
-
 
 //## Content ##//
 .p-sep-secc-bottom {
@@ -257,115 +191,10 @@ li.nic-item:last-child a.a-nic {
 	 margin-left: -25px;
 }
 
-/*.bg-gray-at60 {
-    background-color: none;
-    //margin: 2px;
-}*/
-
 .bg-gray-at60{
     background: -moz-linear-gradient(left, #F7F7F7 0, #F7F7F7 40%, transparent 40%); 
     background: -webkit-linear-gradient(left, #F7F7F7 0, #F7F7F7 40%, transparent 40%); 
     background: -linear-gradient(left, #F7F7F7 0, #F7F7F7 40%, transparent 40%); 
-}
-
-.bg-media {
-	background-color: #F7F7F7;
-}
-
-.sh-img-news {
-	background: #EFEFEF;
-	box-shadow: 5px 5px 10px 0px rgba(0,0,0,0.40);
-	margin: 0px 0px 15px 0px;
-	
-
-	@include modular-mq(xs) {
-		display: inline-block;
-		float: left;
-		margin: 0px 20px 0px 0px;
-	}
-}
-
-
-.cover-img-news {
-	width: 100%;
-	height: 200px;
-	background-color: #efefef;
-	overflow: hidden;
-	@include modular-mq(xs) {
-		width: 218px;
-		height: 122px;
-	}
-}
-
-
-.blog-intro {
-	display: block;
-	width: 100%;
-	@include modular-mq(md) {
-		width: 218px;
-		display: inline-block;
-	}
-}
-
-.cover-img-blog {
-	width: 100%;
-	height: 200px;
-	background-color: #efefef;
-	overflow: hidden;
-
-	@include modular-mq(xs) {
-		width: 218px;
-		height: 122px;
-	}
-}
-
-.adj-blog {
-	//margin-left: 30px;
-	@include modular-mq(sm) {
-		margin-left: 30px;
-	}
-}
-
-.sh-img-blog {
-	background: #EFEFEF;
-	box-shadow: 5px 5px 10px 0px rgba(0,0,0,0.40);
-	display: inline-block;
-	//float: left;
-	margin: 0px 0px 15px 0px;
-	
-	@include modular-mq(xs) {
-		display: block;
-		float: left;
-		margin: 0px 20px 0px 0px;
-	}
-
-	@include modular-mq(md) {
-		display: inline-block;
-		float: none;
-		margin:0px 0px 15px 0px;
-	}
-}
-
-/*.cover-img-blog{
-	width: 218px;
-	height: 122px;
-	background-color: #efefef;
-	overflow: hidden;
-}*/
-
-
-.ico-cal {
-	background-image: url("../img/ico-cal.png");
-	background-repeat: no-repeat;
-	background-position: left center;
-	padding-left: 25px;
-}
-
-.ico-loc {
-	background-image: url("../img/ico-loc.png");
-	background-repeat: no-repeat;
-	background-position: left center;
-	padding-left: 25px;
 }
 
 
@@ -405,8 +234,6 @@ li.nic-item:last-child a.a-nic {
     -webkit-border-horizontal-spacing: 0;
     -webkit-border-vertical-spacing: 0;
     background-color: $ccontrast;
-
-	
 }
 
 .info-bubble {
@@ -462,34 +289,6 @@ th.t-th:last-child, td.t-td:last-child {
 	height: 310px;
 }
 
-.share-buttons {
-	width: 45px;
-	position: fixed;
-	top:50%;
-	right: 0px;
-
-	transform:translate(0,-50%);
-	z-index: 50;
-}
-
-.share-b {
-	display: block;
-	width: 45px;
-	height: 45px;
-}
-
-.share-b-facebook {
-	background-color: #4D70A8;
-}
-
-.share-b-twitter {
-	background-color: #00BAF2;
-}
-
-.share-b-googleplus {
-	background-color: #E2411D;
-}
-
 .acontrast:hover {
 	color:$ccontrast!important;
 	text-decoration: underline;
@@ -500,15 +299,6 @@ th.t-th:last-child, td.t-td:last-child {
 	color: $ccontrast;
 }
 
-
-//## FAKES ##//
-.fake-header {
-	background-image:url("../img/fake-header-repeat.png");
-	background-repeat: repeat-x;
-}
-.fake-footer {
-	background-color: $cprimary;
-}
 
 //## LOADERS DATA ##//
 .pos_loader_data {
