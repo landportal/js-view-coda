@@ -1,214 +1,152 @@
 'use strict';
 
-var lbvisT = (function (args = {}) {
-    return {
-        indicators: [],
-        current_indicator: {},
-        selected_indicator: args.indicator || null,
-        selected_year: args.year || 2011
+var lbvisTable = (function (args = {}) {
+    var LBVIS = args.vis;
+    var _options = {
+        target:   args.target || '#table-indicators',
+        indicators: args.indicators || ["WB-SP.POP.TOTL", "WB-SP.RUR.TOTL.ZS", "WB-NY.GDP.PCAP.PP.KD", "FAO-6601-5110", "FAO-23045-6083", "DP-MOD-O-F", "DP-MOD-O-N", "FAO-LG.1FB"],
+        selected: null,
+        year: null
     };
-});
-
-// var info_indicator_country = [];
-// var default_table_indicators = [];
-
-// Load and display 'default' indicators...
-function loadDefaultTableIndicators() {
-    var query_url = LBD.sparqlURL(LBD.query_default_table_indicators(LBT.indicadors));
-    $.getJSON(query_url, function (data) {
-	for(var j=0;j<data.results.bindings.length;j++){
-            // FIX: This is mad / directly use original keys
-	    var newIndicator = {};
-	    for(var i=0;i<data.head.vars.length;i++){
-		var item_type = data.head.vars[i];
-		switch(item_type){
-		case "obs":
-		    break;
-		case "indicatorURL":
-		    newIndicator.url = data.results.bindings[j][item_type].value;
-		    break;
-		case "indicatorLabel":
-		    newIndicator.name = data.results.bindings[j][item_type].value;
-		    break;
-		case "indicatorDescription":
-                    newIndicator.description = data.results.bindings[j][item_type].value;
-		    break;
-		case "year":
-		    newIndicator.year = data.results.bindings[j][item_type].value;
-		    break;
-		case "value":
-		    newIndicator.value = data.results.bindings[j][item_type].value;
-		    break;
-		case "unitLabel":
-		    newIndicator.unit_label = data.results.bindings[j][item_type].value;
-		    break;
-		case "datasetURL":
-		    newIndicator.dataset_URL = data.results.bindings[j][item_type].value;
-		    break;
-		case "datasetLabel":
-		    newIndicator.dataset_label = data.results.bindings[j][item_type].value;
-		    break;
-		case "sourceOrgURL":
-		    newIndicator.source_URL = data.results.bindings[j][item_type].value;
-		    break;
-		case "sourceOrgLabel":
-		    newIndicator.source_label = data.results.bindings[j][item_type].value;
-		    break;
-		default:
-		    break;
-		}
-	    }
-	    LBT.indicators.push(newIndicator);
-	}
-
-	$("table#tindicators tbody").html("");
-	$.each(LBT.indicators, function( i, val ) {
-	    var row = ' <tr>\
-                <td class="t-td" data-id="'+LBT.indicators[i].url+'"><a href="'+LBT.indicators[i].url+'" target="_blank">'+LBT.indicators[i].name+'</a> <span class="info-bubble txt-s fright" data-toggle="tooltip" data-placement="top" title="'+LBT.indicators[i].description+'">i</span></td>\
-                <td class="t-td txt-c year" data-year="'+LBT.indicators[i].year+'">'+LBT.indicators[i].year+'</td>\
-                <td class="t-td txt-ar">'+LBT.indicators[i].value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>\
-                <td class="t-td">'+LBT.indicators[i].unit_label+'</td>\
-                <td class="t-td"><a href="'+LBT.indicators[i].dataset_URL+'" target="_blank">'+LBT.indicators[i].dataset_label+'</a> (<a href="'+LBT.indicators[i].source_URL+'" target="_blank">'+LBT.indicators[i].source_label+'</a>)</td>\
-                <td class="t-td txt-c"><a href="#" class="r-row del-row" data-ord=""><img src="img/ico-trash.svg" class="c-obj"></a></td>\
-            </tr>';
-            $("table#tindicators tbody").append(row);
-	});
-	$(function () {
-	    $('[data-toggle="tooltip"]').tooltip();
-	});
-    });
-}
-
-function loadYearsIndicatorCountry(){
-    var years_indicator_country = [];
-    // while(years_indicator_country.length > 0) {
-    //     years_indicator_country.pop();
-    // }
-    var query_url = LBD.sparqlURL(LBD.query_years_indicator_country(LBT.selected_indicator));
-    $.getJSON(query_url, function (data) {
-	for(var i=0; i < data.results.bindings.length; i++){
-	    years_indicator_country.push(data.results.bindings[i].year.value);
-	}
-
-	var iop = '<option value="0" data-localize="inputs.syear">Select year ...</option>';
-	$.each(years_indicator_country, function( i, val ) {
-	    iop += '<option value="'+val+'">'+val+'</option>';
-	    //console.log(iop);
-	});
-	$("#isyear").append(iop);
-	if(iop!="") {
-	    $("#isyear").removeClass("cinput-disabled");
-	    $("#isyear").prop( "disabled", false );
-	}
-    });
-}
-
-
-
-function loadCountryIndicatorInfo(){
-    var info_indicator_country = [];
-
-    var query_url = LBD.sparqlURL(LBD.query_info_indicator_country_year(
-        LBT.selected_indicator, LBT.selected_year
-    ));
-    $.getJSON(query_url, function (data) {
-	for(var i=0; i < data.results.bindings.length; i++){
-	    info_indicator_country.push(LBT.selected_year);
-	    info_indicator_country.push(data.results.bindings[i].datasetLabel.value);
-	    info_indicator_country.push(data.results.bindings[i].value.value);
-	    info_indicator_country.push(data.results.bindings[i].unitLabel.value);
-	    info_indicator_country.push(data.results.bindings[i].sourceOrgLabel.value);
-	    info_indicator_country.push(data.results.bindings[i].datasetURL.value);
-	    info_indicator_country.push(data.results.bindings[i].sourceOrgURL.value);
-	    info_indicator_country.push(data.results.bindings[i].indicatorDescription.value);
-	    
-	}
-        console.log(LBT.selected_indicator, LBT.selected_year, info_indicator_country);
-	var addrow = '<tr>\
-	    <td class="t-td" data-id="'+LBT.current_indicator.id+'"><a href="'+LBT.current_indicator.id+'" target="_blank">'+LBT.current_indicator.name+'</a> <span class="info-bubble txt-s fright" data-toggle="tooltip" data-placement="top" title="'+info_indicator_country["7"]+'">i</span></td>\
-	    <td class="t-td txt-c year" data-year="'+info_indicator_country["1"]+'">'+info_indicator_country["1"]+'</td>\
-	    <td class="t-td txt-ar">'+info_indicator_country["2"].replace(/\B(?=(\d{3})+(?!\d))/g, ",")+'</td>\
-	    <td class="t-td">'+info_indicator_country["3"]+'</td>\
-	    <td class="t-td"><a href="'+info_indicator_country["5"]+'" target="_blank">'+info_indicator_country["0"]+'</a> (<a href="'+info_indicator_country["6"]+'" target="_blank">'+info_indicator_country["4"]+'</a>)</td>\
-	    <td class="t-td txt-c"><a href="#" class="r-row del-row" data-ord=""><img src="img/ico-trash.svg" class="c-obj"></a></td>\
-	</tr>';
-	$("table#tindicators tbody").append(addrow);
-
-	$(function () {
-	    $('[data-toggle="tooltip"]').tooltip();
-	});
-
-    });
-}
-
-
-
-//###EVENTOS####//
-//Borramos item de la tabla indicadores
-$(document).ready(function() {
-
-    $(document).delegate(".del-row","click", function(e) {
-	e.preventDefault();
-	$(this).parent().parent().remove().fadeOut("fast");
-    });
-
-    //Agregamos anos
-    $(document).delegate("#isindicators", "change", function(){
-	if($(this).val()!=0){
-	    $("#isyear").html("");
-	    $("#isyear").removeClass("cinput-disabled");
-	    $("#isyear").prop( "disabled", false );
-	    LBT.current_indicator.name = $(this).find("option:selected").text();
-	    LBT.selected_indicator = $(this).val();
-	    //setDataURLs();
-	    loadYearsIndicatorCountry();
-	}else{
-	    $("#isyear").val(0);
-	    $("#isyear").addClass("cinput-disabled");
-	    $("#isyear").prop( "disabled", true );
-	}
-
-    });
-
-    $(document).delegate("#isyear", "change", function(){
-	LBT.selected_indicator = $("#isindicators").val();
-    });
-
-    //Agregamos indicador
-    $(document).delegate(".cbtn-iadd-indicator", "click", function(e){	
-	e.preventDefault();
-
-	if(!$("#isyear").is('.cinput-disabled') && $("#isyear").val()!=0){
-
-	    var exist = 0;
-	    var indicatorsel = $("#isindicators").find("option:selected").val();
-	    LBT.current_indicator.id = $("#isindicators").find("option:selected").val();
-	    var yearsel = parseInt($("#isyear").find("option:selected").val());
-	    //console.log(indicatorsel+"-");
-	    $("#tindicators tbody tr").each(function(){
-		var indicatorTable = $(this).find("td").attr("data-id");
-		var yearTable = parseInt($(this).find("td.year").text());
-		//console.log(yearsel+':'+indicatorsel+" - "+yearTable+':'+indicatorTable);
-		if (indicatorTable == indicatorsel && yearTable == yearsel) {
-		    exist ++;
-		}
-	    });
-
-	    if(exist >0){
-		alert("This indicator and year was added");
-		return false;
-	    }
-
-	    //Get data	
-	    LBT.selected_year = $("#isyear").val();
-	    //console.log(table_selected_year);
-	    //console.log($("#isyear").val());
-	    //setDataURLs();
-	    loadCountryIndicatorInfo();
-	}else{
-	    alert("Select indicator and year");
-	}
-        return true;
-    });
+    var _data = {
+        years: [],
+        indicators: []
+    };
+    // TODO: Borken all indicators hardcoded in query / awful performance / cleanup use options.indicators for default
+    var _getIndicators = function () {
+        var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.query_default_table_indicators(_options.indicators));
+        return $.getJSON(query_url, function (data) {
+            data.results.bindings.forEach(function (item) {
+                var ind = {};
+                for (var prop in item) {
+                    ind[prop] = item[prop].value;
+                }
+                _data.indicators.push(ind);
+            });
+            console.log('Table', _options, data);
+        });
+    };
+    var _getIndicator = function () {
+        var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.query_info_indicator_country_year(
+            _options.selected, _options.year
+        ));
+        return $.getJSON(query_url, function (data) {
+            data.results.bindings.forEach(function (item) {
+                //console.log('New indicator', item);
+                var ind = {'year': _options.year};
+                for (var prop in item) {
+                    ind[prop] = item[prop].value;
+                }
+                _data.indicators.push(ind);
+            });
+        });
+    };
+    var _getYearsIndicator = function () {
+        var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.query_years_indicator_country(_options.selected));
+        return $.getJSON(query_url, function (data) {
+            _data.years = [];
+	    data.results.bindings.forEach(function (item) {
+                _data.years.push(item.year.value);
+            });
+            setOptionsYears();
+        });
+    };
+    function setOptionsYears() {
+        var str = '<option data-localize="inputs.years">Select year...</option>';
+        _data.years.forEach(function (y) {
+            var selected = (_options.year == y ? ' selected="selected"' : '');
+	    str += '<option value="' + y + '"' + selected + '>' + y + '</option>';
+        });
+        $(_options.target + ' select[name=year]').html(str);
+	$(_options.target + ' select[name=year]').prop( "disabled", false );
+    };
     
+
+    var _formatCol = function (col, ind) {
+        var str = '',
+            tdclass = '';
+        switch(col) {
+        case 'value':
+            tdclass = ' txt-ar';
+            // In original code, WTF is it replacing?...
+            // value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            // break;
+        //case 'dataset':
+            // TODO: re-merge with sourceOrg column?
+        default:
+            str = ind[col];
+            if (ind[col+'URL']) {
+                str = '<a href="'+ind[col+'URL']+'" target="_blank">' + ind[col] + '</a>';
+            }
+            if (ind[col+'Description']) {
+                str += ' <span class="info-bubble txt-s fright" data-toggle="tooltip" data-placement="top" title="'
+                    + ind[col+'Description'] + '">i</span>';
+            }
+            break;
+        }
+        return '<td class="t-td '+ col + tdclass +'" data-'+col+'="'+ind[col]+'">'+str+'</td>';
+    };
+    var _formatRow = function (ind) {
+        var cols = ['indicator', 'year', 'value', 'unit', 'dataset', 'sourceOrg'];
+        var row = '<tr>';
+            cols.forEach(function (col) {
+                row += _formatCol(col, ind);
+            });
+        // Add delete column 
+        row += '<td class="t-td txt-c"><a href="#" class="r-row del-row delete">'
+            + '<img src="img/ico-trash.svg" class="c-obj"></a></td></tr>';
+        return row;
+    };
+    var _draw = function () {
+        var tbody = '';
+        _data.indicators.forEach(function (ind) {
+            tbody += _formatRow(ind);
+        });
+        $(_options.target + ' table tbody').html(tbody);
+	$(_options.target + ' [data-toggle="tooltip"]').tooltip();
+    };
+    // Add row
+    // $("table#tindicators tbody").append(addrow);
+
+    var _bindUI = function () {
+        
+        $(_options.target).delegate("select", "change", function(e) {
+            if (e.target.name == 'indicator') {
+                _options.selected = e.target.value;
+                _getYearsIndicator();
+            }
+            if (e.target.name == 'year') {
+                _options.year = e.target.value;
+                //_getIndicator().done(function () { _draw(); });
+            }
+        });
+        
+        // Add row
+        $(_options.target).delegate("form a.add","click", function(e) {
+	    e.preventDefault();
+            _getIndicator().done(function () { _draw(); });
+        });
+
+        // Delete row
+        $(_options.target).delegate("td a.delete","click", function(e) {
+	    e.preventDefault();
+            console.log(e);
+	    $(this).parents('tr').remove().fadeOut("fast");
+        });
+
+    };
+    
+    return {
+        init: function () {
+            LBVIS.defers.indicators.done(function () {
+                var opts = LBVIS.getOptionsIndicators(_options.selected);
+                $(_options.target + ' select[name="indicator"]').html(opts);
+            });
+
+            _getIndicators().done(function () {
+                _draw();
+            });
+            _bindUI();
+        }
+    };
 });
