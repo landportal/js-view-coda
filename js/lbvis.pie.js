@@ -43,7 +43,9 @@ var lbvisPie = (function (args = {}) {
             _data.series = [];
             for (var ind in data.results.bindings[0]) {
                 var serie = {
-                    name: ind,
+                    id: ind,
+                    // TODO get it from LOD! WTF
+                    name: (ind == 'other' ? 'Other' : STATIC_INDICATOR_NAME[ind]),
                     color: _options.colors[_data.series.length],
                     y: parseFloat(data.results.bindings[0][ind].value)
                 };
@@ -54,7 +56,7 @@ var lbvisPie = (function (args = {}) {
                 if (ind === 'mainInd') {
                     _data.main = {
                         name: _options.indicators.main,
-                        y: serie.y
+                        value: serie.y
                     };
                     continue;
                 }
@@ -63,12 +65,12 @@ var lbvisPie = (function (args = {}) {
         });
     };
     var _chartTitle = function () {
-            //.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        //.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         // TODO: fix me, too much static/hardcoded stuff!
-        return '<span class="displayb txt-c">'+_options.title+'</span><div class="txt-m displayb txt-c">Total land area: ' + _data.main.name + ' <span class="displayb c-g40">' + _options.year + '</span></div>';
+        return '<span class="displayb txt-c">'+_options.title+'</span><div class="txt-m displayb txt-c">@@@' + _data.main.name + ': ' + _data.main.value + ' (unit)@@@<span class="displayb c-g40">' + _options.year + '</span></div>';
     };
     var _drawChart = function () {
-        console.log('Draw Pie', _data.series);
+        //console.log('Draw Pie', _data.series);
 	var CharPieOp = {
 	    chart: {
 		plotBackgroundColor: null,
