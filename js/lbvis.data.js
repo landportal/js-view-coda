@@ -59,39 +59,29 @@ cex:value ?value. \
 } ORDER BY ?indicatorURL ";
     };
 
+    var _getObs = function (indicator) {
+        var str = "SELECT ?obs FROM <http://data.landportal.info> WHERE { ?obs cex:ref-area <" + lod.uri.country + ISO3 + "> ; cex:ref-indicator <"+ lod.uri.indicator + indicator +"> ; cex:ref-time ?time . ?time time:hasBeginning ?timeValue . ?timeValue time:inXSDDateTime ?dateTime } ORDER BY DESC(?dateTime) LIMIT 1";
+        return str;
+    };
 
     // Table
     // TODO cleanup , this is horrible + remove HARDCODED values ,
     // DO: loop through default args to generate the subselect!
-    var _default_table_indicators = function () {
+    var _default_table_indicators = function (indicators) {
         return query.prefix + " \
-SELECT ?obs ?indicatorURL ?indicatorLabel ?indicatorDescription (year(?dateTime) as ?year) ?value ?unitLabel ?datasetURL ?datasetLabel ?sourceOrgURL ?sourceOrgLabel \
+SELECT ?obs ?indicator ?indicatorURL ?indicatorDescription (year(?dateTime) as ?year) ?value ?unit ?datasetURL ?dataset ?sourceOrgURL ?sourceOrg \
 FROM <http://data.landportal.info> \
 WHERE { \
-?obs cex:ref-indicator ?indicatorURL ; \
-	 cex:ref-time ?time ; \
-     cex:value ?value. \
-     ?indicatorURL ex:label ?indicatorLabel ; \
-                   ex:description ?indicatorDescription ; \
-				   ex:unit ?unitLabel ; \
-				   ex:dataset ?datasetURL . \
-	 ?datasetURL ex:label ?datasetLabel ; \
-	             ex:org ?sourceOrgURL . \
-	 ?sourceOrgURL ex:label ?sourceOrgLabel. \
-     ?time time:hasBeginning ?timeValue . \
-     ?timeValue time:inXSDDateTime ?dateTime \
- \
+ ?obs cex:ref-indicator ?indicatorURL ; cex:ref-time ?time ; cex:value ?value. \
+ ?indicatorURL ex:label ?indicator ; ex:description ?indicatorDescription ; ex:unit ?unit ; ex:dataset ?datasetURL . \
+ ?datasetURL ex:label ?dataset ; ex:org ?sourceOrgURL . \
+ ?sourceOrgURL ex:label ?sourceOrg . \
+ ?time time:hasBeginning ?timeValue . \
+ ?timeValue time:inXSDDateTime ?dateTime \
 { \
-SELECT ?obs \
-FROM <http://data.landportal.info> \
-WHERE { \
-?obs cex:ref-area <" + lod.uri.country + ISO3 + "> ; \
-     cex:ref-indicator <http://data.landportal.info/indicator/WB-SP.POP.TOTL> ; \
-     cex:ref-time ?time . \
-?time time:hasBeginning ?timeValue . \
-?timeValue time:inXSDDateTime ?dateTime } \
-ORDER BY DESC(?dateTime) \
-LIMIT 1 \
+SELECT ?obs FROM <http://data.landportal.info> WHERE { \
+?obs cex:ref-area <" + lod.uri.country + ISO3 + "> ; cex:ref-indicator <http://data.landportal.info/indicator/WB-SP.POP.TOTL> ; cex:ref-time ?time . ?time time:hasBeginning ?timeValue . ?timeValue time:inXSDDateTime ?dateTime } \
+ORDER BY DESC(?dateTime) LIMIT 1 \
 } \
 UNION \
 { \
@@ -189,22 +179,15 @@ LIMIT 1 \
 
     var _info_indicator_country_year = function (indicator, year) {
         return query.prefix + " \
-SELECT ?indicatorLabel ?indicatorDescription ?value ?unitLabel ?datasetURL ?datasetLabel ?sourceOrgURL ?sourceOrgLabel \
-FROM <http://data.landportal.info> \
-WHERE { \
-?obs cex:ref-area <" + lod.uri.country + ISO3 + "> ; \
-cex:ref-indicator ?indicatorURL ; \
-cex:value ?value ; \
-cex:ref-time ?time . \
-?time time:hasBeginning ?timeValue . \
-?timeValue time:inXSDDateTime '" + year + "-01-01T00:00:00Z'^^xsd:dateTime . \
-?indicatorURL ex:unit ?unitLabel ; \
-ex:dataset ?datasetURL . \
-?datasetURL ex:label ?datasetLabel ; \
-ex:org ?sourceOrgURL . \
-?sourceOrgURL ex:label ?sourceOrgLabel. \
-?indicatorURL ex:label ?indicatorLabel ; \
-ex:description ?indicatorDescription . \
+SELECT ?indicator ?indicatorURL ?indicatorDescription ?value ?unit ?datasetURL ?dataset ?sourceOrgURL ?sourceOrg \
+FROM <http://data.landportal.info> WHERE { \
+ ?obs cex:ref-area <" + lod.uri.country + ISO3 + "> ; cex:ref-indicator ?indicatorURL ; cex:value ?value ; cex:ref-time ?time . \
+ ?time time:hasBeginning ?timeValue . \
+ ?timeValue time:inXSDDateTime '" + year + "-01-01T00:00:00Z'^^xsd:dateTime . \
+ ?indicatorURL ex:unit ?unit ; ex:dataset ?datasetURL . \
+ ?datasetURL ex:label ?dataset ; ex:org ?sourceOrgURL . \
+ ?sourceOrgURL ex:label ?sourceOrg. \
+ ?indicatorURL ex:label ?indicator ; ex:description ?indicatorDescription . \
 VALUES ?indicatorURL {<" + lod.uri.indicator + indicator + ">} \
 }";
     };
