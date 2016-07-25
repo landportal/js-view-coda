@@ -76,8 +76,7 @@ var lbvisMap = (function (args = {}) {
     };
 
     var initMapGlobal = function () {
-        console.log('Map init ' + _options.type, _options);
-
+        //console.log('Map init ' + _options.type, _options);
         // 1) Indicators available for this country
         // Fill up select menu once indicators are loaded
         LBVIS.defers.indicators.done(function () {
@@ -95,7 +94,6 @@ var lbvisMap = (function (args = {}) {
         
         $(_options.target + " .pos_loader_data").removeClass("hddn");
         _getChartData().done(function () {
-            console.log('got chart data', _data);
             drawMapGlobal(_options.mapTarget, _data);
 	    $(_options.target + " .pos_loader_data").addClass("hddn");
         });
