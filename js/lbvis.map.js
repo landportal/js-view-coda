@@ -17,7 +17,7 @@ var lbvisMap = (function (args = {}) {
         type: args.type, // global or local
         target: args.target || '#map-' + args.type,
         mapTarget: args.mapTarget || '#map-' + args.type + '-wrapper',
-        selected: args.indicator || 'FAO-23045-6083',
+        selected: args.indicator || 'WB-SP.RUR.TOTL.ZS',
         year: args.year || 2014
     };
     var _data = {
@@ -29,24 +29,21 @@ var lbvisMap = (function (args = {}) {
         indicator: {}
     };
 
-    var loadYears = function () {
+    var _getYears = function () {
         _data.years = [];
         var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.query_years_indicator_country(_options.selected));
-        console.log('LBM YIM', LBVIS.DATA.query_years_indicator_country(_options.selected), query_url);
         return $.getJSON(query_url, function (data) {
             data.results.bindings.forEach(function (item) {
                 _data.years.push(item.year.value);
             });
-            console.log('got years', _options.selected, _data.years);
-            getOptionsYears();
+            setOptionsYears();
         });
     };
 
-    var loadChartData = function () {
+    var _getChartData = function () {
         var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.query_map_chart(_options.selected));
         return $.getJSON(query_url, function (data) {
             _data.chart = [];
-            // call back
             data.results.bindings.forEach(function (country_value) {
                 if (country_value.year.value != _options.year) return;
                 var v = parseFloat(country_value.value.value);
@@ -61,14 +58,15 @@ var lbvisMap = (function (args = {}) {
     };
 
     // UI / build options for years selection
-    var getOptionsYears = function () {
+    var setOptionsYears = function () {
         var str = '';
         _data.years.forEach(function(year) {
-            str += '<option value="'+year+'">'+year+'</option>';
+            str += '<option value="'+year+'"'
+                + (year == _options.year ? ' selected="selected"' : '')
+                + '>'+year+'</option>';
         });
-        console.log('options', str, _data.years);
         // TODO: bad , separate UI
-	$(_options.target + ' select.years').html('<option value="0" data-localize="inputs.syear">Select year ...</option>');
+	$(_options.target + ' select.years').html('<option data-localize="inputs.syear">Select year ...</option>');
 	if(str.length) {
 	    $(_options.target + ' select.years').append(str);
 	    $(_options.target + ' select.years').removeClass("cinput-disabled");
@@ -78,12 +76,12 @@ var lbvisMap = (function (args = {}) {
     };
 
     var initMapGlobal = function () {
-        console.log('Map init global', _options);
+        console.log('Map init ' + _options.type, _options);
 
         // 1) Indicators available for this country
         // Fill up select menu once indicators are loaded
         LBVIS.defers.indicators.done(function () {
-            var opts = LBVIS.getOptionsIndicators();
+            var opts = LBVIS.getOptionsIndicators(_options.selected);
             $(_options.target + ' select.indicators').html(opts);
         });
         // 2) Load selected indicator
@@ -93,11 +91,11 @@ var lbvisMap = (function (args = {}) {
         //_data.indicator = _data.indicators[_options.selected];
 
         // check defer LBVIS.defer.indicator_info
-        loadYears();
+        _getYears();
         
         $(_options.target + " .pos_loader_data").removeClass("hddn");
-        loadChartData().done(function () {
-            console.log('got chart data', _data.chart);
+        _getChartData().done(function () {
+            console.log('got chart data', _data);
             drawMapGlobal(_options.mapTarget, _data);
 	    $(_options.target + " .pos_loader_data").addClass("hddn");
         });
@@ -116,7 +114,7 @@ var lbvisMap = (function (args = {}) {
 	        $(_options.target + ' .years').prop("disabled", false);
 	        //_data.indicator.name = $(this).find("option:selected").text();
 	        _options.selected = $(this).val();
-	        loadYears();
+	        _getYears();
 	    } else {
 	        $(_options.target + ' .years').val(0);
 	        $(_options.target).addClass("cinput-disabled");
@@ -141,7 +139,7 @@ var lbvisMap = (function (args = {}) {
         OPTS: _options,
         DATA: _data,
         init: function () {
-            console.log('Map init', _options, LBVIS);
+            //console.log('Map init', _options, LBVIS);
             if (_options.type === 'global') {
                 initMapGlobal();
                 bindUI();
