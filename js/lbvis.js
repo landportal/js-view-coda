@@ -103,10 +103,12 @@ var lbvis = (function (args = {}) {
             }
             return _indicators_info[indicator];
         },
-        getOptionsIndicators: function () {
-            var options = '';
+        getOptionsIndicators: function (id) {
+            var options = '<option data-localize="inputs.indicators">Select an indicator...</option>';
             _indicators.forEach(function (indicator) {
-                options += '<option value="'+indicator.ID+'">'
+                var selected = '';
+                if (id && indicator.ID == id) selected = ' selected="selected"';
+                options += '<option value="'+indicator.ID+'"'+selected+'>'
                     + truncateString(indicator.indicatorLabel, 40, ' ', '...')
                     +'</option>';
             });
