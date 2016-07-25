@@ -1,4 +1,9 @@
 @charset "UTF-8";
+/* line 1, ../sass/screen.scss */
+table .loading {
+  height: 320px;
+}
+
 /* line 1, ../sass/_config.scss */
 body {
   font-family: 'Open Sans', sans-serif;
