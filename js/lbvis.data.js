@@ -13,10 +13,10 @@ var lbvisDATA = (function (args = {}) {
         suffix: args.suffix || '&should-sponge=&format=json&timeout=0&debug=on'
     };
     var query = {
-	prefix: "PREFIX cex: <http://purl.org/weso/ontology/computex#>\
-PREFIX time: <http://www.w3.org/2006/time#>\
+	prefix: "PREFIX cex: <http://purl.org/weso/ontology/computex#> \
+PREFIX time: <http://www.w3.org/2006/time#> \
 PREFIX ex: <http://www.example.org/rdf#>",
-        prefix_elgaf: "PREFIX cex: <http://purl.org/weso/ontology/computex#>\
+        prefix_lgaf: "PREFIX cex: <http://purl.org/weso/ontology/computex#> \
 PREFIX qb: <http://purl.org/linked-data/cube#>"
     };
     var _indicator_info = function (indicator_id) {
@@ -47,8 +47,8 @@ cex:ref-area ?countryURL . \
     };
 
     // ELGAF
-    var _elgaf_values = function (year) {
-        return query.prefix_elgaf + " \
+    var _lgaf_values = function (year) {
+        return query.prefix_lgaf + " \
 SELECT ?indicatorURL (STR(?value) AS ?value) \
 FROM <http://data.landportal.info> \
 WHERE { \
@@ -308,7 +308,7 @@ cex:value ?value. \
 ORDER BY ?indicatorURL",
 
             // TODO remove HARDCODED VAR
-            elgaf_country_years: query.prefix_elgaf + " \
+            lgaf_country_years: query.prefix_lgaf + " \
 SELECT DISTINCT ?dataset \
 FROM <http://data.landportal.info> \
 WHERE { \
@@ -446,8 +446,8 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
         query_get_indicator_info: function (info) {
             return _indicator_info(info);
         },
-        query_elgaf_values: function (year) {
-            return _elgaf_values(year);
+        query_lgaf_values: function (year) {
+            return _lgaf_values(year);
         },
         query_countries_per_indicator: function (indicator) {
             return _countries_per_indicator(indicator);
