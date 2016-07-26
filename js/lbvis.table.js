@@ -32,7 +32,6 @@ var lbvisTable = (function (args = {}) {
         ));
         return $.getJSON(query_url, function (data) {
             data.results.bindings.forEach(function (item) {
-                //console.log('New indicator', item);
                 var ind = {'year': _options.year};
                 for (var prop in item) {
                     ind[prop] = item[prop].value;
