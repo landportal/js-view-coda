@@ -90,7 +90,7 @@
 
 
     <a name="compare"></a>
-    <section class="p-sep-secc-top p-sep-secc-bottom cb-bottom-lh">
+    <section id="compare" class="p-sep-secc-top p-sep-secc-bottom cb-bottom-lh">
       <div class="header-section">
         <div class="container">
           <div class="row">
@@ -103,28 +103,30 @@
       </div>
 
       <div class="container">
+        <form>
         <div class="row m-l-top">
           <div class="col-md-3">
-              <select class="sindicator fos cinput cinput-s-arrow cinput-sh" id="lsindicador"></select>
+              <select name="indicator" class="sindicator fos cinput cinput-s-arrow cinput-sh" id="lsindicador"></select>
           </div>
           <div class="col-md-3">
-              <select class="scountry fos cinput cinput-s-arrow cinput-sh cinput-disabled" id="lscountry" disabled="disabled">
-                <option value="0" data-localize="inputs.scountry">Select country ...</option>
+              <select name="country" class="scountry fos cinput cinput-s-arrow cinput-sh" id="lscountry" disabled="disabled">
+                <option data-localize="inputs.scountry">Select country ...</option>
               </select>
           </div>
           <div class="col-md-2">
-              <select class="speriod fos cinput cinput-s-arrow cinput-sh cinput-disabled" id="lsperiod_from" disabled="disabled">
-                <option value="0" data-localize="inputs.speriodfrom">From year ...</option>
+              <select name="year[from]" class="years speriod fos cinput cinput-s-arrow cinput-sh" id="lsperiod_from" disabled="disabled">
+                <option data-localize="inputs.speriodfrom">From year ...</option>
               </select>
           </div>
           <div class="col-md-2">
-              <select class="speriod fos cinput cinput-s-arrow cinput-sh cinput-disabled" id="lsperiod_to" disabled="disabled">
-                <option value="0" data-localize="inputs.speriodto">To year ...</option>
+              <select name="year[to]" class="years speriod fos cinput cinput-s-arrow cinput-sh" id="lsperiod_to" disabled="disabled">
+                <option data-localize="inputs.speriodto">To year ...</option>
               </select>
           </div>
           <div class="col-md-2">
-              <a href="#" class="txt-s uppc txt-c cbtn cbtn-block cbtn-s-acc cbtn-s-sh2 fos cbtn-ladd-compare" data-localize="inputs.addtocompare">add</a>
+              <a class="add txt-s uppc txt-c cbtn cbtn-block cbtn-s-acc cbtn-s-sh2 fos cbtn-ladd-compare" data-localize="inputs.addtocompare">add</a>
           </div>
+          </form>
         </div>
         <div class="row">
           <div class="col-xs-12 txt-c p-l-top p-l-bottom" id="labels-compare">
@@ -133,7 +135,7 @@
         </div>
         <div class="row m-xl-top" id="igraphics">
           <div class="col-xs-12 r-pos">
-            <div id="wrapper-igraphics"></div>
+            <div id="compare-chart"></div>
             <div class="pos_loader_data hddn">
               <div class="pos_spinkit">
                 <div class="sk-three-bounce no-m-bottom">
@@ -168,7 +170,7 @@
             <select class="indicators msindicator fos cinput cinput-s-arrow cinput-sh cinput-gray" id="msindicator"></select>
           </div>
           <div class="col-lg-3 col-md-4">
-            <select id="msyear" class="years msyear fos cinput cinput-s-arrow cinput-sh cinput-gray cinput-disabled" disabled="disabled">
+            <select id="msyear" class="years msyear fos cinput cinput-s-arrow cinput-sh cinput-gray" disabled="disabled">
                 <option value="0" data-localize="inputs.syear">Select year ...</option>
               </select>
           </div>
@@ -296,25 +298,23 @@
 
     <script src="js/vendor/jquery-1.11.2.min.js"></script>
     <script src="js/vendor/bootstrap.min.js"></script>
-    <!-- <script src="js/vendor/stock/highstock.js"></script> -->
-    <!-- <script src="js/vendor/maps/modules/map.js"></script> -->
-    <!-- <script src="js/vendor/highcharts-more.js"></script> -->
-    <!-- <script src="js/vendor/modules/exporting.js"></script> -->
     <script src="js/vendor/randomColor.js"></script>
+    <script src="js/vendor/highstock.js"></script>
+    <script src="js/vendor/highmaps.js"></script>
+    <script src="js/vendor/highcharts-more.js"></script>
+    <!-- <script src="js/vendor/modules/exporting.js"></script> -->
     <!-- <script src="js/vendor/jquery.localize.min.js"></script> -->
 
-        <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
+    <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
     <!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> -->
-    <script src="//code.highcharts.com/stock/highstock.js"></script>
-    <script src="//code.highcharts.com/maps/modules/map.js"></script>
-    <script src="//code.highcharts.com/highcharts-more.js"></script>
-    <!-- <script src="//code.highcharts.com/modules/exporting.js"></script> -->
     <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/randomcolor/0.4.4/randomColor.min.js"></script> -->
+    <!-- <script src="//code.highcharts.com/stock/highstock.js"></script> -->
+    <!-- <script src="//code.highcharts.com/maps/modules/map.js"></script> -->
+    <!-- <script src="//code.highcharts.com/highcharts-more.js"></script> -->
+    <!-- <script src="//code.highcharts.com/modules/exporting.js"></script> -->
 
-
-    <script src="js/lbvis.helpers.js"></script>
-    <script src="js/lbvis.js"></script>
     <script src="js/map_data.js"></script>
+    <script src="js/lbvis.js"></script>
     <script src="js/lbvis.map.js"></script>
     <script src="js/lbvis.linechart.js"></script>
     <script src="js/lbvis.table.js"></script>
@@ -338,7 +338,8 @@
       var LBT = new lbvisTable({
         vis: LBV
       });
-      LBT.init();
+      //LBT.init();
+
       // Global heatmap
       var LBMG = new lbvisMap({
         type: 'global',
@@ -362,11 +363,12 @@
       });
       LBE.init();
 
-      /*
       var LBLC = new lbvisLC({
-        vis: LBV
+        vis: LBV,
+        //indicator: 'WB-SP.POP.TOTL',
       });
-      */
+      LBLC.init();
+
       //var lang = getUrlVars()["lang"] || 'en';
       //$("[data-localize]").localize("lang/lp_labels", { language: lang });
     </script>
