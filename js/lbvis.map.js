@@ -26,7 +26,8 @@ var lbvisMap = (function (args = {}) {
         min: 0,
         max: 0,
         years: [],
-        indicator: {}
+        indicator: {},
+        indicators: {}
     };
 
     var _getYears = function () {
@@ -75,7 +76,7 @@ var lbvisMap = (function (args = {}) {
         return str;
     };
 
-    var initMapGlobal = function () {
+    var _initMapGlobal = function () {
         //console.log('Map init ' + _options.type, _options);
         // 1) Indicators available for this country
         // Fill up select menu once indicators are loaded
@@ -84,10 +85,10 @@ var lbvisMap = (function (args = {}) {
             $(_options.target + ' select.indicators').html(opts);
         });
         // 2) Load selected indicator
-        // BAD BORKEN DEFER
-        LBVIS.getIndicatorInfo(_options.selected);
-        _data.indicators = LBVIS.indicators_info();
-        //_data.indicator = _data.indicators[_options.selected];
+        LBVIS.getIndicatorInfo(_options.selected, _data.indicators).done(function () {
+            //console.log(_data);
+            _data.indicator = _data.indicators[_options.selected];
+        });
 
         // check defer LBVIS.defer.indicator_info
         _getYears();
@@ -102,21 +103,20 @@ var lbvisMap = (function (args = {}) {
     /*
      * Events
      */
-    var bindUI = function () {
+    var _bindUI = function () {
         // Country Indicators select
         $(_options.target).delegate(".indicators", "change", function(e) {
 	    e.preventDefault();
-	    if ($(this).val()!=0) {
+	    if (e.target.value) {
+                LBVIS.getIndicatorInfo(_options.indicatorID, _data.indicators);
+	        _options.selected = e.target.value;
 	        $(_options.target + ' .years').html("");
-	        $(_options.target + ' .years').removeClass("cinput-disabled");
 	        $(_options.target + ' .years').prop("disabled", false);
-	        //_data.indicator.name = $(this).find("option:selected").text();
-	        _options.selected = $(this).val();
+
 	        _getYears();
 	    } else {
 	        $(_options.target + ' .years').val(0);
-	        $(_options.target).addClass("cinput-disabled");
-	        $(_options.target).prop( "disabled", true );
+	        $(_options.target + ' .years').prop( "disabled", true );
 	    }
         });
 
@@ -124,7 +124,7 @@ var lbvisMap = (function (args = {}) {
 	    e.preventDefault();
 	    if ($(this).val()!=0) {
 	        _options.year = $(this).val();
-	        initMapGlobal();
+	        _initMapGlobal();
 	    }
         });
     };
@@ -139,8 +139,8 @@ var lbvisMap = (function (args = {}) {
         init: function () {
             //console.log('Map init', _options, LBVIS);
             if (_options.type === 'global') {
-                initMapGlobal();
-                bindUI();
+                _initMapGlobal();
+                _bindUI();
             } else {
                 drawMapLocal(_options.mapTarget);
                 $(_options.mapTarget).highcharts().get(LBVIS.ISO3).select();
@@ -216,7 +216,7 @@ function drawMapGlobal(target, data) {
 	    borderColor: 'white',
 	    mapData: data.map,
 	    joinBy: ['id', 'code'],
-	    name: 'blablabal',//data.indicator.name,
+	    name: data.indicator.label,
 	    states: {
 	        hover: {
 	            color: '#F5A623'
@@ -226,7 +226,7 @@ function drawMapGlobal(target, data) {
 	        }
 	    },
 	    tooltip: {
-	        pointFormat: '{point.name} <b>' + '{point.value}'.replace(/\B(?=(\d{3})+(?!\d))/g, ",")+' @@@unit@@@'+'</b>'
+	        pointFormat: '{point.name} <b>' + '{point.value}'.replace(/\B(?=(\d{3})+(?!\d))/g, ",")+' ' + data.indicator.unit +'</b>'
 	    }
 	}]
     });
