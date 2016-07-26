@@ -79,29 +79,50 @@ var lbvis = (function (args = {}) {
         });
     };
 
+    // Clap, clap, clap, about the only function kept from the original code.
+    // It is not really useful and can probably fail in some cases :)
+    // Note: string.length > limit and no breakchar in string?
+    //  it will also fail if the breakchar is after the limit
+    // LOL. ;)
+    function truncateString (string, limit, breakChar, rightPad) {
+        if (string.length <= limit) { return string; }
+        var substr = string.substr(0, limit),
+            breakPoint = substr.lastIndexOf(breakChar);
+        if (breakPoint >= 0) {
+            if (breakPoint < string.length - 1) {
+                return string.substr(0, breakPoint) + rightPad;
+            }
+        }
+    }
+
     return {
         // Public vars
-        defers: {},
+        defers: { info: {} },
         ISO3: args.iso3 || 'VNM',
         DATA: _DATA,
         // Shared data / sort of internal cache
         countries: function () { return _countries; },
         indicators: function () { return _indicators; },
         indicators_info: function () { return _indicators_info; },
-
+        TS: function (a, b, c, d) { return truncateString(a, b, c, d); },
         // Public methods
         init: function () {
             // TODO: use defer or proper async mecanism!
             this.defers.countries = _loadCountries();
             this.defers.indicators = _loadIndicators();
         },
-        getIndicatorInfo: function (indicator) {
-            console.log('FIX ME / bad caching / defers');
-            // one possible way, cache every indicator_info defer
-            if (!_indicators_info[indicator]) {
-                this.defers.indicator_info = _loadIndicatorInfo(indicator);
+        getIndicatorInfo: function (indicator, ptr) {
+            console.log('FIX ME / Not a gr8 defer', indicator);
+            if (!this.defers.info[indicator]) {
+                this.defers.info[indicator] = _loadIndicatorInfo(indicator, ptr);
             }
-            return _indicators_info[indicator];
+            
+            if (ptr) {
+                this.defers.info[indicator].done(function () {
+                    ptr[indicator] = _indicators_info[indicator];
+                });
+            }
+            return this.defers.info[indicator];
         },
         getOptionsIndicators: function (id) {
             var options = '<option data-localize="inputs.indicators">Select an indicator...</option>';
@@ -116,29 +137,3 @@ var lbvis = (function (args = {}) {
         }
     };
 });
-
-
-// TODO: Cache this globally so we never request twice the same indicator name
-// Check: maybe cheaper to fetch all indicators details at once (less queries back n' forth to sparql)
-// Note for LP: this data should be directly hard-baked by drupal in a (very dense) JS hash
-// It should already include all the localization for inficators name, desc an so on
-function getIndicatorInfo(indicator, ptr) {
-    LBV.indicator_info = [];
-    var query_get_indicator_info_URL = LBD.sparqlURL(LBD.query_get_indicator_info(indicator));
-    //console.log('getIndicatorInfo', indicator, query_get_indicator_info_URL);
-    $.getJSON(query_get_indicator_info_URL, function (data) {
-	for(var i=0; i < data.results.bindings.length; i++){
-	    LBV.indicator_info.push({
-		'name':data.results.bindings[i].indicatorLabel.value,
-		'desc':data.results.bindings[i].indicatorDescription.value,
-		'unit':data.results.bindings[i].indicatorUnit.value,
-		'datasetURL':data.results.bindings[i].datasetURL.value,
-		'datasetLabel':data.results.bindings[i].datasetLabel.value,
-		'sourceOrgURL':data.results.bindings[i].sourceOrgURL.value,
-		'sourceOrgLabel':data.results.bindings[i].sourceOrgLabel.value,
-	    });
-	}
-        //console.log('LBV getInfo: ' + indicator, LBV.indicator_info);
-        if (ptr) { ptr.current_indicator = LBV.indicator_info[0]; }
-    });
-}
