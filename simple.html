@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <title>All - LB VISualizations - Land Portal</title>
@@ -9,292 +9,254 @@
     <link rel="stylesheet" href="css/screen.css">
   </head>
   <body>
-
-    <section class="top-hero group r-pos" id="map-local">
+    <section id="map-local">
+      <h2 class="text-center" data-localize="global.map">Local map</h2>
       <div id="map-local-wrapper"></div>
     </section>  
 
-
-    <a name="indicators"></a>
-    <section id="table-indicators" class="p-sep-secc-top p-sep-secc-bottom bg-secc-clear cb-bottom-lh">
-      <div class="header-section">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-offset-2 col-md-8 txt-c">
-              <img src="img/ico-h2-indicators.png">
-              <h2 class="fos txt-small m-xs-top" data-localize="global.indicators">Indicators</h2>
-            </div>
-          </div>
+    <section id="table-indicators" class="container-fluid">
+      <header class="row">
+        <div class="col-md-offset-2 col-md-8 text-center">
+          <img src="img/ico-h2-indicators.png" alt="indicators">
+          <h2 data-localize="global.indicators">Indicators</h2>
         </div>
-      </div>
-      <div class="container p-l-top">
-        <div class="row">
-          <div class="col-xs-12">
-            <div class="table-responsive">
-              <table class="reset_table c-g60" id="tindicators">
-                <thead>
-                  <tr>
-                    <th class="uppc txt-s t-th fos t-th-green" data-localize="label.iname">Indicators</th>
-                    <th class="uppc txt-s t-th fos t-th-green txt-c" data-localize="label.year">Year</th>
-                    <th class="uppc txt-s t-th fos t-th-green txt-c" data-localize="label.val">Value</th>
-                    <th class="uppc txt-s t-th fos t-th-green" data-localize="label.unit">Unit</th>
-                    <th class="uppc txt-s t-th fos t-th-green" data-localize="label.dataset">Dataset</th>
-                    <th class="uppc txt-s t-th fos t-th-green" data-localize="label.dataset">Source</th>
-                    <th class="uppc txt-s t-th fos t-th-green txt-c" data-localize="label.remove">Remove</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="loading r-pos" colspan="7">
-                      <div class="pos_loader_data">
-                        <div class="pos_spinkit">
-                            <div class="sk-three-bounce no-m-bottom">
-                              <div class="sk-child sk-bounce1"></div>
-                              <div class="sk-child sk-bounce2"></div>
-                              <div class="sk-child sk-bounce3"></div>
-                            </div>
-                            <p class="txt-s c-g40 uppc txt-c fos no-m-top m-xs-top" data-localize="feedback.loading">Loading data ...</p>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <td colspan="7" class="t-tf t-tf-green txt-c txt-s fos"></td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="row m-l-top">
-          <form>
-          <div class="col-md-4">
-            <select name="indicator" class="sindicator fos cinput cinput-s-arrow cinput-sh cinput-gray">
-              <option data-localize="inputs.indicators">Select an indicator...</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <select name="year" class="years syear fos cinput cinput-s-arrow cinput-sh cinput-gray" disabled="disabled">
-              <option data-localize="inputs.years">Select a year...</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <a href="#" class="add txt-s uppc txt-c cbtn cbtn-block cbtn-s-acc cbtn-s-sh2 fos cbtn-iadd-indicator" data-localize="inputs.addindicator">add indicator</a>
-          </div>
-          </form>
-        </div>
-      </div>
-    </section>
-
-
-    <a name="compare"></a>
-    <section id="compare" class="p-sep-secc-top p-sep-secc-bottom cb-bottom-lh">
-      <div class="header-section">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-offset-2 col-md-8 txt-c">
-              <img src="img/ico-h2-infographics.png">
-              <h2 class="fos txt-small m-xs-top" data-localize="global.infographics">Compare countries</h2>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="container">
-        <form>
-        <div class="row m-l-top">
-          <div class="col-md-3">
-              <select name="indicator" class="sindicator fos cinput cinput-s-arrow cinput-sh" id="lsindicador"></select>
-          </div>
-          <div class="col-md-3">
-              <select name="country" class="scountry fos cinput cinput-s-arrow cinput-sh" id="lscountry" disabled="disabled">
-                <option data-localize="inputs.scountry">Select country ...</option>
-              </select>
-          </div>
-          <div class="col-md-2">
-              <select name="year[from]" class="years speriod fos cinput cinput-s-arrow cinput-sh" id="lsperiod_from" disabled="disabled">
-                <option data-localize="inputs.speriodfrom">From year ...</option>
-              </select>
-          </div>
-          <div class="col-md-2">
-              <select name="year[to]" class="years speriod fos cinput cinput-s-arrow cinput-sh" id="lsperiod_to" disabled="disabled">
-                <option data-localize="inputs.speriodto">To year ...</option>
-              </select>
-          </div>
-          <div class="col-md-2">
-              <a class="add txt-s uppc txt-c cbtn cbtn-block cbtn-s-acc cbtn-s-sh2 fos cbtn-ladd-compare" data-localize="inputs.addtocompare">add</a>
-          </div>
-          </form>
-        </div>
-        <div class="row">
-          <div class="col-xs-12 txt-c p-l-top p-l-bottom" id="labels-compare">
-            <span class="displayb c-g40 txt-xs uppc fos m-xs-bottom hddn remove-text">Remove countries added</span>
-          </div>
-        </div>
-        <div class="row m-xl-top" id="igraphics">
-          <div class="col-xs-12 r-pos">
-            <div id="compare-chart"></div>
-            <div class="pos_loader_data hddn">
-              <div class="pos_spinkit">
-                <div class="sk-three-bounce no-m-bottom">
-                  <div class="sk-child sk-bounce1"></div>
-                  <div class="sk-child sk-bounce2"></div>
-                  <div class="sk-child sk-bounce3"></div>
-                </div>
-                <p class="txt-s c-g40 uppc txt-c fos no-m-top m-xs-top" data-localize="feedback.loading">Loading data ...</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <a name="mapping"></a>
-    <section class="p-sep-secc-top p-sep-secc-bottom bg-secc-clear cb-bottom-lh" id="map-global">
-      <div class="header-section">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-offset-2 col-md-8 txt-c">
-              <img src="img/ico-h2-mapping.png">
-              <h2 class="fos txt-small m-xs-top" data-localize="global.mapping">Mapping</h2>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="container p-l-bottom">
-        <div class="row m-l-top">
-          <div class="col-lg-offset-2 col-lg-5 col-md-8">
-            <select class="indicators msindicator fos cinput cinput-s-arrow cinput-sh cinput-gray" id="msindicator"></select>
-          </div>
-          <div class="col-lg-3 col-md-4">
-            <select id="msyear" class="years msyear fos cinput cinput-s-arrow cinput-sh cinput-gray" disabled="disabled">
-                <option value="0" data-localize="inputs.syear">Select year ...</option>
-              </select>
-          </div>
-        </div>
-      </div>
-      <div id="maparea" class="r-pos">
-        <div class="tit-mapping">--</div>
-        <div id="map-global-wrapper"></div>
-        <div class="pos_loader_data hddn">
-          <div class="pos_spinkit">
-            <div class="sk-three-bounce no-m-bottom">
-              <div class="sk-child sk-bounce1"></div>
-              <div class="sk-child sk-bounce2"></div>
-              <div class="sk-child sk-bounce3"></div>
-            </div>
-            <p class="txt-s c-g40 uppc txt-c fos no-m-top m-xs-top" data-localize="feedback.loading">Loading data ...</p>
-          </div>
-        </div>
-      </div>
-      <div class="container p-xxl-bottom hddn">
-        <div class="row m-l-top">
-          <div class="col-xs-12 txt-c">
-            <div class="year-navigation c-obj">
-              <ul class="nav-years fos">
-                <li class="i-years"><a href="#" class="a-i-years">2008</a></li>
-                <li class="i-years"><a href="#" class="a-i-years">2009</a></li>
-                <li class="i-years"><a href="#" class="a-i-years">2010</a></li>
-                <li class="i-years"><a href="#" class="a-i-years">2011</a></li>
-                <li class="i-years"><a href="#" class="a-i-years">2012</a></li>
-                <li class="i-years"><a href="#" class="a-i-years">2013</a></li>
-                <li class="i-years"><a href="#" class="a-i-years a-i-acc">2014</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>  
-
-
-    <a name="rankings"></a>
-    <section class="p-sep-secc-top p-sep-secc-bottom cb-bottom-lh">
-      <div class="header-section">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-offset-2 col-md-8 txt-c">
-              <img src="img/ico-h2-rankings.png">
-              <h2 class="fos txt-small m-xs-top" data-localize="global.rankings">Infographic</h2>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="container p-xxl-bottom">
-        <div id="lgaf" class="LGAF_area hddn">
-          <div class="row m-l-top p-xl-bottom cb-bottom-lh">
-            <div class="col-xs-12 m-l-top m-s-bottom">
-              <p class="displayb txt-c fos">Land Governance Assessment Framework (LGAF)</p>
-            </div>
-            <form>
-              <div class="col-md-offset-1 col-md-2">
-              <select name="year" class="years egsyear fos cinput cinput-s-arrow cinput-sh">
-                  <option data-localize="inputs.subpanels">Year</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-              <select name="panel" class="panels egspanel fos cinput cinput-s-arrow cinput-sh">
-                  <option data-localize="inputs.subpanels">Panel</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-              <select name="subpanel" class="subpanels egsindicator fos cinput cinput-s-arrow cinput-sh">
-                  <option data-localize="inputs.subpanels">Sub-panel</option>
-                </select>
-            </div>
-            <form>
-
-          </div>
-          <div class="row p-l-bottom">
-            <div class="col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8 r-pos" id="quality-info">
-              <ul class="quality-list">
-                <li class="item-q fos r-pos txt-c c-g40">Please, select year and panels to show the info.</li>
-              </ul>
-              <div class="pos_loader_data hddn">
-                <div class="pos_spinkit">
-                    <div class="sk-three-bounce no-m-bottom">
+      </header>
+      <div class="row">
+        <div class="col-xs-12">
+          <table class="table">
+            <thead>
+              <tr>
+                <th data-localize="label.iname">Indicators</th>
+                <th data-localize="label.year">Year</th>
+                <th data-localize="label.val">Value</th>
+                <th data-localize="label.unit">Unit</th>
+                <th data-localize="label.dataset">Dataset</th>
+                <th data-localize="label.dataset">Source</th>
+                <th data-localize="label.remove">Remove</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="7">
+                  <div class="loading">
+                    <div class="sk-three-bounce">
                       <div class="sk-child sk-bounce1"></div>
                       <div class="sk-child sk-bounce2"></div>
                       <div class="sk-child sk-bounce3"></div>
                     </div>
-                    <p class="txt-s c-g40 uppc txt-c fos no-m-top m-xs-top" data-localize="feedback.loading">Loading data ...</p>
-                </div>
+                    <p class="text-center" data-localize="feedback.loading">Loading data ...</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <form class="form-inline">
+          <div class="form-group col-md-4">
+            <select name="indicator" class="form-control">
+              <option data-localize="inputs.indicators">Select an indicator...</option>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
+            <select name="year" class="form-control" disabled="disabled">
+              <option data-localize="inputs.years">Select a year...</option>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
+            <input type="submit" name="add" value="add indicator" class="btn btn-primary" data-localize="inputs.addindicator"/>
+          </div>
+        </form>
+      </div>
+    </section>
+
+
+
+    <section id="compare" class="container-fluid">
+      <div class="row">
+        <div class="col-md-offset-2 col-md-8 text-center">
+          <img src="img/ico-h2-infographics.png" alt="Compare">
+          <h2 class="" data-localize="global.compare">Compare countries</h2>
+        </div>
+      </div>
+
+      <div class="row">
+        <form class="form-inline">
+          <div class="form-group col-md-3">
+            <select name="indicator" class="form-control"></select>
+          </div>
+          <div class="form-group col-md-3">
+            <select name="country" class="form-control" disabled="disabled">
+              <option data-localize="inputs.scountry">Select country ...</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <select name="year[from]" class="form-control" disabled="disabled">
+              <option data-localize="inputs.speriodfrom">From year ...</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <select name="year[to]" class="form-control" disabled="disabled">
+              <option data-localize="inputs.speriodto">To year ...</option>
+            </select>
+          </div>
+          <div class="form-group col-md-2">
+            <input type="submit" name="add" value="add country" class="btn btn-primary" data-localize="inputs.addtocompare"/>
+          </div>
+        </form>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 text-center" id="labels-compare">
+          <span class="hidden">Remove countries added</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div id="compare-chart"></div>
+          <div class="loading">
+            <div class="pos_spinkit">
+              <div class="sk-three-bounce no-m-bottom">
+                <div class="sk-child sk-bounce1"></div>
+                <div class="sk-child sk-bounce2"></div>
+                <div class="sk-child sk-bounce3"></div>
               </div>
+              <p class="text-center" data-localize="feedback.loading">Loading data ...</p>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+
+    <section id="map-global" class="container-fluid">
+      <header class="row">
+        <div class="col-md-offset-2 col-md-8 text-center">
+          <img src="img/ico-h2-mapping.png" alt="mapping">
+          <h2 class="fos txt-small m-xs-top" data-localize="global.mapping">Mapping</h2>
+        </div>
+      </header>
+
+      <div class="row">
+        <form class="form-inline text-center">
+          <div class="form-group col-lg-offset-2 col-lg-5 col-md-8">
+            <select name="indicator" class="form-control"></select>
+          </div>
+          <div class="form-group col-lg-3 col-md-4">
+            <select name="year" class="form-control" disabled="disabled">
+              <option data-localize="inputs.syear">Select year ...</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="row">
+        <div id="map-global-wrapper" class="col-md-12"></div>
+        <div class="loading">
+          <div class="sk-three-bounce no-m-bottom">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+          </div>
+          <p class="text-center" data-localize="feedback.loading">Loading data ...</p>
+        </div>
+      </div>
+      <div class="row hidden year-navigation">
+        <div class="col-xs-12">
+          <ul class="nav-years">
+            <li><a href="#">2008</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>  
+
+
+    <section id="lgaf" class="container-fluid">
+      <header class="row text-center">
+        <div class="col-xs-12">
+          <img src="img/ico-h2-rankings.png" alt="inforgraphics">
+          <h2 data-localize="global.rankings">Infographic</h2>
+        </div>
+        <div class="col-xs-12">
+          <h3>Land Governance Assessment Framework (LGAF)</h3>
+        </div>
+      </header>
+
+      <div class="row">
+        <form class="form-inline">
+          <div class="form-group col-md-offset-1 col-md-2">
+            <select name="year" class="form-control" disabled="disabled">
+              <option data-localize="inputs.subpanels">Year</option>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
+            <select name="panel" class="form-control">
+              <option data-localize="inputs.subpanels">Panel</option>
+            </select>
+          </div>
+          <div class="form-group col-md-4">
+            <select name="subpanel" class="form-control">
+              <option data-localize="inputs.subpanels">Sub-panel</option>
+            </select>
+          </div>
+        </form>
+      </div>
+
+      <div class="row">
+        <div id="quality-info" class="col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8">
+          <ul class="list-unstyled">
+            <li>Please, select year and panels to show the info.</li>
+          </ul>
+          <div class="loading">
+            <div class="sk-three-bounce">
+              <div class="sk-child sk-bounce1"></div>
+              <div class="sk-child sk-bounce2"></div>
+              <div class="sk-child sk-bounce3"></div>
+            </div>
+            <p class="text-center" data-localize="feedback.loading">Loading data ...</p>
+          </div>
+        </div>
+        <div class="col-xs-12 text-center">
+          <ul class="list-unstyled list-inline lgaf-legend">
+            <li><span class="lgaf-value-a"></span> <span data-localize="label.vgp">Very Good Practice</span></li>
+            <li><span class="lgaf-value-b"></span> <span data-localize="label.gp">Good Practice</span></li>
+            <li><span class="lgaf-value-c"></span> <span data-localize="label.wp">Weak Practice</span></li>
+            <li><span class="lgaf-value-d"></span> <span data-localize="label.vwp">Very Weak Practice </span></li>
+            <li><span class="lgaf-value-na"></span> <span data-localize="label.ndata">Missing Value</span></li>
+          </ul>
+        </div>
+        <div class="col-xs-12">
+          <p>Note: Some Indicators might have multiple values (e.g. Green-Orange), which might refers to different localities or categories of people. For more information please refers to specific country reports and to the methodology made available by the original data source/provider: <a href="http://go.worldbank.org/21M7S7AZO0" target="_blank">The Land GovernanceAssessment Framework (LGAF) website of the World Bank</a></p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <!-- js-view-coda: Pie -->
+          <div id="wrapper-piechart"></div>
+        </div>
+
+        <div class="col-md-6">
+          <!-- js-view-coda: Spider -->
+          <div id="wrapper-spiderchart"></div>
+          <div class="row">
             <div class="col-xs-12">
-                <div class="quality-legend fos txt-c txt-s">
-                  <span class="cqdata-il cqdata-a"></span> <span data-localize="label.vgp">Very Good Practice</span> &nbsp; 
-                  <span class="cqdata-il cqdata-b"></span> <span data-localize="label.gp">Good Practice</span> &nbsp; 
-                  <span class="cqdata-il cqdata-c"></span> <span data-localize="label.wp">Weak Practice</span> &nbsp;
-                  <span class="cqdata-il cqdata-d"></span> <span data-localize="label.vwp">Very Weak Practice </span> &nbsp;
-                  <span class="cqdata-il cqdata-na"></span> <span data-localize="label.ndata">Missing Value</span> 
-                </div>
-            </div>
-            <div class="col-xs-12 m-l-top">
-                <div class="txt-s c-g40 fos">Note: Some Indicators might have multiple values (e.g. Green-Orange), which might refers to different localities or categories of people. For more information please refers to specific country reports and to the methodology made available by the original data source/provider: <a href="http://go.worldbank.org/21M7S7AZO0" target="_blank">The Land GovernanceAssessment Framework (LGAF) website of the World Bank</a></div>
-            </div>
-          </div>
-        </div>
-        <div class="row p-xxl-top m-xl-top cb-top-2">
-          <div class="col-md-6">
-            <div id="wrapper-piechart"></div>
-          </div>
-          <div class="col-md-6 sep-left-charts">
-            <div id="wrapper-spiderchart"></div>
-            <div class="txt-s c-g40 fos">Note: This spider chart reflects the level of development of a country on four dimensions, which are measured using four internationally accepted indexes:
-              <p class="m-xs-top no-m-bottom"><a href="https://landportal.info/book/indicators/oecd-sigi">The Social Institutions and Gender Index (SIGI) by OECD</a></p>
-              <p class="no-m-top no-m-bottom"><a href="https://landportal.info/book/indicators/wb-sipovgini">The GINI Index by the World Bank</a></p>
-              <p class="no-m-top no-m-bottom"><a href="https://landportal.info/book/indicators/undp-hdi-index">The Human Development Index (HDI) by UNDP</a></p>
-              <p class="no-m-top no-m-bottom"><a href="https://landportal.info/book/indicators/ifpri-ghi">The Global Hunger Index (GHI) by IFPRI</a></p>
-              <p class="m-xs-top no-m-bottom">All original values for the indexes have been rescaled from 0 to 100, where 0 reflects low development levels and 100 reflects high development levels.For each index the value for the most recent available year is selected by default".</p>
+              <p>Note: This spider chart reflects the level of development of a country on four dimensions, which are
+                measured using four internationally accepted indexes:</p>
+              <ul class="list-unstyled">
+                <li><a href="https://landportal.info/book/indicators/oecd-sigi">The Social Institutions and Gender Index (SIGI) by OECD</a></li>
+                <li><a href="https://landportal.info/book/indicators/wb-sipovgini">The GINI Index by the World Bank</a></li>
+                <li><a href="https://landportal.info/book/indicators/undp-hdi-index">The Human Development Index (HDI) by UNDP</a></li>
+                <li><a href="https://landportal.info/book/indicators/ifpri-ghi">The Global Hunger Index (GHI) by IFPRI</a></li>
+              </ul>
+              <p>All original values for the indexes have been rescaled from 0 to 100, where 0 reflects low development
+                levels and 100 reflects high development levels. For each index the value for the most recent available
+                year is selected by default.</p>
             </div>
           </div>
         </div>
-    </section> 
-
-
+      </div>
+    </section>
 
     <script src="js/vendor/jquery-1.11.2.min.js"></script>
     <script src="js/vendor/bootstrap.min.js"></script>
@@ -338,7 +300,7 @@
       var LBT = new lbvisTable({
         vis: LBV
       });
-      LBT.init();
+      //LBT.init();
 
       // Global heatmap
       var LBMG = new lbvisMap({
@@ -367,7 +329,7 @@
         vis: LBV,
         //indicator: 'WB-SP.POP.TOTL',
       });
-      LBLC.init();
+      //LBLC.init();
 
       //var lang = getUrlVars()["lang"] || 'en';
       //$("[data-localize]").localize("lang/lp_labels", { language: lang });
