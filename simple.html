@@ -71,8 +71,6 @@
       </div>
     </section>
 
-
-
     <section id="compare" class="container-fluid">
       <header class="row">
         <div class="col-md-offset-2 col-md-8 text-center">
@@ -140,10 +138,10 @@
 
       <div class="row">
         <form class="form-inline text-center">
-          <div class="form-group col-lg-offset-2 col-lg-5 col-md-8">
+          <div class="form-group col-xs-8 col-lg-offset-2 col-lg-5">
             <select name="indicator" class="form-control"></select>
           </div>
-          <div class="form-group col-lg-3 col-md-4">
+          <div class="form-group col-xs-4 col-lg-3">
             <select name="year" class="form-control" disabled="disabled">
               <option data-localize="inputs.syear">Select year ...</option>
             </select>
@@ -181,33 +179,28 @@
           <h3>Land Governance Assessment Framework (LGAF)</h3>
         </div>
       </header>
-
       <div class="row">
         <form class="form-inline">
-          <div class="form-group col-md-offset-1 col-md-2">
+          <div class="form-group col-xs-3 col-sm-offset-1 col-sm-2">
             <select name="year" class="form-control" disabled="disabled">
               <option data-localize="inputs.subpanels">Year</option>
             </select>
           </div>
-          <div class="form-group col-md-4">
+          <div class="form-group col-xs-9 col-sm-4">
             <select name="panel" class="form-control">
               <option data-localize="inputs.subpanels">Panel</option>
             </select>
           </div>
-          <div class="form-group col-md-4">
+          <div class="form-group col-xs-12 col-sm-4">
             <select name="subpanel" class="form-control">
               <option data-localize="inputs.subpanels">Sub-panel</option>
             </select>
           </div>
         </form>
       </div>
-
       <div class="row">
-        <div id="quality-info" class="col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8">
-          <ul class="list-unstyled">
-            <li>Please, select year and panels to show the info.</li>
-          </ul>
-          <div class="loading">
+        <div class="col-xs-12 col-md-offset-2 col-md-8">
+          <div class="loading hidden">
             <div class="sk-three-bounce">
               <div class="sk-child sk-bounce1"></div>
               <div class="sk-child sk-bounce2"></div>
@@ -215,9 +208,12 @@
             </div>
             <p class="text-center" data-localize="feedback.loading">Loading data ...</p>
           </div>
+          <ul id="lgaf-values" class="list-unstyled">
+            <li>Please, select year and panels to show the info.</li>
+          </ul>
         </div>
         <div class="col-xs-12 text-center">
-          <ul class="list-unstyled list-inline lgaf-legend">
+          <ul id="lgaf-legend" class="list-unstyled list-inline">
             <li><span class="lgaf-value-a"></span> <span data-localize="label.vgp">Very Good Practice</span></li>
             <li><span class="lgaf-value-b"></span> <span data-localize="label.gp">Good Practice</span></li>
             <li><span class="lgaf-value-c"></span> <span data-localize="label.wp">Weak Practice</span></li>
@@ -231,12 +227,12 @@
       </div>
 
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-sm-6">
           <!-- js-view-coda: Pie -->
           <div id="wrapper-piechart"></div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-sm-6">
           <!-- js-view-coda: Spider -->
           <div id="wrapper-spiderchart"></div>
           <div class="row">
@@ -329,10 +325,9 @@
         vis: LBV,
         //indicator: 'WB-SP.POP.TOTL',
       });
-      //LBLC.init();
+      LBLC.init();
 
-      //var lang = getUrlVars()["lang"] || 'en';
-      //$("[data-localize]").localize("lang/lp_labels", { language: lang });
+      //$("[data-localize]").localize("lang/lp_labels", { language: 'en' });
     </script>
     
   </body>
