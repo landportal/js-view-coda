@@ -9,6 +9,9 @@ $grey:  #999999;
 
 section {
     margin: 2em auto;
+    header h2 {
+        margin-top: 0;
+    }
 }
 
 .form-inline select.form-control {

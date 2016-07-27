@@ -7,18 +7,22 @@
 section {
   margin: 2em auto;
 }
+/* line 12, ../sass/screen.scss */
+section header h2 {
+  margin-top: 0;
+}
 
-/* line 14, ../sass/screen.scss */
+/* line 17, ../sass/screen.scss */
 .form-inline select.form-control {
   max-width: 100%;
 }
 
-/* line 18, ../sass/screen.scss */
+/* line 21, ../sass/screen.scss */
 .loading {
   position: relative;
   margin-bottom: 4em;
 }
-/* line 21, ../sass/screen.scss */
+/* line 24, ../sass/screen.scss */
 .loading p {
   position: absolute;
   top: 30px;
@@ -30,32 +34,32 @@ section {
 }
 
 /* LGAF visualization specific styles */
-/* line 34, ../sass/screen.scss */
+/* line 37, ../sass/screen.scss */
 .lgaf-value-a {
   background-color: #7ED321;
 }
 
-/* line 37, ../sass/screen.scss */
+/* line 40, ../sass/screen.scss */
 .lgaf-value-b {
   background-color: #F8E71C;
 }
 
-/* line 40, ../sass/screen.scss */
+/* line 43, ../sass/screen.scss */
 .lgaf-value-c {
   background-color: #F5A623;
 }
 
-/* line 43, ../sass/screen.scss */
+/* line 46, ../sass/screen.scss */
 .lgaf-value-d {
   background-color: #F6112D;
 }
 
-/* line 46, ../sass/screen.scss */
+/* line 49, ../sass/screen.scss */
 .lgaf-value-na {
   background-color: #999999;
 }
 
-/* line 49, ../sass/screen.scss */
+/* line 52, ../sass/screen.scss */
 .lgaf-legend li span:first-of-type {
   width: 1em;
   height: 1em;
