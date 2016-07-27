@@ -1,10 +1,54 @@
-table .loading {
-    height: 320px;
+@import "compass/css3/border-radius";
+
+$grey:  #999999;
+/* @import "config"; */
+/* @import "variables"; */
+/* @import "base"; */
+/* @import "layout"; */
+/* @import "modulos"; */
+
+section {
+    margin: 2em auto;
 }
 
-@import "config";
-@import "variables";
-@import "base";
-@import "layout";
-@import "modulos";
+.form-inline select.form-control {
+    max-width: 100%;
+}
 
+.loading {
+    position: relative;
+    margin-bottom: 4em;
+    p {
+        position: absolute;
+        top: 30px;
+        width: 100%;
+        font-family: 'Open Sans', sans-serif;
+        text-transform: uppercase;
+        color: $grey;
+        font-size: 12px;
+    }
+}
+
+
+/* LGAF visualization specific styles */
+.lgaf-value-a {
+    background-color: #7ED321;
+}
+.lgaf-value-b {
+    background-color: #F8E71C;
+}
+.lgaf-value-c {
+    background-color: #F5A623;
+}
+.lgaf-value-d {
+    background-color: #F6112D;
+}
+.lgaf-value-na {
+    background-color: $grey;
+}
+.lgaf-legend li span:first-of-type {
+     width: 1em;
+     height: 1em;
+     display: inline-block;
+     @include border-radius(20px);
+}
