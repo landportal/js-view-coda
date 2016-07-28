@@ -7,6 +7,10 @@ $grey:  #999999;
 /* @import "layout"; */
 /* @import "modulos"; */
 
+body {
+    background-color: #f8f8f8;
+}
+
 section {
     margin: 2em auto;
     header h2 {
@@ -14,10 +18,14 @@ section {
     }
 }
 
-.form-inline select.form-control {
-    max-width: 100%;
+form {
+    margin: 5px auto;
+    input {
+        width: 100%;
+    }
 }
 
+/* loader block / also using spinkit */
 .loading {
     position: relative;
     margin-bottom: 4em;
@@ -32,8 +40,7 @@ section {
     }
 }
 
-
-/* LGAF visualization specific styles */
+/* LGAF visualization styles */
 .lgaf-value-a {
     background-color: #7ED321;
 }
@@ -49,7 +56,13 @@ section {
 .lgaf-value-na {
     background-color: $grey;
 }
-.lgaf-legend li span:first-of-type {
+#lgaf-values li {
+    padding: 15px 20px;
+    border-bottom: 2px solid #F2F2F2;
+    background-color: #FFFFFF;
+}
+#lgaf-values li span:first-of-type,
+#lgaf-legend li span:first-of-type {
      width: 1em;
      height: 1em;
      display: inline-block;

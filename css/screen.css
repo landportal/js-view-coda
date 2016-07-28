@@ -4,25 +4,35 @@
 /* @import "layout"; */
 /* @import "modulos"; */
 /* line 10, ../sass/screen.scss */
+body {
+  background-color: #f8f8f8;
+}
+
+/* line 14, ../sass/screen.scss */
 section {
   margin: 2em auto;
 }
-/* line 12, ../sass/screen.scss */
+/* line 16, ../sass/screen.scss */
 section header h2 {
   margin-top: 0;
 }
 
-/* line 17, ../sass/screen.scss */
-.form-inline select.form-control {
-  max-width: 100%;
+/* line 21, ../sass/screen.scss */
+form {
+  margin: 5px auto;
+}
+/* line 23, ../sass/screen.scss */
+form input {
+  width: 100%;
 }
 
-/* line 21, ../sass/screen.scss */
+/* loader block / also using spinkit */
+/* line 29, ../sass/screen.scss */
 .loading {
   position: relative;
   margin-bottom: 4em;
 }
-/* line 24, ../sass/screen.scss */
+/* line 32, ../sass/screen.scss */
 .loading p {
   position: absolute;
   top: 30px;
@@ -33,34 +43,42 @@ section header h2 {
   font-size: 12px;
 }
 
-/* LGAF visualization specific styles */
-/* line 37, ../sass/screen.scss */
+/* LGAF visualization styles */
+/* line 44, ../sass/screen.scss */
 .lgaf-value-a {
   background-color: #7ED321;
 }
 
-/* line 40, ../sass/screen.scss */
+/* line 47, ../sass/screen.scss */
 .lgaf-value-b {
   background-color: #F8E71C;
 }
 
-/* line 43, ../sass/screen.scss */
+/* line 50, ../sass/screen.scss */
 .lgaf-value-c {
   background-color: #F5A623;
 }
 
-/* line 46, ../sass/screen.scss */
+/* line 53, ../sass/screen.scss */
 .lgaf-value-d {
   background-color: #F6112D;
 }
 
-/* line 49, ../sass/screen.scss */
+/* line 56, ../sass/screen.scss */
 .lgaf-value-na {
   background-color: #999999;
 }
 
-/* line 52, ../sass/screen.scss */
-.lgaf-legend li span:first-of-type {
+/* line 59, ../sass/screen.scss */
+#lgaf-values li {
+  padding: 15px 20px;
+  border-bottom: 2px solid #F2F2F2;
+  background-color: #FFFFFF;
+}
+
+/* line 64, ../sass/screen.scss */
+#lgaf-values li span:first-of-type,
+#lgaf-legend li span:first-of-type {
   width: 1em;
   height: 1em;
   display: inline-block;
