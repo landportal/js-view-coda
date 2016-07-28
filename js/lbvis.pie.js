@@ -1,10 +1,10 @@
 /*
  * LB vis. Pie chart
  *
-NOTE from (original) dev.
+ NOTE from (original) dev.
 
-Lot of hardcoded stuff to remove
-Make this truely dynamic. Need to fix the query
+ Lot of hardcoded stuff to remove
+ Make this truely dynamic. Need to fix the query
 
  */
 
@@ -26,7 +26,9 @@ var lbvisPie = (function (args = {}) {
 
     var _data = {
         main: {},
-        series: []
+        series: [],
+        indicator: {},   // Main indicator info
+        indicators: {}   // Indicators info cache
     };
     var chart_series = [];
     // TODO: fix me BADBADBAD
@@ -64,59 +66,61 @@ var lbvisPie = (function (args = {}) {
             }
         });
     };
-    var _chartTitle = function () {
-        //.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        // TODO: fix me, too much static/hardcoded stuff!
-        return '<span class="displayb txt-c">'+_options.title+'</span><div class="txt-m displayb txt-c">@@@' + _data.main.name + ': ' + _data.main.value + ' (unit)@@@<span class="displayb c-g40">' + _options.year + '</span></div>';
-    };
+
     var _drawChart = function () {
         //console.log('Draw Pie', _data.series);
-	var CharPieOp = {
-	    chart: {
-		plotBackgroundColor: null,
-		plotBorderWidth: null,
-		renderTo: $(_options.target)[0],
-		plotShadow: false,
-		type: 'pie',
-		backgroundColor: 'transparent'
-	    },
-	    credits:{
-		enabled:false
-	    },
-	    title: {
-		text: _chartTitle(),
-		useHTML: true
-	    },
-	    tooltip: {
-		pointFormat: '{series.name}<b>{point.percentage:.1f}%</b>'
-	    },
-	    legend: {
-	        itemWidth: 300
-	    },
-	    plotOptions: {
-		pie: {
-		    allowPointSelect: true,
-		    cursor: 'pointer',
-		    dataLabels: {
-			enabled: false
-		    },
-		    showInLegend: true
-		}
-	    },
-	    series: [{
-		name: ' ',
-		colorByPoint: true,
-		data: _data.series
-	    }]
-	};
-	return new Highcharts.Chart(CharPieOp);
+        var CharPieOp = {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                renderTo: $(_options.target)[0],
+                plotShadow: false,
+                type: 'pie',
+                backgroundColor: 'transparent'
+            },
+            credits: { enabled: false },
+            title: {
+                text: _options.title + ' ('+ _options.year +')',
+                align: 'center'
+            },
+            subtitle: {
+                text: _data.indicator.label + ': ' + _data.main.value + ' ('+ _data.indicator.unit +')',
+                align: 'center'
+            },
+            tooltip: {
+                pointFormat: '<b>{point.percentage:.1f}%</b>'
+            },
+            legend: {
+                itemWidth: 300
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true
+                }
+            },
+            series: [{
+                //name: _data.indicator.name,
+                colorByPoint: true,
+                data: _data.series
+            }]
+        };
+        return new Highcharts.Chart(CharPieOp);
     };
 
     // Public interfaces
     return {
         init: function () {
-            _loadData().done(function () {
-                _drawChart();
+            // Get main indicator info, then load Pie data
+            LBVIS.getIndicatorInfo(_options.indicators.main, _data.indicators).done(function () {
+                _data.indicator = _data.indicators[_options.indicators.main];
+                _loadData().done(function () {
+                    _drawChart();
+                });
             });
         }
     };
