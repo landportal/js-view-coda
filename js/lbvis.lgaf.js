@@ -5,7 +5,9 @@ var lbvisLGAF = (function (args = {}) {
         target: args.target      || '#lgaf',
         year: args.year          || '2016',
         panel: args.panel        || 'WB-LGAF2016-1',
-        subpanel: args.indicator || 'WB-LGAF2016-1.1'
+        subpanel: args.indicator || 'WB-LGAF2016-1.1',
+        jsonPath: args.jsonPath  || 'json'
+
     };
     var _defer = null;
     var _data = {
@@ -16,7 +18,7 @@ var lbvisLGAF = (function (args = {}) {
 
     /* GET Data */
     function _getLGAFstructure () {
-        return $.getJSON('json/LGAF_structure.json', function(data) {
+        return $.getJSON(_options.jsonPath + '/LGAF_structure.json', function(data) {
             //console.log('GOT LGAF struct:', data);
             for (var y in data) {
                 _data.panels[y] = data[y];
@@ -43,42 +45,34 @@ var lbvisLGAF = (function (args = {}) {
         var str = '<option data-localize="inputs.years">Select year...</option>';
         _data.years.forEach(function (y) {
             var selected = (_options.year == y ? ' selected="selected"' : '');
-	    str += '<option value="' + y + '"' + selected + '>' + y + '</option>';
+            str += '<option value="' + y + '"' + selected + '>' + y + '</option>';
         });
-        $(_options.target + ' select.years').html(str);
+        $(_options.target + ' select[name="year"]').prop( "disabled", (str ? false : true));
+        $(_options.target + ' select[name="year"]').html(str);
     }
     function setOptionsPanels() {
         var str = '<option data-localize="inputs.panels">Select a panel...</option>';
         _data.panels[_options.year].forEach(function (item) {
             var selected = (_options.panel == item.id ? ' selected="selected"' : '');
-	    str += '<option value="' + item.id + '"'+selected+'>' + item.name + '</option>';
+            str += '<option value="' + item.id + '"'+selected+'>' + item.name + '</option>';
         });
-	$(_options.target + ' select.panels').prop( "disabled", (str ? false : true));
-        // TODO: in CSS directly
-	//$(_options.target + ' select.panels').removeClass("cinput-disabled");
-        $(_options.target + ' select.panels').html(str);
+        $(_options.target + ' select[name="panel"]').prop( "disabled", (str ? false : true));
+        $(_options.target + ' select[name="panel"]').html(str);
     }
     function setOptionsSubpanels() {
         var str = '<option data-localize="inputs.subpanels">Select a sub-panel...</option>';
         var panel = _data.panels[_options.year].find(function(panel) {
             return (panel.id == _options.panel ? panel : null);
         });
-        //console.log('LGAF sub '+_options.subpanel, subpanel);
-        if (!panel) return false;
-        panel.subpanels.forEach(function (item) {
-            var selected = (_options.subpanel == item.id ? ' selected="selected"' : '');
-	    str += '<option value="' + item.id + '"'+selected+'>' + item.name + '</option>';
-        });
-	$(_options.target + ' select.subpanels').prop( "disabled", (str ? false : true));
-	//$(_options.target + ' select.subpanels').removeClass("cinput-disabled");
-        $(_options.target + ' select.subpanels').html(str);
-        return true;
+        if (panel) {
+            panel.subpanels.forEach(function (item) {
+                var selected = (_options.subpanel == item.id ? ' selected="selected"' : '');
+                str += '<option value="' + item.id + '"'+selected+'>' + item.name + '</option>';
+            });
+        }
+        $(_options.target + ' select[name="subpanel"]').prop( "disabled", (str ? false : true));
+        $(_options.target + ' select[name="subpanel"]').html(str);
     }
-    // function updateSelect(target) {
-    // 	//$(_options.target + ' ' + target).prop('selectedIndex');
-    //     $(_options.target + ' ' + target).removeClass("cinput-disabled");
-    //     $(_options.target + ' ' + target).prop("disabled", false);
-    // }
 
     function updateInfo() {
         _defer.done(function () {
@@ -90,14 +84,14 @@ var lbvisLGAF = (function (args = {}) {
             subpanel.indicators.forEach(function (indicator) {
                 var ival = _data.series.find(function(v) { return v.ID == indicator.id; });
                 var value = (ival ? ival.value.toLowerCase() : 'na');
-                row += '<li class="item-q fos r-pos">'
-                    + '<span class="txt-s cqdata cqdata-'+value+'"></span> '
+                // TODO: handle indicators with 2 values like A-B or A-C
+                row += '<li><span class="lgaf-value-'+value+'"></span> '
                     + indicator.name + '</li>';
                 // var split = indicatorsValues[i].value.split("-");
                 // split[1].toLowerCase()
             });
-            $("#quality-info .pos_loader_data").addClass("hddn");
-            $(".quality-list").html(row);
+            $(_options.target + " .loading").addClass("hidden");
+            $(_options.target + " #lgaf-values").html(row);
         }).fail(function () {
             // ERROR
             console.error('LGAF values', _options, _data);
@@ -105,10 +99,9 @@ var lbvisLGAF = (function (args = {}) {
     }
     
     function _bindUI () {
-	$(_options.target).removeClass("hddn");
         $(_options.target).delegate("select", "change", function(e) {
             // there isn't really anything to 'prevent' here, this is a select...
-	    e.preventDefault();
+            e.preventDefault();
             if (e.target.name == 'year') {
                 _options.year = e.target.value;
                 _options.panel = null;
@@ -128,8 +121,8 @@ var lbvisLGAF = (function (args = {}) {
                 updateInfo();
             }
             //console.log('EVENT ' + e.target.name + ' = '+e.target.value);
-	    //$(_options.target + " .quality-list").html('<li class="item-q fos r-pos txt-c c-g40">Please, select year and panels to show the info.</li>');
-	});
+            //$(_options.target + " .quality-list").html('<li class="item-q fos r-pos txt-c c-g40">Please, select year and panels to show the info.</li>');
+        });
     }
     
     return {
