@@ -1,9 +1,10 @@
-
 'use strict';
+
 var lbvisSpider = (function (args = {}) {
     var LBVIS = args.vis;
     var _options = {
-        target: args.target || '#wrapper-spiderchart'
+        target: args.target || '#wrapper-spiderchart',
+        title: args.title || 'Main indexes'
     };
     var categories_names = [];
     var chart_series = [];
@@ -69,12 +70,12 @@ var lbvisSpider = (function (args = {}) {
                 renderTo: $(_options.target)[0],
                 backgroundColor: 'transparent'
             },
-            credits: {
-                enabled:false
-            },
+            credits: { enabled:false },
             title: {
-                text: '<div class="txt-m displayb txt-c">Main Indexes</div>',
-                useHTML: true
+                text: _options.title
+            },
+            subtitle: {
+                text:  LBVIS.countries().find(function (c) { return c.iso3 === LBVIS.ISO3; }).name
             },
             pane: {
                 size: '80%'
@@ -91,11 +92,11 @@ var lbvisSpider = (function (args = {}) {
             },
             tooltip: {
                 shared: true,
-                pointFormat: '<span style="color:{series.color}">{series.name}: <b>{point.y:,.0f}</b><br/>'
+                pointFormat: '<b>{point.y:,.0f}</b> /100'
             },
             series: [{
                 showInLegend:false,
-                name: LBVIS.countries().find(function (c) { return c.iso3 === LBVIS.ISO3; }).name,
+                //name: LBVIS.countries().find(function (c) { return c.iso3 === LBVIS.ISO3; }).name,
                 data: chart_series,
                 pointPlacement: 'on'
             }]
