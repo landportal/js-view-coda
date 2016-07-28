@@ -19,11 +19,6 @@ var lbvisLC = (function (args = {}) {
         from: null,
         to: null,
         series: null
-        // serie: {
-        //     name: null,         // Serie name (should be same as _options.indicator)
-        //     data: [],           // Indicator value for coutries + years
-        //     color: []           // Same as _options.colors 
-        // }
     };
 
     /* Get DATA */
@@ -61,7 +56,7 @@ var lbvisLC = (function (args = {}) {
             _options.indicatorID, _options.compare
         );
         var query_URL = LBVIS.DATA.sparqlURL(query);
-	_data.defer = $.getJSON(query_URL, function (data) {
+        _data.defer = $.getJSON(query_URL, function (data) {
             _data.values = data.results.bindings.map(function (item) {
                 return {
                     'country': item.countryISO3.value,
@@ -81,7 +76,7 @@ var lbvisLC = (function (args = {}) {
         $(_options.target + ' select[name="country"]').prop('disabled', (str ? false : true));
         $(_options.target + ' select[name="country"]').html(
             '<option data-localize="inputs.countries">Select a country...</option>'
-            + str);
+                + str);
         return str;
     }
     function _setOptionsYears() {
@@ -117,49 +112,48 @@ var lbvisLC = (function (args = {}) {
     }
     function _draw() {
         _prepareSeries();
-	    var chart_type = "column";
-	    if(_data.from != _data.to) chart_type = "line";
-	    var CharLineOp = {
-		chart: {
-		    type: chart_type,
-		    backgroundColor: "transparent",
-		    renderTo: $(_options.target + ' ' + _options.target_chart)[0]
-		},
-		credits: {
-		    enabled: false
-		},
-		title: {
-		    text: '<span class="m-s-top m-xs-bottom txt-sh-dark txt-l">'
-                        + '<a href="'+_data.indicator.url+'" target="_blank" class="txt-l">'
-                        + _data.indicator.label + '</a>'
-                        +' ('+ _data.indicator.unit +')</span>',
-		    useHTML: true,
-		    x: -20 //center
-		},
-		subtitle: {
-		    text: '<a href="'+_data.indicator.datasetURL+'" target="_blank" class="txt-l">'
-                        + _data.indicator.dataset+'</a> (<a href="'+ _data.indicator.sourceOrgURL
-                        + '" target="_blank" class="txt-l">'+ _data.indicator.sourceOrg +'</a>)',
-		    useHTML: true,
-		    x: -20
-		},
-		xAxis: {
-		    categories: _data.years.filter(function (year) { return (year >= _data.from && year <= _data.to); })
-		},
-		yAxis: {
-		    title: {
-			text: _data.indicator.name
-		    }
-		},
-		legend: {
-		    align: 'center',
-		    verticalAlign: 'bottom',
-		    borderWidth: 0
-		},
-		series: _data.series
-	    };
-	$(_options.target + " .pos_loader_data").addClass("hddn");
-	return new Highcharts.Chart(CharLineOp);
+        var chart_type = "column";
+        if(_data.from != _data.to) chart_type = "line";
+        var CharLineOp = {
+            chart: {
+                type: chart_type,
+                backgroundColor: "transparent",
+                renderTo: $(_options.target + ' ' + _options.target_chart)[0]
+            },
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: '<a href="'+_data.indicator.url+'" target="_blank">'
+                    + _data.indicator.label + '</a>'
+                    +' ('+ _data.indicator.unit +')',
+                useHTML: true,
+                x: -20 //center
+            },
+            subtitle: {
+                text: '<a href="'+_data.indicator.datasetURL+'" target="_blank" class="txt-l">'
+                    + _data.indicator.dataset+'</a> (<a href="'+ _data.indicator.sourceOrgURL
+                    + '" target="_blank" class="txt-l">'+ _data.indicator.sourceOrg +'</a>)',
+                useHTML: true,
+                x: -20
+            },
+            xAxis: {
+                categories: _data.years.filter(function (year) { return (year >= _data.from && year <= _data.to); })
+            },
+            yAxis: {
+                title: {
+                    text: _data.indicator.name
+                }
+            },
+            legend: {
+                align: 'center',
+                verticalAlign: 'bottom',
+                borderWidth: 0
+            },
+            series: _data.series
+        };
+        $(_options.target + " .loading").addClass("hidden");
+        return new Highcharts.Chart(CharLineOp);
     }
 
     function _bindUI() {
@@ -190,7 +184,7 @@ var lbvisLC = (function (args = {}) {
                 // TODO: switch values if from > to?
             }
         });
-        $(_options.target + ' form').delegate(".add", "click", function(e) {
+        $(_options.target + ' form').delegate('input[name="add"]', "click", function(e) {
             e.preventDefault();
             console.log(_options, _data);
             // requery the data and draw chart
@@ -240,10 +234,6 @@ var lbvisLC = (function (args = {}) {
 // var label = '<span class="label-compare displayib fos txt-s">'+$("#lscountry option:selected").text()+' <a href="#" class="close-label" data-iso3="'+$("#lscountry option:selected").val()+'"><img src="img/close-label.svg"></a></span>';
 // $("#labels-compare").append(label)
 
-// if($("#labels-compare > span.label-compare").length > 0) {
-// 	$("span.remove-text").removeClass("hddn");
-// }
-
 // $(document).delegate(".close-label", "click", function(e){
 //     e.preventDefault();
 //     var stringToArray = LBLC.compared_countries;
@@ -254,7 +244,6 @@ var lbvisLC = (function (args = {}) {
 //     //Refrescamos el array existente donde se anaden
 //     $(this).parent().remove();
 //     if($("#labels-compare > span.label-compare").length == 0) {
-//         $("span.remove-text").addClass("hddn");
 //     }
 //     LBLC.compared_countries = stringToArray;
 //     //setDataURLs();
