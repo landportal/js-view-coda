@@ -23,7 +23,7 @@ var lbvisTable = (function (args = {}) {
                 }
                 _data.indicators.push(ind);
             });
-            console.log('Table', _options, data);
+            //console.log('Table', _options, data);
         });
     };
     var _getIndicator = function () {
@@ -65,8 +65,8 @@ var lbvisTable = (function (args = {}) {
         var str = '',
             tdclass = '';
         switch(col) {
-        case 'value':
-            tdclass = ' txt-ar';
+        // case 'value':
+        //     tdclass = ' txt-ar';
             // In original code, WTF is it replacing?...
             // value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             // break;
@@ -78,12 +78,11 @@ var lbvisTable = (function (args = {}) {
                 str = '<a href="'+ind[col+'URL']+'" target="_blank">' + ind[col] + '</a>';
             }
             if (ind[col+'Description']) {
-                str += ' <span class="info-bubble txt-s fright" data-toggle="tooltip" data-placement="top" title="'
-                    + ind[col+'Description'] + '">i</span>';
+                str += ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="' + ind[col+'Description'] + '"></span>';
             }
             break;
         }
-        return '<td class="t-td '+ col + tdclass +'" data-'+col+'="'+ind[col]+'">'+str+'</td>';
+        return '<td class="'+ col + tdclass +'" data-'+col+'="'+ind[col]+'">'+str+'</td>';
     };
     var _formatRow = function (ind) {
         var cols = ['indicator', 'year', 'value', 'unit', 'dataset', 'sourceOrg'];
@@ -92,8 +91,7 @@ var lbvisTable = (function (args = {}) {
                 row += _formatCol(col, ind);
             });
         // Add delete column 
-        row += '<td class="t-td txt-c"><a href="#" class="r-row del-row delete">'
-            + '<img src="img/ico-trash.svg" class="c-obj"></a></td></tr>';
+        row += '<td><a href="#" class="delete"><img src="img/ico-trash.svg"></a></td></tr>';
         return row;
     };
     var _draw = function () {
@@ -104,11 +102,8 @@ var lbvisTable = (function (args = {}) {
         $(_options.target + ' table tbody').html(tbody);
 	$(_options.target + ' [data-toggle="tooltip"]').tooltip();
     };
-    // Add row
-    // $("table#tindicators tbody").append(addrow);
 
     var _bindUI = function () {
-        
         $(_options.target).delegate("select", "change", function(e) {
             if (e.target.name == 'indicator') {
                 _options.selected = e.target.value;
@@ -119,20 +114,18 @@ var lbvisTable = (function (args = {}) {
                 //_getIndicator().done(function () { _draw(); });
             }
         });
-        
         // Add row
-        $(_options.target).delegate("form a.add","click", function(e) {
+        $(_options.target).delegate('form [name="add"]', "click", function(e) {
 	    e.preventDefault();
+            // here we could also just add a row and call tooltip again...
             _getIndicator().done(function () { _draw(); });
         });
-
         // Delete row
         $(_options.target).delegate("td a.delete","click", function(e) {
 	    e.preventDefault();
             console.log(e);
 	    $(this).parents('tr').remove().fadeOut("fast");
         });
-
     };
     
     return {
@@ -141,8 +134,9 @@ var lbvisTable = (function (args = {}) {
                 var opts = LBVIS.getOptionsIndicators(_options.selected);
                 $(_options.target + ' select[name="indicator"]').html(opts);
             });
-
+            $(_options.target + ' .loading').removeClass('hidden');
             _getIndicators().done(function () {
+                $(_options.target + ' .loading').addClass('hidden');
                 _draw();
             });
             _bindUI();
