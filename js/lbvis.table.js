@@ -91,7 +91,7 @@ var lbvisTable = (function (args = {}) {
                 row += _formatCol(col, ind);
             });
         // Add delete column 
-        row += '<td><a href="#" class="delete"><img src="img/ico-trash.svg"></a></td></tr>';
+        row += '<td><a href="#" class="delete"><span class="glyphicon glyphicon-trash"></span></a></td></tr>';
         return row;
     };
     var _draw = function () {
