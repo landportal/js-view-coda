@@ -63,20 +63,14 @@ WHERE { \
 VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
 } ORDER BY DESC(?dateTime)";
     };    
-
-    // Available countries for a given indicator
-    var _indicatorCountries = function (selected_indicator) {
-        return query.prefix + " \
-SELECT DISTINCT ?iso3 \
-FROM <http://data.landportal.info> \
-WHERE { \
-?obs cex:ref-indicator <" + lod.uri.indicator + selected_indicator + "> ; \
-cex:ref-area ?countryURL . \
-?countryURL ex:label ?countryLabel. \
- BIND (REPLACE(STR(?countryURL),'" + lod.uri.country + "','') AS ?iso3) \
-} ORDER BY ?countryLabel ";
-    };
-    var _indicatorValues = function (indicator) {
+    // Get all indicator values (aka obs), optionally filter by year
+    var _indicatorValues = function (indicator, year) {
+        var filters = [ "?uri", "?id" ],
+            values  = [ "<" + lod.uri.indicator + indicator + ">", "'"+ indicator +"'" ];
+        if (year) {
+            filters.push('?year');
+            values.push("'" + year + "'");
+        }
         return query.prefix + " \
 SELECT ?iso3 ?year ?value \
 FROM <http://data.landportal.info> \
@@ -87,11 +81,25 @@ WHERE { \
      cex:value ?value. \
 ?time time:hasBeginning ?timeValue . \
 ?timeValue time:inXSDDateTime ?dateTime . \
-VALUES (?uri ?id) { ( <" + lod.uri.indicator + indicator + "> "+ indicator +" ) } \
+VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
 BIND (REPLACE(STR(?countryURL), '" + lod.uri.country + "','') AS ?iso3) \
 BIND (year(?dateTime) AS ?year) \
 } ORDER BY ?dateTime ?countryURL";
     };
+
+    // Available countries for a given indicator
+    var _indicatorCountries = function (indicator) {
+        return query.prefix + " \
+SELECT DISTINCT ?iso3 \
+FROM <http://data.landportal.info> \
+WHERE { \
+?obs cex:ref-indicator <" + lod.uri.indicator + indicator + "> ; \
+cex:ref-area ?countryURL . \
+?countryURL ex:label ?countryLabel. \
+ BIND (REPLACE(STR(?countryURL),'" + lod.uri.country + "','') AS ?iso3) \
+} ORDER BY ?countryLabel ";
+    };
+
 
 
 
