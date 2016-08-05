@@ -5,25 +5,31 @@
  * Params:
  - type         # mandatory MUST be either 'local' or 'global'
  - vis          # mandatory MUST be a <lbvis> instance
- - indicator    # optional , default indicator
- * other global (bad) var used:
- - map_data     # mandatory MUST exist
+ - map_data     # mandatory MUST contain display data for the highchart map
 
+ * Options:
+ - iso3         # country
+ - showIndicators       # load indicators and fill up select menu
+ - indicator    # Load this indicator
+ - year         # Load this year (TODO: default to latest)
  */
 var lbvisMap = (function (args = {}) {
     var LBVIS = args.vis;
     var _options = {
-        type: args.type, // global or local
+        type: args.type,                // map type: global or local
+        iso3: args.iso3 || null,        // for local map, the iso3 of the country to zoom
         target: args.target || '#map-' + args.type,
         mapTarget: args.mapTarget || '#map-' + args.type + '-wrapper',
-        selected: args.indicator || 'WB-SP.RUR.TOTL.ZS',
-        year: args.year || 2014
+        // optional
+        showIndicators: false,                  // indicators + year select form
+        indicator: args.indicator || null       //'WB-SP.RUR.TOTL.ZS',
     };
     var _data = {
-        map: args.map_data || null,
+        map: args.map_data || map_data,
         chart: null,
         min: 0,
         max: 0,
+        year: args.year || null,
         years: [],
         indicator: {},
         indicators: {}
@@ -31,8 +37,9 @@ var lbvisMap = (function (args = {}) {
 
     var _getYears = function () {
         _data.years = [];
-        var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.query_years_indicator_country(_options.selected));
-        return $.getJSON(query_url, function (data) {
+        var query = LBVIS.DATA.queries.indicatorYears(_options.indicator, _options.iso3);
+        //console.log('Years', query);
+        return $.getJSON(LBVIS.DATA.sparqlURL(query), function (data) {
             data.results.bindings.forEach(function (item) {
                 _data.years.push(item.year.value);
             });
@@ -41,11 +48,11 @@ var lbvisMap = (function (args = {}) {
     };
 
     var _getChartData = function () {
-        var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.query_map_chart(_options.selected));
-        return $.getJSON(query_url, function (data) {
+        var query = LBVIS.DATA.queries.indicatorValues(_options.indicator);
+        console.log('Values', query);
+        return $.getJSON(LBVIS.DATA.sparqlURL(query), function (data) {
             _data.chart = [];
             data.results.bindings.forEach(function (country_value) {
-                if (country_value.year.value != _options.year) return;
                 var v = parseFloat(country_value.value.value);
                 _data.chart.push({
                     code: country_value.countryISO3.value,
@@ -76,20 +83,29 @@ var lbvisMap = (function (args = {}) {
 
     var _initMapGlobal = function () {
         //console.log('Map init ' + _options.type, _options);
-        // 1) Indicators available for this country
-        // Fill up select menu once indicators are loaded
-        LBVIS.defers.indicators.done(function () {
-            var opts = LBVIS.getOptionsIndicators(_options.selected);
-            $(_options.target + ' select[name="indicator"]').html(opts);
-        });
-        // 2) Load selected indicator
-        LBVIS.getIndicatorInfo(_options.selected, _data.indicators).done(function () {
-            //console.log(_data);
-            _data.indicator = _data.indicators[_options.selected];
-        });
 
-        // check defer LBVIS.defer.indicator_info
-        _getYears();
+        // Fill up indicators select menu
+        if (_options.showIndicators) {
+            LBVIS.defers.indicators.done(function () {
+                var opts = LBVIS.getOptionsIndicators(_options.indicator);
+                $(_options.target + ' select[name="indicator"]').html(opts);
+            });
+        }
+
+        // Load indicator Information
+        if (_options.indicator) {
+            var df = [];
+            df[0] = LBVIS.getIndicatorInfo(_options.indicator, _data.indicators).done(function () {
+                //console.log(_data);
+                _data.indicator = _data.indicators[_options.indicator];
+            });
+
+            df[1] = _getYears();
+            $.when(df).done(function () {
+                console.log('all Deferred completed', this, df);
+            });
+        }
+            
         $(_options.target + " .loading").removeClass("hidden");
         _getChartData().done(function () {
             drawMapGlobal(_options.mapTarget, _data);
@@ -106,7 +122,7 @@ var lbvisMap = (function (args = {}) {
             e.preventDefault();
             if (e.target.value) {
                 LBVIS.getIndicatorInfo(_options.indicatorID, _data.indicators);
-                _options.selected = e.target.value;
+                _options.indicator = e.target.value;
                 $(_options.target + ' select[name="year"]').html("");
                 _getYears();
                 // } else {
@@ -133,14 +149,16 @@ var lbvisMap = (function (args = {}) {
         DATA: _data,
         init: function () {
             //console.log('Map init', _options, LBVIS);
-            if (_options.type === 'global') {
-                _initMapGlobal();
-                _bindUI();
-            } else {
+            if (_options.type === 'local') {
                 drawMapLocal(_options.mapTarget);
-                $(_options.mapTarget).highcharts().get(LBVIS.ISO3).select();
-                $(_options.mapTarget).highcharts().get(LBVIS.ISO3).zoomTo();
+                $(_options.mapTarget).highcharts().get(_options.iso3).select();
+                $(_options.mapTarget).highcharts().get(_options.iso3).zoomTo();
                 $(_options.mapTarget).highcharts().mapZoom(3);
+            } else {
+                _initMapGlobal();
+                if (_options.showIndicators) {
+                    _bindUI();
+                }
             }
         }
     };
@@ -205,7 +223,7 @@ function drawMapGlobal(target, data) {
             minColor: "#D9ED7E"
         },
         series: [{
-            data: data.chart,
+            data: data.chart[data.year],
             allowPointSelect: true,
             nullColor: '#bbd6d8',
             borderColor: 'white',

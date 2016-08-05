@@ -5,132 +5,108 @@
  * This is a first rewrite as a JS app rather than dirty script.
  *
  * Author: Jules Clement <jules@ker.bz>
- */
-'use strict';
-
-/*
+ *
  * lbvis - main Object
  *
  * Prototype:
- *   new lbvis(options);
+ *   new lbvis({arguments});
+ *
  * Arguments:
- *   options    - configuration hash
  *      iso3    - MANDATORY - country iso 3 letters code
  * Example:
 
- var VIS = new lbvis({iso3: 'VNM'});
- VIS.init();
+var VIS = new lbvis({iso3: 'VNM'});
+VIS.init();
 
-*/
+ */
+
+'use strict';
+
 var lbvis = (function (args = {}) {
-    var options = args.options || {},   // Optional arguments
-        _countries = [],                // Holds the countries list
-        //_countries_indicators = [],   // Holds indicators available for this country
-        _indicators = [],               // Holds indicators list
-        _indicators_info = [],          // Holds indicators details
-        // Data connector
-        country = null;
-    var _DATA = args.data || new lbvisDATA({iso3: args.iso3});
+    var _options = {
+        iso3: args.iso3 || null
+    };
+    var _defers = { info: {} };           // AJAX Deferes
+    var _cache = {};            // Internal cache
+    var _DATA = args.data || new lbvisDATA(_options);
 
+    var _getSPARQL = function (query, type) {
+        _cache[type] = [];
+        var url = _DATA.sparqlURL(query);
+        _defers[type] = $.getJSON(url, function (data) {
+            data.results.bindings.forEach(function (item) {
+                var stuff = {};
+                Object.keys(item).forEach(function (prop) { stuff[prop] = item[prop].value; });
+                _cache[type].push(stuff);
+            });
+        });
+        return _defers[type];
+    };
+    
     // This pre-load all countries in a hash
     var _loadCountries = function () {
-        _countries = [];
-        var query_countries_iso3_URL = _DATA.sparqlURL(_DATA.queries.countries_iso3);
-        return $.getJSON(query_countries_iso3_URL, function (data) {
-	    for(var i=0; i < data.results.bindings.length; i++){
-	        _countries.push({
-                    name: data.results.bindings[i].countryLabel.value,
-                    iso3: data.results.bindings[i].countryISO3.value,
-                    url:  data.results.bindings[i].countryURL.value
-                });
-	    }
-        });
+        var q = _DATA.queries.countries;
+        //console.log(q);
+        return _getSPARQL(q, 'countries');
     };
 
-    // Loads all available indicators for a country
+    // Loads all available indicators
     var _loadIndicators = function () {
-        var query_country_indicators_URL = _DATA.sparqlURL(_DATA.queries.country_indicators);
-        //console.log(query_country_indicators_URL);
-        return $.getJSON(query_country_indicators_URL, function (data) {
-            data.results.bindings.forEach(function (item) {
-                var i = {};
-                Object.keys(item).forEach(function (prop) { i[prop] = item[prop].value; });
-                i.ID = i.indicatorURL.replace(_DATA.lod.uri.indicator,'');
-                // TODO: bad! why are we filtering WB-LGAF here? it should *E*LGAF...
-	        if(i.ID !== 'WB-LGAF') {
-                    _indicators.push(i);
-                }
-            });
-        });
-    };
-
-    var _loadIndicatorInfo = function (ID) {
-        //_indicators_info = [];
-        var query_get_indicator_info_URL = _DATA.sparqlURL(_DATA.query_get_indicator_info(ID));
-        return $.getJSON(query_get_indicator_info_URL, function (data) {
-	    data.results.bindings.forEach(function (indicator) {
-                var i = { ID: ID };
-                Object.keys(indicator).forEach(function (prop) {
-                    i[prop] = indicator[prop].value;
-                });
-                _indicators_info[ID] = i;
-                //console.log(ID, i);
-            });
-        });
-    };
-
-    // Clap, clap, clap, about the only function kept from the original code.
-    // It is not really useful and can probably fail in some cases :)
-    // Note: string.length > limit and no breakchar in string?
-    //  it will also fail if the breakchar is after the limit
-    // LOL. ;)
-    function truncateString (string, limit, breakChar, rightPad) {
-        if (string.length <= limit) { return string; }
-        var substr = string.substr(0, limit),
-            breakPoint = substr.lastIndexOf(breakChar);
-        if (breakPoint >= 0) {
-            if (breakPoint < string.length - 1) {
-                return string.substr(0, breakPoint) + rightPad;
-            }
+        var q = _DATA.queries.indicators;
+        if (_options.iso3) {
+            q = _DATA.queries.countryIndicators(_options.iso3);
         }
-    }
+        //console.log(q);
+        return _getSPARQL(q, 'indicators');
+    };
 
+    var _loadIndicatorInfo = function (id) {
+        var q = _DATA.queries.indicatorInfo(id);
+        //console.log(id, q);
+        return _getSPARQL(q, 'infoTmp', id);
+    };
+
+    var _init = function () {
+        _loadCountries();
+        _loadIndicators();
+    };
+    _init();
+
+    // Public methods
     return {
         // Public vars
-        defers: { info: {} },
-        ISO3: args.iso3 || 'VNM',
+        ISO3: args.iso3,
         DATA: _DATA,
-        // Shared data / sort of internal cache
-        countries: function () { return _countries; },
-        indicators: function () { return _indicators; },
-        indicators_info: function () { return _indicators_info; },
-        TS: function (a, b, c, d) { return truncateString(a, b, c, d); },
+        // Shared data / internal cache
+        defers: function () { return _defers; },
+        cache: function () { return _cache; },
+        countries: function () { return _cache['countries']; },
+        indicators: function () { return _cache['indicators']; },
+        indicators_info: function () { return _cache['info']; },
+
         // Public methods
         init: function () {
-            // TODO: use defer or proper async mecanism!
-            this.defers.countries = _loadCountries();
-            this.defers.indicators = _loadIndicators();
+            _init();
         },
         getIndicatorInfo: function (indicator, ptr) {
-            console.log('FIX ME / Not a gr8 defer', indicator);
-            if (!this.defers.info[indicator]) {
-                this.defers.info[indicator] = _loadIndicatorInfo(indicator, ptr);
+            console.log('FIX ME', indicator);
+            if (!_defers.info[indicator]) {
+                _defers.info[indicator] = _loadIndicatorInfo(indicator, ptr);
             }
-            
             if (ptr) {
-                this.defers.info[indicator].done(function () {
-                    ptr[indicator] = _indicators_info[indicator];
+                _defers.info[indicator].done(function () {
+                    ptr[indicator] = _cache['infoTmp'][0];
                 });
             }
-            return this.defers.info[indicator];
+            return _defers.info[indicator];
         },
         getOptionsIndicators: function (id) {
             var options = '<option data-localize="inputs.indicators">Select an indicator...</option>';
-            _indicators.forEach(function (indicator) {
+            _cache['indicators'].forEach(function (indicator) {
                 var selected = '';
                 if (id && indicator.ID == id) selected = ' selected="selected"';
                 options += '<option value="'+indicator.ID+'"'+selected+'>'
-                    + truncateString(indicator.indicatorLabel, 40, ' ', '...')
+                    + indicator.indicatorLabel
                     +'</option>';
             });
             return options;

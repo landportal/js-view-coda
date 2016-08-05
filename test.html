@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>All - LB VISualizations - Land Portal</title>
+    <!-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/screen.css">
+  </head>
+  <body>
+    <section id="stuff">
+      <h2 class="text-center">Stuff</h2>
+      <div id="stuff-wrapper"></div>
+    </section>  
+
+    <script src="js/vendor/jquery-1.11.2.min.js"></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
+    <!-- <script src="js/vendor/randomColor.js"></script> -->
+    <script src="js/vendor/highstock.js"></script>
+    <script src="js/vendor/highmaps.js"></script>
+    <!-- <script src="js/vendor/highcharts-more.js"></script> -->
+    <!-- <script src="js/vendor/modules/exporting.js"></script> -->
+    <!-- <script src="js/vendor/jquery.localize.min.js"></script> -->
+
+    <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
+    <!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> -->
+    <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/randomcolor/0.4.4/randomColor.min.js"></script> -->
+    <!-- <script src="//code.highcharts.com/stock/highstock.js"></script> -->
+    <!-- <script src="//code.highcharts.com/maps/modules/map.js"></script> -->
+    <!-- <script src="//code.highcharts.com/highcharts-more.js"></script> -->
+    <!-- <script src="//code.highcharts.com/modules/exporting.js"></script> -->
+
+    <script src="js/lbvis.data.js"></script>
+    <script src="js/lbvis.js"></script>
+    <script src="js/map_data.js"></script>
+    <script src="js/lbvis.map.js"></script>
+    <!-- <script src="js/lbvis.linechart.js"></script> -->
+    <!-- <script src="js/lbvis.table.js"></script> -->
+    <!-- <script src="js/lbvis.lgaf.js"></script> -->
+    <!-- <script src="js/lbvis.pie.js"></script> -->
+    <!-- <script src="js/lbvis.spider.js"></script> -->
+    <script type="text/javascript">
+
+      var LBV = new lbvis();
+
+      var LBM = new lbvisMap({vis: LBV, type: 'global', target: 'stuff',
+      indicator: 'WB-SP.RUR.TOTL.ZS',
+      });
+      LBM.init();
+
+      //var LBC = new lbvis({iso3: 'AGO'});
+
+    </script>
+    
+  </body>
+</html>

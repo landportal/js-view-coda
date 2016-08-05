@@ -1,4 +1,11 @@
-JavaScript Visualizations for the Land Portal
+
+JavaScript View COuntry DAta
+
+About
+=====
+
+This library allows you to visualize country-based dataset in various ways.
+The data comes directly from a LOD sparql endpoint (except for LGAF vis.)
 
 
 Installation
@@ -6,7 +13,6 @@ Installation
 
 # npm install [project_path OR GIT_url]
 # to deploy / get locally all dependencies (from package.json)
-
 
 Requirements
 ------------
@@ -19,20 +25,28 @@ JS libs:
    - highmaps
    - highcharts-more
    - exporting (optional)
- - boostrap
- - randomColor
+ - bootstrap
 
 
 Source
 ======
 GIT repository:
+  https://github.com/landportal/js-view-coda/
+
 Issues list:
+  https://github.com/landportal/js-view-coda/issues
+
+
 
 Authors
 =======
-Simbiosys - 2016
+JS library - Jules Clement <jules@ker.bz>
+(Wireframe/POC - Simbiosys)
+
+
 
 Licence
 =======
 This project is licensed under the terms of the MIT license.
 
+Note: It uses Highcharts, which is a non-free software/library.
