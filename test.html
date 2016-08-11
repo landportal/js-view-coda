@@ -5,12 +5,49 @@
     <title>All - LB VISualizations - Land Portal</title>
     <!-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/screen.css">
+
   </head>
   <body>
-    <section id="stuff">
-      <h2 class="text-center">Stuff</h2>
-      <div id="stuff-wrapper"></div>
+    
+    <section id="map-full" class="container-fluid">
+      <header class="row">
+        <div class="col-md-offset-2 col-md-8 text-center">
+          <h2 class="fos txt-small m-xs-top" data-localize="global.mapping">Mapping</h2>
+        </div>
+      </header>
+
+      <div class="row">
+        <form class="text-center">
+          <div class="form-group col-xs-8 col-lg-offset-2 col-lg-5">
+            <select name="indicator" class="form-control"></select>
+          </div>
+          <div class="form-group col-xs-4 col-lg-3">
+            <select name="year" class="form-control" disabled="disabled">
+              <option data-localize="inputs.syear">Select year ...</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="row">
+        <div style="position: absolute; z-index: 200; width: 100%; margin-top: -30px;">
+        <div class="loading">
+        </div>
+        </div>
+        <div id="map-full-wrapper" class="col-xs-12"></div>
+      </div>
+      <div class="row hidden year-navigation">
+        <div class="col-xs-12">
+          <ul class="nav-years">
+            <li><a href="#">2008</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>  
+
+    <hr/>
+    <section class="container-fluid">
+      <div id="map-wrapper"></div>
+      <div id="map-indi-wrapper"></div>
     </section>  
 
     <script src="js/vendor/jquery-1.11.2.min.js"></script>
@@ -42,14 +79,39 @@
     <script type="text/javascript">
 
       var LBV = new lbvis();
-
-      var LBM = new lbvisMap({vis: LBV, type: 'global', target: 'stuff',
-      indicator: 'WB-SP.RUR.TOTL.ZS',
+      var LBM = new lbvisMap({vis: LBV,
+        selectable: true,
+        tooltip: function () { return 'Click to visit '+this.point.name; },
+        events: { click: function () { window.location.href = '#'+this.id; } },
+        iso3: 'FRA',
+        zoom: 3
       });
-      LBM.init();
+      var LBMi = new lbvisMap({vis: LBV,
+        tooltip: function () { return this.point.name + ': ' + this.point.value; },
+        mapTarget: '#map-indi-wrapper',
+        indicator: 'WB-SP.RUR.TOTL.ZS',
+        legend: true,
+        iso3: 'VNM',
+        //tooltip: true,
+      });
+      var LBMf = new lbvisMap({vis: LBV,
+        tooltip: function () { return this.point.name + ': ' + this.point.value; },
+        target: '#map-full',
+        mapTarget: '#map-full-wrapper',
+        indicators: true,
+        indicator: 'WB-SP.RUR.TOTL.ZS',
+        legend: true,
+        iso3: 'USA',
+        //tooltip: true,
+      });
+
+      LBV.ready().done(function () {
+        //LBM.init();
+        //LBMi.init();
+        LBMf.init();
+      });
 
       //var LBC = new lbvis({iso3: 'AGO'});
-
     </script>
     
   </body>
