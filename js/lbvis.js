@@ -102,7 +102,7 @@ var lbvis = (function (args = {}) {
 
         // kinda bad...
         generateOptions: function (data, id) {
-            //var options = '<option data-localize="inputs.indicators">Select an indicator...</option>';
+            var options = '';
             data.forEach(function (item) {
                 var selected = (item.id === id ? ' selected="selected"' : '');
                 options += '<option value="'+item.id+'"'+selected+'>'

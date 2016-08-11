@@ -47,7 +47,7 @@ var lbvisMap = (function (args = {}) {
         iso3:           args.iso3       || null,        // iso3 of the country to select
         target:         args.target     || '#map',
         mapTarget:      args.mapTarget  || '#map-wrapper',
-        showIndicators: false,                          // indicators + year select form
+        showIndicators: args.indicators || false,       // indicators + year select form
         indicator:      args.indicator  || null,        // ex: 'WB-SP.RUR.TOTL.ZS'
         map: {
             events:     args.events     || {},
@@ -198,7 +198,6 @@ var lbvisMap = (function (args = {}) {
         return {
             data: data,
             joinBy: ['id', 'code'],
-            mapData: _data.mapData,
             name: _data.indicator.name
         };
     }
@@ -221,8 +220,8 @@ var lbvisMap = (function (args = {}) {
         // TODO : borken
         map.colorAxis[0].update(_map.colorAxis, true);
         console.log('update', map, _map.colorAxis);
-        //$(_options.mapTarget).highcharts().addSeries(_mapSerie(d));
         if (_options.iso3) {
+            // Borken? wait after setData / map update finished?
             $(_options.mapTarget).highcharts().get(_options.iso3).select();
         }
     }
@@ -245,8 +244,7 @@ var lbvisMap = (function (args = {}) {
             e.preventDefault();
             if (e.target.value) {
                 _options.year = e.target.value;
-                //_initMapGlobal();
-                // TODO : prep serie(s)
+                _mapUpdate();
             }
         });
     };
@@ -273,9 +271,12 @@ var lbvisMap = (function (args = {}) {
             }
             // Fills up Indicators select
             if (_options.showIndicators) {
-                LBVIS.defers.indicators.done(function () {
-                    var opts = LBVIS.getOptionsIndicators(_options.indicator);
+                LBVIS.defers('indicators').done(function () {
+
+                    _data.indicators = LBVIS.cache('indicators');
+                    var opts = LBVIS.generateOptions(_data.indicators, _options.indicator);
                     $(_options.target + ' select[name="indicator"]').html(opts);
+                    console.log(' indi', _data.indicators, opts);
                 });
                 _bindUI();
             }
