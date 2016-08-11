@@ -8,7 +8,7 @@ var lbvisDATA = (function (args = {}) {
             indicator: "http://data.landportal.info/indicator/"
         },
         sparql: {
-            prefix: args.prefix || 'http://landportal.info/sparql?default-graph-uri=&query=',
+            prefix: args.prefix || '//landportal.info/sparql?default-graph-uri=&query=',
             suffix: args.suffix || '&should-sponge=&format=json&timeout=0&debug=on'
         }
     };
