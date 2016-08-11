@@ -49,7 +49,7 @@ WHERE { \
             values  = [ "<" + lod.uri.indicator + indicator + ">" ];
         if (iso3) {
             filters.push("?country");
-            values.push("'" + lod.uri.country + iso3 + "'");
+            values.push("<" + lod.uri.country + iso3 + ">");
         }
         return query.prefix + " \
 SELECT DISTINCT (year(?dateTime) as ?year) \
