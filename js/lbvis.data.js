@@ -4,8 +4,9 @@ var lbvisDATA = (function (args = {}) {
     var ISO3 = args.iso3;
     var lod = {
         uri: {
-            country: "http://data.landportal.info/geo/",
-            indicator: "http://data.landportal.info/indicator/"
+            time:       "http://data.landportal.info/time/",
+            country:    "http://data.landportal.info/geo/",
+            indicator:  "http://data.landportal.info/indicator/"
         },
         sparql: {
             prefix: args.prefix || '//landportal.info/sparql?default-graph-uri=&query=',
@@ -68,8 +69,8 @@ VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
         var filters = [ "?uri", "?id" ],
             values  = [ "<" + lod.uri.indicator + indicator + ">", "'"+ indicator +"'" ];
         if (year) {
-            filters.push('?year');
-            values.push("'" + year + "'");
+            filters.push('?time');
+            values.push("<" + lod.uri.time + year + ">");
         }
         return query.prefix + " \
 SELECT ?iso3 ?year ?value \
