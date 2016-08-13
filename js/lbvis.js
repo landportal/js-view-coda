@@ -66,7 +66,7 @@ var lbvis = (function (args = {}) {
     // Get an indicator detail
     var _getIndicatorInfo = function (id) {
         var q = _DATA.queries.indicatorInfo(id);
-        return _getSPARQL(q, 'infoTmp', id);
+        return _getSPARQL(q, id);
     };
 
     var _init = function () {
