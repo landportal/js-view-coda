@@ -34,11 +34,52 @@
       <a href="#indicators">Indicators</a> (complete)
     </nav>
 
+    <section id="doc" class="container-fluid clearfix">
+      <h2>Documentation</h2>
+      <h3>Available options</h3>
+      <div class="row">
+      <div class="col-xs-6">
+      <p>Global options</p>
+      <dl>
+        <dt>title, subtitle: string</dt>
+        <dt>iso3 : country ISO 3 letters code</dt>
+        <dd>Select a specific country</dd>
+        <dt>target, mapTarget: xpath</dt>
+        <dd>XPath to element containing the map (target) and the element to draw the map (mapTarget)</dd>
+        <dt>indicators: bool</dt>
+        <dd>Requires: 'target' options and select elements name=indicators and name=year ; LBVIS. Show indicators select menu</dd>
+        <dt>indicator: indicator code</dt>
+        <dd>Show a specific indicator</dd>
+        <dt>data: array</dt>
+        <dd>Array of object with id and value</dd>
+      </dl>
+      </div>
+      <div class="col-xs-6">
+      <p>Map options</p>
+      <dl>
+        <dt>events: hash</dt>
+        <dd>(See: http://api.highcharts.com/highmaps#series&lt;map&gt;.events)</dd>
+        <dt>legend: bool</dt>
+        <dd>false: hide legend, true: show default legend</dd>
+        <dt>nav: bool</dt>
+        <dd>Show map 'navigation'. Allow to zoom in/out the map</dd>
+        <dt>selectable: bool</dt>
+        <dd>Allow to select a country. If we don't have data and indicator, the map will be filled with an empty dataset allowing for selection (and events callback) to work </dd>
+        <dt>tooltip: bool or callback</dt>
+        <dd>false: hide tooltip, true: show Highmaps default tooltip, callback: tooltip formatter callback (See: http://api.highcharts.com/highmaps#tooltip.formatter)</dd>
+        <dt>zoom: int</dt>
+        <dd>Zoom map</dd>
+      </dl>
+            </div>
+      </div>
+
+    </section>
     <section id="simple" class="container-fluid clearfix">
       <h2>Simple maps</h2>
 
       <div class="row">
         <article class="col-sm-6">
+          <p>Map with a selected country, zoom: 3</p>
           <div id="country"></div>
         </article>
         <article class="col-sm-6">
@@ -138,7 +179,7 @@ LBV.ready().done(function () {
     <script type="text/javascript">
       // Maps 'without' data
       var MapCountry = new lbvisMap({
-        target: '#simple',
+        //target: '#simple',
         mapTarget: '#country',
         iso3: 'FRA',
         zoom: 3,
