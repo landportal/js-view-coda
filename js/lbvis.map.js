@@ -111,7 +111,7 @@ var lbvisMap = (function (args = {}) {
                     year:  parseFloat(item.year.value)
                 });
             });
-            console.log(_data.chart[0], _data.chart[42]);
+            //console.log(_data.chart[0], _data.chart[42]);
         });
     };
 
@@ -288,9 +288,12 @@ var lbvisMap = (function (args = {}) {
      * Public methods
      */
     return {
+        debug: function () {
+            console.log(_options, _data, _map);
+        },
         draw: _mapDraw,
         init: function () {
-            console.log('Map init', _options, _data);
+            //console.log('Map init', _options, _data);
             // $(_options.target + " .loading").removeClass("hidden");
             _mapDraw();
             // Select and eventually zoom to country
@@ -306,6 +309,7 @@ var lbvisMap = (function (args = {}) {
                 _data.indicators = LBVIS.cache('indicators');
                 var opts = LBVIS.generateOptions(_data.indicators, _options.indicator);
                 $(_options.target + ' select[name="indicator"]').html(opts);
+                $(_options.target + ' select[name="indicator"]').prop( "disabled", false );
                 _bindUI();
             }
             // Get indicator details (meta + years)
