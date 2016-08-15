@@ -37,7 +37,7 @@ var lbvisMap = (function (args = {}) {
         subtitle:       args.subtitle   || null,        // Chart title
         iso3:           args.iso3       || null,        // iso3 of the country to select
         target:         args.target     || '#map',
-        mapTarget:      args.mapTarget  || args.target + '-wrapper' || '#map-wrapper',
+        mapTarget:      args.mapTarget  || (args.target ? args.target + '-wrapper' : '#map-wrapper'),
         showIndicators: args.indicators || false,       // indicators + year select form
         indicator:      args.indicator  || null,        // ex: 'WB-SP.RUR.TOTL.ZS'
         data:           args.data       || null,        // static data, array of objects (id/value) where id is iso3
