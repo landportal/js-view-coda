@@ -38,10 +38,11 @@
       <h2>Documentation</h2>
       <h3>Available options</h3>
       <div class="row">
-      <div class="col-xs-6">
+      <div class="col-sm-6">
       <p>Global options</p>
       <dl>
-        <dt>title, subtitle: string</dt>
+        <dt>title, subtitle: bool or string</dt>
+        <dd>False (default) hide sub/title. True: sub/title will be replaced by 'indicator' (see option indicator) label + year for the title and description for the subtitle.  String: set sub/title</dd>
         <dt>iso3 : country ISO 3 letters code</dt>
         <dd>Select a specific country</dd>
         <dt>target, mapTarget: xpath</dt>
@@ -51,10 +52,18 @@
         <dt>indicator: indicator code</dt>
         <dd>Show a specific indicator</dd>
         <dt>data: array</dt>
-        <dd>Array of object with id and value</dd>
+        <dd>Array of objects with id, value (and year?)</dd>
       </dl>
       </div>
-      <div class="col-xs-6">
+      <div class="col-sm-6">
+      <p>Color options</p>
+      <dl>
+        <dt>colors: hash</dt>
+        <dd>for the map / countries: background, hover, select, borders.<br/>
+          colorAxis: max, min, na</dd>
+      </dl>
+      </div>
+      <div class="col-sm-6">
       <p>Map options</p>
       <dl>
         <dt>events: hash</dt>
@@ -105,8 +114,8 @@
           <h2 data-localize="global.mapping">Mapping</h2>
         </header>
 
-        <nav class="col-md-offset-2 col-md-8 text-center">
-          <form class="text-center">
+        <nav class="text-center">
+          <form>
             <div class="form-group col-xs-8 col-lg-offset-2 col-lg-5">
               <select name="indicator" class="form-control" disabled="disabled"></select>
             </div>
@@ -121,29 +130,60 @@
             <div id="map-full-wrapper" class="map-fluid-wrapper"></div>
           </div>
         </div>
-
-        <footer>
-          <article class="col-xs-6">
-            <h3>HTML/CSS</h3>
-          </article>
-          <article class="col-xs-6">
-            <h3>Javascript</h3>
-              <pre>
-var LBV = new lbvis();
-var LBmap = new lbvisMap({vis: LBV,
-  tooltip: function () { return this.point.name + ': ' + this.point.value; },
-  target: '#map-full',
-  mapTarget: '#map-full-wrapper',
-  indicators: true,
-  indicator: 'WB-SL.AGR.EMPL.ZS',
-  legend: true,
-});
-LBV.ready().done(function () {
-  LBmap.init();
-});
-          </pre>
-        </footer>
       </article>
+
+      <aside>
+        <article class="col-xs-6">
+          <h3>HTML/CSS</h3>
+          <div id="indicators-source"><pre>
+// CSS Hack to make map 'responsive' with a 1/2 ratio
+.map-fluid {
+  position: relative;
+  padding-bottom: 50%;
+}
+.map-fluid .map-fluid-wrapper {
+  position: absolute;
+  width: 100%; height: 100%;
+}
+// HTML
+&lt;article id="indicators" class="row"&gt;
+  &lt;nav class="text-center"&gt;
+    &lt;form&gt;
+      &lt;div class="form-group col-xs-8 col-lg-offset-2 col-lg-5"&gt;
+        &lt;select name="indicator" class="form-control" disabled="disabled"&gt;&lt;/select&gt;
+      &lt;/div&gt;
+      &lt;div class="form-group col-xs-4 col-lg-3"&gt;
+        &lt;select name="year" class="form-control" disabled="disabled"&gt;&lt;/select&gt;
+      &lt;/div&gt;
+    &lt;/form&gt;
+  &lt;/nav&gt;
+  &lt;div class="col-xs-12"&gt;
+    &lt;div class="map-fluid"&gt;
+      &lt;div id="map-full-wrapper" class="map-fluid-wrapper"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/article&gt;
+            </pre>
+          </div>
+        </article>
+        <article class="col-xs-6">
+          <h3>Javascript</h3>
+          <pre>
+            var LBV = new lbvis();
+            var LBmap = new lbvisMap({vis: LBV,
+            tooltip: function () { return this.point.name + ': ' + this.point.value; },
+            target: '#map-full',
+            mapTarget: '#map-full-wrapper',
+            indicators: true,
+            indicator: 'WB-SL.AGR.EMPL.ZS',
+            legend: true,
+            });
+            LBV.ready().done(function () {
+            LBmap.init();
+            });
+          </pre>
+      </article>
+      </aside>
     </section>
 
     <footer class="container">
@@ -219,8 +259,6 @@ LBV.ready().done(function () {
       LBV.ready().done(function () {
         MapIndicators.init();
       });
-
-
     </script>
     
   </body>
