@@ -1,17 +1,8 @@
 'use strict';
 
-/* LB vis map class/module
+/**
+ * JS View CODA - map module
  *
- * Params:
- - vis          # mandatory MUST be a <lbvis> instance
- - map_data     # mandatory MUST contain display data for the highchart map
-
- * Options:
- - iso3         # country
- - showIndicators       # load indicators and fill up select menu
- - indicator    # Load this indicator
- - year         # Load this year
-
 
 Examples
 ========
@@ -37,14 +28,13 @@ tooltip: function () {
 
 (See: http://api.highcharts.com/highmaps#plotOptions.map.tooltip.pointFormatter)
 
-
  */
 var lbvisMap = (function (args = {}) {
     var LBVIS = args.vis;
     var _options = {
         //type: args.type,                // map type: global or local
-        title:          args.title      || null,       // Chart title
-        subtitle:       args.subtitle   || null,       // Chart title
+        title:          args.title      || null,        // Chart title
+        subtitle:       args.subtitle   || null,        // Chart title
         iso3:           args.iso3       || null,        // iso3 of the country to select
         target:         args.target     || '#map',
         mapTarget:      args.mapTarget  || args.target + '-wrapper' || '#map-wrapper',
@@ -83,20 +73,26 @@ var lbvisMap = (function (args = {}) {
     // Highchart parameters
     var _map = {};
 
+    // This method is used by mainstream libs (underscore...)
+    // See: http://perfectionkills.com/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
+    // http://stackoverflow.com/questions/4059147/check-if-a-variable-is-a-string (read through it)
+    var _isString = function (s) {
+        return Object.prototype.toString.call(s) == '[object String]';
+    };
+
     var _getYears = function () {
         $(_options.target + ' select[name="year"]').html("");
         _data.years = [];
         var query = LBVIS.DATA.queries.indicatorYears(_options.indicator, _options.iso3);
-
         return $.getJSON(LBVIS.DATA.sparqlURL(query), function (data) {
             data.results.bindings.forEach(function (item) {
                 _data.years.push(parseFloat(item.year.value) || item.year.value);
             });
+            // If year isn't set, pick the latest available year
             if (!_data.year) {
                 _data.year = Math.max.apply(Math, _data.years);
-                // TODO: set select option
             }
-            setOptionsYears();
+            _setOptionsYears();
         });
     };
 
@@ -108,7 +104,7 @@ var lbvisMap = (function (args = {}) {
                 _data.chart.push({
                     id:  item.iso3.value,
                     value: parseFloat(item.value.value),
-                    year:  parseFloat(item.year.value)
+                    year:  parseInt(item.year.value)
                 });
             });
             //console.log(_data.chart[0], _data.chart[42]);
@@ -124,27 +120,48 @@ var lbvisMap = (function (args = {}) {
         // Get Years for which this indicator is available
         df[1] = _getYears();
         return $.when(df[0], df[1]).done(function () {
-            _data.map.setTitle(
-                {text: _data.indicator.label + ' - ' + _data.year },
-                {text: _data.indicator.description}
-            );
+            _setTitles(_data.indicator.label + ' - ' + _data.year,
+                       _data.indicator.description);
         });
     };
 
-    // UI / build options for years selection
-    var setOptionsYears = function () {
+    var _setTitles = function(title, subtitle) {
+        //console.log('T: ', _options.title + '/'+title , _options.subtitle + '/'+subtitle);
+        // Check that _options.title/subtitle are true (not Strings) and have a value
+        if (_options.title === true && title) {
+            _map.title.text = title;
+        }
+        if (_options.subtitle === true && subtitle) {
+            _map.subtitle.text = subtitle;
+        }
+        _data.map.setTitle(_map.title, _map.subtitle);
+    };
+
+    var _setOptionsYears = function () {
+        var el = $(_options.target + ' select[name="year"]');
         var str = '';
         _data.years.forEach(function(year) {
             str += '<option value="'+year+'"'
                 + (year == _data.year ? ' selected="selected"' : '')
                 + '>'+year+'</option>';
         });
-        $(_options.target + ' select[name="year"]').html('<option data-localize="inputs.syear">Select year ...</option>');
+        el.html('<option data-localize="inputs.syear">Select a year...</option>');
         if(str.length) {
-            $(_options.target + ' select[name="year"]').append(str);
-            $(_options.target + ' select[name="year"]').prop( "disabled", false );
+            el.append(str);
+            el.prop( "disabled", false );
         }
         return str;
+    };
+
+    var _setOptionsIndicators = function () {
+        var el = $(_options.target + ' select[name="indicator"]');
+        _data.indicators = LBVIS.cache('indicators');
+        el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
+        var opts = LBVIS.generateOptions(_data.indicators, _options.indicator);
+        if (opts) {
+            el.append(opts);
+            el.prop( "disabled", false );
+        }
     };
 
     var _mapOptions = function () {
@@ -153,17 +170,17 @@ var lbvisMap = (function (args = {}) {
                 backgroundColor: _options.colors.background,
                 margin: (_options.indicator ? [40, 0, 0, 0] : 0)
             },
-            title:      { text: _options.title },
-            subtitle:   { text: _options.subtitle },
+            title:      { text: (_isString(_options.title) ? _options.title : null) },
+            subtitle:   { text: (_isString(_options.subtitle) ? _options.subtitle : null) },
             credits:    { enabled: false },
             legend:     { enabled: _options.map.legend, y: 20 },
-            tooltip:    { enabled: true, valueDecimals: 2 }//(_options.map.tooltip ? true : false) }
+            tooltip:    { enabled: (_options.map.tooltip ? true : false), valueDecimals: 2 }
         };
         _map.mapNavigation = {
             enabled: _options.map.nav,
-            // enableMouseWheelZoom: true,
-            // enableDoubleClickZoom: false,
-            // enableTouchZoom: false,
+            enableMouseWheelZoom: true,
+            enableDoubleClickZoom: false,
+            enableTouchZoom: false,
             buttons: {
                 zoomIn:  { y: 20, x: 20 },
                 zoomOut: { y: 50, x: 20 }
@@ -199,7 +216,13 @@ var lbvisMap = (function (args = {}) {
     var _mapDataset = function () {
         var dataset = [];
         if (_data.chart.length) {
-            dataset = _data.chart.filter(function (i) { return i.year == _data.year; });
+            if (_data.year && _data.chart[0].year) {
+                dataset = _data.chart.filter(function (i) { return i.year == _data.year; });
+            } else {
+                dataset = _data.chart;
+            }
+            // Get min/max values for this dataset
+            // TODO: borken colorAxis / refresh options?
             var d = dataset.map(function (i) { return i.value; });
             _map.colorAxis.min = Math.min.apply(Math, d);
             _map.colorAxis.max = Math.max.apply(Math, d);
@@ -207,14 +230,15 @@ var lbvisMap = (function (args = {}) {
         return dataset;
     };
 
-    function _mapSerie(data) {
+    var _mapSerie = function(data) {
         data = data || [];
         return {
             data: data,
-            //joinBy: 'id',
-            name: _data.indicator.label + ' - ' + _data.year
+            name: _data.indicator.label + (_data.year ? ' - ' + _data.year : '')
         };
-    }
+    };
+
+
 
     /*
      * Drawing
@@ -231,21 +255,24 @@ var lbvisMap = (function (args = {}) {
         //console.log('drawMap with ', _options, _data, _map);
         _data.map = $(_options.mapTarget).highcharts();
     }
-    function _mapUpdate() {
-        // Update series with (new) data, refresh map
-        var dataset = _mapDataset();
-        // map.series[0].setData(dataset);
 
+    function _mapUpdate() {
+        // Update series with (new) data
+        var dataset = _mapDataset();
+        // Method 1: update/replace values in series[0]
+        //map.series[0].setData(dataset);
+        // Method 2: remove series[0], add a new one
         _data.map.series[0].remove();
         _data.map.addSeries(_mapSerie(dataset));
-        //console.log('update serie', dataset);
-
+        // Borken config? (sort of, legend doesn't show min/max values)
         _data.map.colorAxis[0].update(_map.colorAxis);
-        //console.log('Borken update', map, JSON.stringify(_map.colorAxis));
         if (_options.iso3) {
-            // Borken? wait after setData / map update finished?
-            //var cc = $(_options.mapTarget).highcharts().get(_options.iso3).select();
-            //console.log(dataset);
+            // Re-select country, update selected point(s)
+            // Otherwise selected color isn't (re)set properly. Highchart (re)coloring bug?
+            _data.map.get(_options.iso3).select();
+            _data.map.getSelectedPoints().forEach(function (p) {
+                p.update();
+            });
         }
     }
 
@@ -266,7 +293,7 @@ var lbvisMap = (function (args = {}) {
                     _getChartData().done(function () {
                         _mapUpdate();
                     });
-                    console.log('Indicator changed', _data);
+                    //console.log('Indicator changed', _data);
                 });
             }
         });
@@ -306,10 +333,7 @@ var lbvisMap = (function (args = {}) {
             }
             // Fills up Indicators select
             if (_options.showIndicators) {
-                _data.indicators = LBVIS.cache('indicators');
-                var opts = LBVIS.generateOptions(_data.indicators, _options.indicator);
-                $(_options.target + ' select[name="indicator"]').html(opts);
-                $(_options.target + ' select[name="indicator"]').prop( "disabled", false );
+                _setOptionsIndicators();
                 _bindUI();
             }
             // Get indicator details (meta + years)
