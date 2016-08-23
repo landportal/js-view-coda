@@ -20,26 +20,29 @@ var lbvisSpider = (function (args = {}) {
             for(var i=0; i<chart_series_labels.length; i++){
                 var serie_name;
                 switch (chart_series_labels[i]){
-                case "sigiTo100":
-                    serie_name = "SIGI ("+
-                        data.results.bindings[0][chart_series_labels[2]].value+")";
-                    break;
-                case "giniTo100":
-                    serie_name = "GINI Index ("+
-                        data.results.bindings[0][chart_series_labels[5]].value+")";
-                    break;
-                case "hdiTo100":
-                    serie_name = "HDI ("+
-                        data.results.bindings[0][chart_series_labels[8]].value+")";
-                    break;
-                case "ghiTo100":
-                    serie_name = "GHI ("+
-                        data.results.bindings[0][chart_series_labels[11]].value+")";
-                    break;
-                default:
-                    serie_name = "notused";
-                    break;
-                }
+	        case "sigiTo100":	serie_name = "SIGI";
+		    if(data.results.bindings[0][chart_series_labels[2]]!=undefined){
+		        serie_name = serie_name	+ " ("+data.results.bindings[0][chart_series_labels[2]].value+")";
+		    }
+		    break;
+	        case "giniTo100": 	serie_name = "GINI Index";
+		    if(data.results.bindings[0][chart_series_labels[5]]!=undefined){
+		        serie_name = serie_name	+ " ("+data.results.bindings[0][chart_series_labels[5]].value+")";
+		    }
+		    break;
+	        case "hdiTo100": 	serie_name = "HDI";
+		    if(data.results.bindings[0][chart_series_labels[8]]!=undefined){
+		        serie_name = serie_name	+ " ("+data.results.bindings[0][chart_series_labels[8]].value+")";
+		    }
+		    break;
+	        case "ghiTo100": 	serie_name = "GHI";
+		    if(data.results.bindings[0][chart_series_labels[11]]!=undefined){
+		        serie_name = serie_name	+ " ("+data.results.bindings[0][chart_series_labels[11]].value+")";
+		    }
+		    break;
+	        default:			serie_name = "notused";
+		    break;
+	        }
 
                 if(serie_name!="notused"){
                     categories_names.push(serie_name);
