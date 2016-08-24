@@ -142,7 +142,6 @@ var lbvisLGAF = (function (args = {}) {
             }).fail(function () {
                 console.error('LGAF structure load', arguments);
             });
-            console.log(_options, _data);
             _bindUI();
         }
     };
