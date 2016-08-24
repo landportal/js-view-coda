@@ -2,74 +2,230 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Map examples - JS View CODA</title>
-    <!-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> -->
+    <title>LB vis examples - JS View CODA</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <style type="text/css">
+.map-fluid {
+  position: relative;
+  padding-bottom: 50%;
+}
+.map-fluid .map-fluid-wrapper {
+  position: absolute;
+  width: 100%; height: 100%;
+}
+    </style>
   </head>
   <body>
-    
-    <section id="map" class="container-fluid">
+
+    <section id="table-indicators" class="container-fluid">
       <header class="row">
         <div class="col-md-offset-2 col-md-8 text-center">
-          <h2 data-localize="global.mapping">Mapping</h2>
+          <h2 data-localize="global.indicators">Indicators table</h2>
         </div>
       </header>
 
       <div class="row">
-        <form class="text-center">
-          <div class="form-group col-xs-8 col-lg-offset-2 col-lg-5">
-            <select name="indicator" class="form-control" disabled="disabled"></select>
+        <div class="col-xs-12">
+          <table class="table">
+            <thead>
+              <tr>
+                <th data-localize="label.iname">Indicators</th>
+                <th data-localize="label.year">Year</th>
+                <th data-localize="label.val">Value</th>
+                <th data-localize="label.unit">Unit</th>
+                <th data-localize="label.dataset">Dataset</th>
+                <th data-localize="label.dataset">Source</th>
+                <th data-localize="label.remove">Remove</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <footer class="row">
+        <form>
+          <div class="form-group col-xs-7 col-sm-6">
+            <select name="indicator" class="form-control">
+              <option data-localize="inputs.indicators">Select an indicator...</option>
+            </select>
           </div>
-          <div class="form-group col-xs-4 col-lg-3">
-            <select name="year" class="form-control" disabled="disabled"></select>
+          <div class="form-group col-xs-5 col-sm-3">
+            <select name="year" class="form-control" disabled="disabled">
+              <option data-localize="inputs.years">Year...</option>
+            </select>
+          </div>
+          <div class="form-group col-xs-7 col-sm-3">
+            <input type="submit" name="add" value="Add" class="btn btn-primary" data-localize="inputs.addindicator"/>
+          </div>
+        </form>
+      </footer>
+    </section>
+
+    <section id="compare" class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <div id="spiderchart"></div>
+        </div>
+        <div class="col-sm-6">
+          <div id="piechart"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container-fluid">
+      <div class="row">
+        <!-- LGAF chart markup -->
+        <article id="lgaf" class="col-sm-12 text-center">
+          <header>
+            <h2 data-localize="global.title.lgaf">Land Governance Assessment Framework (LGAF)</h2>
+          </header>
+          <nav class="row">
+            <form>
+              <div class="form-group col-xs-6 col-sm-2">
+                <select name="year" class="form-control" disabled="disabled">
+                  <option data-localize="inputs.subpanels">Year</option>
+                </select>
+              </div>
+              <div class="form-group col-xs-9 col-sm-5">
+                <select name="panel" class="form-control">
+                  <option data-localize="inputs.subpanels">Panel</option>
+                </select>
+              </div>
+              <div class="form-group col-xs-12 col-sm-5">
+                <select name="subpanel" class="form-control">
+                  <option data-localize="inputs.subpanels">Sub-panel</option>
+                </select>
+              </div>
+            </form>
+          </nav>
+          <div class="row">
+            <div class="col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8">
+              <ul id="lgaf-wrapper" class="list-unstyled">
+                <li>Please, select year and panels to show the info.</li>
+              </ul>
+            </div>
+          </div>
+          <footer class="row">
+            <div class="col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8 text-center">
+              <ul class="list-unstyled list-inline legend">
+                <li><span class="lgaf-value-a lgaf-value"></span> <span data-localize="label.vgp">Very Good Practice</span></li>
+                <li><span class="lgaf-value-b lgaf-value"></span> <span data-localize="label.gp">Good Practice</span></li>
+                <li><span class="lgaf-value-c lgaf-value"></span> <span data-localize="label.wp">Weak Practice</span></li>
+                <li><span class="lgaf-value-d lgaf-value"></span> <span data-localize="label.vwp">Very Weak Practice </span></li>
+                <li><span class="lgaf-value-na lgaf-value"></span> <span data-localize="label.ndata">Missing Value</span></li>
+              </ul>
+            </div>
+          </footer>
+        </article>
+      </div>
+    </section>
+
+    <section id="compare" class="container-fluid">
+      <div class="row">
+        <form>
+          <div class="form-group col-xs-6 col-sm-3">
+            <select name="indicator" class="form-control">
+              <option data-localize="inputs.indicators">Select an indicator...</option>
+            </select>
+          </div>
+          <div class="form-group col-xs-6 col-sm-3">
+            <select name="country" class="form-control" disabled="disabled">
+              <option data-localize="inputs.scountry">Select country ...</option>
+            </select>
+          </div>
+          <div class="form-group col-xs-6 col-sm-2">
+            <select name="year[from]" class="form-control" disabled="disabled">
+              <option data-localize="inputs.speriodfrom">From year ...</option>
+            </select>
+          </div>
+          <div class="form-group col-xs-6 col-sm-2">
+            <select name="year[to]" class="form-control" disabled="disabled">
+              <option data-localize="inputs.speriodto">To year ...</option>
+            </select>
+          </div>
+          <div class="form-group col-xs-6 col-sm-2">
+            <input type="submit" name="add" value="Add country" class="btn btn-primary" data-localize="inputs.addtocompare"/>
           </div>
         </form>
       </div>
       <div class="row">
-        <div id="map-wrapper" class="col-xs-12"></div>
+        <div class="col-xs-12 text-center" id="labels-compare">
+          <span class="hidden">Remove countries added</span>
+        </div>
       </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div id="compare-chart"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="map" class="container-fluid">
+      <article id="indicators" class="row">
+        <header class="col-md-offset-2 col-md-8 text-center">
+          <h2 data-localize="global.mapping">Mapping</h2>
+        </header>
+        <nav class="text-center">
+          <form>
+            <div class="form-group col-xs-8 col-lg-offset-2 col-lg-5">
+              <select name="indicator" class="form-control" disabled="disabled"></select>
+            </div>
+            <div class="form-group col-xs-4 col-lg-3">
+              <select name="year" class="form-control" disabled="disabled"></select>
+            </div>
+          </form>
+        </nav>
+        <div class="col-xs-12">
+          <div class="map-fluid">
+            <div id="map-wrapper" class="map-fluid-wrapper"></div>
+          </div>
+        </div>
+      </article>
     </section>  
 
     <script src="js/vendor/jquery-1.11.2.min.js"></script>
     <script src="js/vendor/bootstrap.min.js"></script>
-    <!-- <script src="js/vendor/randomColor.js"></script> -->
     <script src="js/vendor/highstock.js"></script>
     <script src="js/vendor/highmaps.js"></script>
-    <!-- <script src="js/vendor/highcharts-more.js"></script> -->
+    <script src="js/vendor/highcharts-more.js"></script>
     <!-- <script src="js/vendor/modules/exporting.js"></script> -->
     <!-- <script src="js/vendor/jquery.localize.min.js"></script> -->
-
-    <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
-    <!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> -->
-    <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/randomcolor/0.4.4/randomColor.min.js"></script> -->
-    <!-- <script src="//code.highcharts.com/stock/highstock.js"></script> -->
-    <!-- <script src="//code.highcharts.com/maps/modules/map.js"></script> -->
-    <!-- <script src="//code.highcharts.com/highcharts-more.js"></script> -->
-    <!-- <script src="//code.highcharts.com/modules/exporting.js"></script> -->
-
     <script src="js/lbvis.data.js"></script>
     <script src="js/lbvis.js"></script>
     <script src="js/map_data.js"></script>
     <script src="js/lbvis.map.js"></script>
-    <!-- <script src="js/lbvis.linechart.js"></script> -->
-    <!-- <script src="js/lbvis.table.js"></script> -->
-    <!-- <script src="js/lbvis.lgaf.js"></script> -->
-    <!-- <script src="js/lbvis.pie.js"></script> -->
-    <!-- <script src="js/lbvis.spider.js"></script> -->
+    <script src="js/lbvis.linechart.js"></script>
+    <script src="js/lbvis.spider.js"></script>
+    <script src="js/lbvis.lgaf.js"></script>
+    <script src="js/lbvis.pie.js"></script>
+    <script src="js/lbvis.table.js"></script>
     <script type="text/javascript">
-      // With data
-      var LBV = new lbvis();
-      var MapIndicator = new lbvisMap({vis: LBV,
-        indicator: 'WB-SP.RUR.TOTL.ZS',
-        legend: true,
-        iso3: 'VNM',
-      });
-      LBV.ready().done(function () {
-        MapIndicator.init();
-      });
+      LBV = new lbvis();
+      var defaultParams = {vis: LBV, iso3: 'VNM'};
 
-      //var LBC = new lbvis({iso3: 'AGO'});
+      // LB Charts
+      Compare = new lbvisLC(defaultParams);
+      VMap = new lbvisMap($.extend({
+        indicator: 'WB-SP.RUR.TOTL.ZS',
+        indicators: true,
+        legend: true
+      }, defaultParams));
+      Spider = new lbvisSpider($.extend({target: '#spiderchart'}, defaultParams));
+      Pie = new lbvisPie($.extend({target: '#piechart'}, defaultParams));
+      LGAF = new lbvisLGAF($.extend({target: '#lgaf'}, defaultParams));
+      Table = new lbvisTable($.extend({target: '#table-indicators'}, defaultParams));
+
+      // Init Charts when LBV is ready (ie: indicators and countries are loaded)
+      LBV.ready().done(function () {
+        Compare.init();
+        VMap.init();
+        Spider.init();
+        Pie.init();
+        LGAF.init();
+        Table.init();
+      });
     </script>
-    
   </body>
 </html>
