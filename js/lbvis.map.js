@@ -321,7 +321,7 @@ var lbvisMap = (function (args = {}) {
         draw: _mapDraw,
         init: function () {
             //console.log('Map init', _options, _data);
-            // $(_options.target + " .loading").removeClass("hidden");
+            $(_options.target + " .loading").removeClass("hidden");
             _mapDraw();
             // Select and eventually zoom to country
             if (_options.iso3) {
@@ -342,10 +342,12 @@ var lbvisMap = (function (args = {}) {
                     // Get indicator values (all years)
                     _getChartData().done(function () {
                         _mapUpdate();
+                        $(_options.target + " .loading").addClass("hidden");
                     });
                 });
+            } else {
+                $(_options.target + " .loading").addClass("hidden");
             }
-            // $(_options.target + " .loading").addClass("hidden");
         }
     };
 });
