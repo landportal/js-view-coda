@@ -2,8 +2,10 @@
 var lbvisLGAF = (function (args = {}) {
     var LBVIS = args.vis;
     var _options = {
-        target: args.target      || '#lgaf',
+        iso3: args.iso3,
         year: args.year          || '2016',
+        target: args.target             || '#lgaf',
+        targetGraph: args.targetGraph   || (args.target ? args.target + '-wrapper' : '#lgaf-wrapper'),
         panel: args.panel        || 'WB-LGAF2016-1',
         subpanel: args.indicator || 'WB-LGAF2016-1.1',
         jsonPath: args.jsonPath  || 'json'
@@ -27,13 +29,12 @@ var lbvisLGAF = (function (args = {}) {
         });
     }
     function _getValues() {
-        var query = LBVIS.DATA.query_lgaf_values(_options.year);
+        var query = LBVIS.DATA.queries.lgaf_chart(_options.iso3, _options.year);
         var query_url = LBVIS.DATA.sparqlURL(query);
         _defer = $.getJSON(query_url, function (data) {
             data.results.bindings.forEach(function (item) {
                 var i = {};
                 Object.keys(item).forEach(function (prop) { i[prop] = item[prop].value; });
-                i.ID = i.indicatorURL.replace(LBVIS.DATA.lod.uri.indicator,'');
                 _data.series.push(i);
             });
         });
@@ -82,7 +83,7 @@ var lbvisLGAF = (function (args = {}) {
                     .subpanels.find(function(s) { return s.id == _options.subpanel; });
             //console.log('LGAF got values ', _options, _data, subpanel);
             subpanel.indicators.forEach(function (indicator) {
-                var ival = _data.series.find(function(v) { return v.ID == indicator.id; });
+                var ival = _data.series.find(function(v) { return v.id == indicator.id; });
                 var value = (ival ? ival.value.toLowerCase() : 'na');
                 // TODO: handle indicators with 2 values like A-B or A-C
                 row += '<li><span class="lgaf-value-'+value+'"></span> '
@@ -91,7 +92,7 @@ var lbvisLGAF = (function (args = {}) {
                 // split[1].toLowerCase()
             });
             $(_options.target + " .loading").addClass("hidden");
-            $(_options.target + " #lgaf-values").html(row);
+            $(_options.targetGraph).html(row);
         }).fail(function () {
             // ERROR
             console.error('LGAF values', _options, _data);
@@ -141,6 +142,7 @@ var lbvisLGAF = (function (args = {}) {
             }).fail(function () {
                 console.error('LGAF structure load', arguments);
             });
+            console.log(_options, _data);
             _bindUI();
         }
     };
