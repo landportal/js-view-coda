@@ -88,8 +88,8 @@ VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
         var filters = [ "?uri", "?id" ],
             values  = [ "<" + lod.uri.indicator + indicator + ">", "'"+ indicator +"'" ];
         if (year) {
-            filters.push('?year');
-            values.push("'" + year + "'");
+            filters.push('?time');
+            values.push("<" + lod.uri.time + year + ">");
         }
         return query.prefix + " \
 SELECT ?iso3 ?year ?value \
@@ -156,7 +156,7 @@ FROM <http://data.landportal.info> WHERE { \
  ?labelURL ex:label ?indicator ; ex:label ?label ; ex:description ?indicatorDescription . \
 VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
 BIND (year(?dateTime) AS ?year) \
-} ORDER BY ?year LIMIT 1";
+} ORDER BY DESC(?time) LIMIT 1";
     };
 
     // un-used
