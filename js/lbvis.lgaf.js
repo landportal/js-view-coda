@@ -87,7 +87,7 @@ var lbvisLGAF = (function (args = {}) {
                 var value = (ival ? ival.value.toLowerCase() : 'na');
 
                 var vspan = value.split('-').map(function (v) {
-                    return '<span class="lgaf-value lgaf-value-'+v+'"></span>';
+                    return '<span class="lgaf-value-'+v+'"></span>';
                 }).join('');
                 row += '<li>' + vspan + indicator.name + '</li>';
                 // var split = indicatorsValues[i].value.split("-");
