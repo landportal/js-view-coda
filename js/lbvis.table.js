@@ -27,7 +27,7 @@ var lbvisTable = (function (args = {}) {
         var query = LBVIS.DATA.queries.countryIndicatorValues(
             _options.iso3, id, _options.year
         );
-        console.log('get indicator', id, _options.year, query);
+        //console.log('get indicator', id, _options.year, query);
         return $.getJSON(LBVIS.DATA.sparqlURL(query), function (data) {
             data.results.bindings.forEach(function (item) {
                 var ind = {};
@@ -94,7 +94,7 @@ var lbvisTable = (function (args = {}) {
             tbody += _formatRow(ind);
         });
         var t = $(_options.target + ' table tbody');
-        console.log('draw', t);
+        //console.log('draw', t);
         t.html(tbody);
 	$(_options.target + ' [data-toggle="tooltip"]').tooltip();
     };
@@ -115,14 +115,13 @@ var lbvisTable = (function (args = {}) {
 	    e.preventDefault();
             // here we could also just add a row and call tooltip again...
             _getIndicator(_options.selected, _options.year).done(function () {
-                console.log('add', _options, _data);
+                //console.log('add', _options, _data);
                 _draw();
             });
         });
         // Delete row
         $(_options.target).delegate("td a.delete","click", function(e) {
 	    e.preventDefault();
-            console.log(e);
 	    $(this).parents('tr').remove().fadeOut("fast");
         });
     };
@@ -131,7 +130,7 @@ var lbvisTable = (function (args = {}) {
         init: function () {
             _setOptionsIndicators();
 
-            console.log('Table indicators', _options, _data);
+            //console.log('Table indicators', _options, _data);
             if (_options.indicators.length) {
                 $(_options.target + ' .loading').removeClass('hidden');
                 _getIndicators().done(function () {
