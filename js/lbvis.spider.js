@@ -1,16 +1,20 @@
+/**
+ * Require highcharts-more.js
+ */
 'use strict';
 
 var lbvisSpider = (function (args = {}) {
     var LBVIS = args.vis;
     var _options = {
         target: args.target || '#wrapper-spiderchart',
-        title: args.title || 'Main indexes'
+        title: args.title || 'Main indexes',
+        iso3: args.iso3
     };
     var categories_names = [];
     var chart_series = [];
 
     var _loadData = function () {
-        var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.queries.spider_chart);
+        var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.queries.spider_chart(_options.iso3));
         return $.getJSON(query_url, function (data) {
             // Un-cleaned , mad code to parse serie data
             // TODO: re-do :)
@@ -78,7 +82,7 @@ var lbvisSpider = (function (args = {}) {
                 text: _options.title
             },
             subtitle: {
-                text:  LBVIS.countries().find(function (c) { return c.iso3 === LBVIS.ISO3; }).name
+                text:  LBVIS.countries().find(function (c) { return c.iso3 === _options.iso3; }).name
             },
             pane: {
                 size: '80%'
@@ -99,11 +103,10 @@ var lbvisSpider = (function (args = {}) {
             },
             series: [{
                 showInLegend:false,
-                //name: LBVIS.countries().find(function (c) { return c.iso3 === LBVIS.ISO3; }).name,
                 data: chart_series,
                 pointPlacement: 'on'
             }]
-};
+        };
         return new Highcharts.Chart(CharSpiderOp);
     };
 
