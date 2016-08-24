@@ -88,8 +88,8 @@ VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
         var filters = [ "?uri", "?id" ],
             values  = [ "<" + lod.uri.indicator + indicator + ">", "'"+ indicator +"'" ];
         if (year) {
-            filters.push('?time');
-            values.push("<" + lod.uri.time + year + ">");
+            filters.push('?year');
+            values.push("'" + year + "'");
         }
         return query.prefix + " \
 SELECT ?iso3 ?year ?value \
@@ -119,29 +119,14 @@ cex:ref-area ?countryURL . \
  BIND (REPLACE(STR(?countryURL),'" + lod.uri.country + "','') AS ?iso3) \
 } ORDER BY ?name ";
     };
-        
-    // Woot? (sameAs _indicatorValues?)
-    var _indicator_values =  function (indicator) {
-        return query.prefix + " \
-SELECT ?countryISO3 (year(?dateTime) as ?year) ?value \
-FROM <http://data.landportal.info> \
-WHERE { \
-?obs cex:ref-indicator ?indicatorURL ; \
-     cex:ref-area ?countryURL ; \
-     cex:ref-time ?time ; \
-     cex:value ?value. \
-?time time:hasBeginning ?timeValue . \
-?timeValue time:inXSDDateTime ?dateTime . \
-VALUES ?indicatorURL {<" + lod.uri.indicator + indicator + ">} \
-BIND (REPLACE(STR(?countryURL), '" + lod.uri.country + "','') AS ?countryISO3) \
-} ORDER BY ?dateTime ?countryURL";
-    };
+
+
 
     /**************************************
      * Countries-based queries
      */
     var _countryIndicators = function(iso3) {
-	    return query.prefix + " SELECT DISTINCT ?id ?label \
+        return query.prefix + " SELECT DISTINCT ?id ?label \
 FROM <http://data.landportal.info> \
 WHERE { \
 ?obs cex:ref-indicator ?uri ; \
@@ -152,8 +137,52 @@ WHERE { \
 } ORDER BY ?label";
     };
 
+    var _countryIndicatorValues = function (iso3, indicator, year) {
+        var filters = [ "?country", "?labelURL", "?id" ],
+            values  = [ "<" + lod.uri.country + iso3 + ">", "<" + lod.uri.indicator + indicator + ">", "'"+ indicator +"'" ];
+        if (year) {
+            filters.push('?year');
+            values.push("'" + year + "'");
+        }
+        return query.prefix + " \
+SELECT ?id ?label ?labelURL ?indicatorDescription ?year ?value ?unit ?datasetURL ?dataset ?sourceOrgURL ?sourceOrg \
+FROM <http://data.landportal.info> WHERE { \
+ ?obs cex:ref-area ?country ; cex:ref-indicator ?labelURL ; cex:value ?value ; cex:ref-time ?time . \
+?time time:hasBeginning ?timeValue . \
+?timeValue time:inXSDDateTime ?dateTime . \
+ ?labelURL ex:unit ?unit ; ex:dataset ?datasetURL . \
+ ?datasetURL ex:label ?dataset ; ex:org ?sourceOrgURL . \
+ ?sourceOrgURL ex:label ?sourceOrg. \
+ ?labelURL ex:label ?indicator ; ex:label ?label ; ex:description ?indicatorDescription . \
+VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
+BIND (year(?dateTime) AS ?year) \
+} ORDER BY ?year LIMIT 1";
+    };
 
-    
+    // un-used
+    // var _getObs = function (indicator) {
+    //     var str = "SELECT ?obs FROM <http://data.landportal.info> WHERE { ?obs cex:ref-area <" + lod.uri.country + ISO3 + "> ; cex:ref-indicator <" + lod.uri.indicator + indicator + "> ; cex:ref-time ?time . ?time time:hasBeginning ?timeValue . ?timeValue time:inXSDDateTime ?dateTime } ORDER BY DESC(?dateTime) LIMIT 1";
+    //     return str;
+    // };
+    // Woot? (sameAs _indicatorValues?)
+    // var _indicator_values =  function (indicator) {
+    //     return query.prefix + " \
+// SELECT ?countryISO3 (year(?dateTime) as ?year) ?value \
+// FROM <http://data.landportal.info> \
+// WHERE { \
+// ?obs cex:ref-indicator ?indicatorURL ; \
+//      cex:ref-area ?countryURL ; \
+//      cex:ref-time ?time ; \
+//      cex:value ?value. \
+// ?time time:hasBeginning ?timeValue . \
+// ?timeValue time:inXSDDateTime ?dateTime . \
+// VALUES ?indicatorURL {<" + lod.uri.indicator + indicator + ">} \
+// BIND (REPLACE(STR(?countryURL), '" + lod.uri.country + "','') AS ?countryISO3) \
+// } ORDER BY ?dateTime ?countryURL";
+//     };
+
+
+
     /**************************************
      *  Specific 'graph' queries
      */
@@ -185,28 +214,6 @@ WHERE{ \
         return str;
     };
 
-
-    // un-used
-    // var _getObs = function (indicator) {
-    //     var str = "SELECT ?obs FROM <http://data.landportal.info> WHERE { ?obs cex:ref-area <" + lod.uri.country + ISO3 + "> ; cex:ref-indicator <" + lod.uri.indicator + indicator + "> ; cex:ref-time ?time . ?time time:hasBeginning ?timeValue . ?timeValue time:inXSDDateTime ?dateTime } ORDER BY DESC(?dateTime) LIMIT 1";
-    //     return str;
-    // };
-//     var _info_indicator_country_year = function (indicator, year) {
-//         return query.prefix + " \
-// SELECT ?indicator ?indicatorURL ?indicatorDescription ?value ?unit ?datasetURL ?dataset ?sourceOrgURL ?sourceOrg \
-// FROM <http://data.landportal.info> WHERE { \
-//  ?obs cex:ref-area <" + lod.uri.country + ISO3 + "> ; cex:ref-indicator ?indicatorURL ; cex:value ?value ; cex:ref-time ?time . \
-//  ?time time:hasBeginning ?timeValue . \
-//  ?timeValue time:inXSDDateTime '" + year + "-01-01T00:00:00Z'^^xsd:dateTime . \
-//  ?indicatorURL ex:unit ?unit ; ex:dataset ?datasetURL . \
-//  ?datasetURL ex:label ?dataset ; ex:org ?sourceOrgURL . \
-//  ?sourceOrgURL ex:label ?sourceOrg. \
-//  ?indicatorURL ex:label ?indicator ; ex:description ?indicatorDescription . \
-// VALUES ?indicatorURL {<" + lod.uri.indicator + indicator + ">} \
-// }";
-//     };
-
-    
 
 
     /**************************************
@@ -374,28 +381,17 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
 	    indicators: _indicators(),
             // List of available indicators for a given country
             countryIndicators: function (iso3) { return _countryIndicators(iso3); },
+            countryIndicatorValues: function (iso3, indicator, year) { return _countryIndicatorValues(iso3, indicator, year); },
             // Indicator queries
             indicatorInfo: function (id) { return _indicatorInfo(id); },
             indicatorYears: function (indicator, iso3) { return _indicatorYears(indicator, iso3); },
             indicatorValues: function(indicator, years) { return _indicatorValues(indicator, years); },
             indicatorCountries: function(indicator, countries) { return _indicatorCountries(indicator, countries); },
-
             // TODO: check/cleanup queries
             line_chart: function(indicator, countries) { return _line_chart(indicator, countries); },
             spider_chart: function(iso3) { return _spider_chart(iso3); },
             pie_chart: function(iso3) { return _pie_chart(iso3); },
             lgaf_chart: function(iso3, year) { return _lgaf_chart(iso3, year); }
-
-            // @@@
         }
-
-        // // Queries that require a parameters (or should)
-        // query_default_table_indicators: function (indicators) {
-        //     return _default_table_indicators();
-        // },
-        // // TODO : cleanup / move away in specific vis. module
-        // query_lgaf_values: function (year) {
-        //     return _lgaf_values(year);
-        // }
     };
 });
