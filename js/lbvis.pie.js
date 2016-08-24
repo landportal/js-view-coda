@@ -12,8 +12,9 @@
 var lbvisPie = (function (args = {}) {
     var LBVIS = args.vis;
     var _options = {
-        target: args.target || '#wrapper-piechart',
-        title: 'Land Use',
+        target: args.target     || '#wrapper-piechart',
+        title:  args.title      || 'Land Use',
+        iso3:   args.iso3,
         // (future) DO NOT work yet, all was hardcoded...
         indicators: {
             main: 'FAO-6601-5110',      // TotalLandHA
@@ -40,7 +41,7 @@ var lbvisPie = (function (args = {}) {
     };
 
     var _loadData = function () {
-        var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.queries.pie_chart);
+        var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.queries.pie_chart(_options.iso3));
         return $.getJSON(query_url, function (data) {
             _data.series = [];
             for (var ind in data.results.bindings[0]) {
@@ -116,8 +117,8 @@ var lbvisPie = (function (args = {}) {
     return {
         init: function () {
             // Get main indicator info, then load Pie data
-            LBVIS.getIndicatorInfo(_options.indicators.main, _data.indicators).done(function () {
-                _data.indicator = _data.indicators[_options.indicators.main];
+            LBVIS.getIndicatorInfo(_options.indicators.main).done(function () {
+                _data.indicator = LBVIS.cache(_options.indicators.main)[0];
                 _loadData().done(function () {
                     _drawChart();
                 });
