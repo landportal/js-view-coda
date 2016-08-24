@@ -85,9 +85,11 @@ var lbvisLGAF = (function (args = {}) {
             subpanel.indicators.forEach(function (indicator) {
                 var ival = _data.series.find(function(v) { return v.id == indicator.id; });
                 var value = (ival ? ival.value.toLowerCase() : 'na');
-                // TODO: handle indicators with 2 values like A-B or A-C
-                row += '<li><span class="lgaf-value-'+value+'"></span> '
-                    + indicator.name + '</li>';
+
+                var vspan = value.split('-').map(function (v) {
+                    return '<span class="lgaf-value lgaf-value-'+v+'"></span>';
+                }).join('');
+                row += '<li>' + vspan + indicator.name + '</li>';
                 // var split = indicatorsValues[i].value.split("-");
                 // split[1].toLowerCase()
             });
