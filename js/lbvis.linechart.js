@@ -5,8 +5,8 @@ var lbvisLC = (function (args = {}) {
     var _options = {
         target: args.target || '#compare',
         target_chart: args.target_chart || '#compare-chart',
-        indicatorID: args.indicator || 'WB-SP.RUR.TOTL.ZS',
-        compare: [LBVIS.ISO3],
+        indicator: args.indicator || 'WB-SP.RUR.TOTL.ZS',
+        compare: [args.iso3],
         colors: args.colors || ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"],
         max_countries: 20
     };
@@ -23,18 +23,18 @@ var lbvisLC = (function (args = {}) {
 
     /* Get DATA */
     function _getCountries() {
-        var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.query_countries_per_indicator(_options.indicatorID));
+        var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.queries.indicatorCountries(_options.indicator));
         return $.getJSON(query_url, function (data) {
             data.results.bindings.forEach(function (item) {
                 //console.log('Countries', item);
-                _data.countries.push({iso3: item.countryISO3.value, name: item.countryLabel.value });
+                _data.countries.push({iso3: item.iso3.value, name: item.name.value});
             });
         });
     }
     function _getYearsIndicator() { //?
         $(_options.target + ' select.years').prop('disabled', true);
         var query_url = LBVIS.DATA.sparqlURL(
-            LBVIS.DATA.query_years_indicator_country(_options.indicatorID));
+            LBVIS.DATA.queries.indicatorYears(_options.indicator));
         return $.getJSON(query_url, function (data) {
             var years = [];
             _data.years = data.results.bindings.map(function (item) {
@@ -52,8 +52,9 @@ var lbvisLC = (function (args = {}) {
     }
 
     function _getIndicatorValues() {
-        var query = LBVIS.DATA.query_line_chart(
-            _options.indicatorID, _options.compare
+        //console.log(_options.indicator, _options.compare, _options);
+        var query = LBVIS.DATA.queries.line_chart(
+            _options.indicator, _options.compare
         );
         var query_URL = LBVIS.DATA.sparqlURL(query);
         _data.defer = $.getJSON(query_URL, function (data) {
@@ -107,12 +108,13 @@ var lbvisLC = (function (args = {}) {
                 }).map(function (val) { return val.value; })
             };
         });
-        _data.indicator = _data.indicators[_options.indicatorID];
+        //_data.indicator = _data.indicators[_options.indicator];
         //console.log('Series', _data.series);
     }
     function _draw() {
         _prepareSeries();
         var chart_type = "column";
+        //console.log(_data.indicator);
         if(_data.from != _data.to) chart_type = "line";
         var CharLineOp = {
             chart: {
@@ -124,7 +126,7 @@ var lbvisLC = (function (args = {}) {
                 enabled: false
             },
             title: {
-                text: '<a href="'+_data.indicator.url+'" target="_blank">'
+                text: '<a href="'+_data.indicator.uri+'" target="_blank">'
                     + _data.indicator.label + '</a>'
                     +' ('+ _data.indicator.unit +')',
                 useHTML: true,
@@ -162,10 +164,13 @@ var lbvisLC = (function (args = {}) {
         $(_options.target + ' select[name="year[to]"]').prop('disabled', true);
         $(_options.target + ' form').delegate("select", "change", function(e) {
             if (e.target.name == 'indicator') {
-                _options.indicatorID = e.target.value;
-                LBVIS.getIndicatorInfo(_options.indicatorID, _data.indicators);
-                _getCountries().done(function () {
-                    _setOptionsCountries();
+                _options.indicator = e.target.value;
+                //
+                LBVIS.getIndicatorInfo(_options.indicator, _data.indicators).done(function () {
+                    _data.indicator = LBVIS.cache(_options.indicator)[0];
+                    _getCountries().done(function () {
+                        _setOptionsCountries();
+                    });
                 });
             }
             else if (e.target.name == 'country') {
@@ -186,7 +191,7 @@ var lbvisLC = (function (args = {}) {
         });
         $(_options.target + ' form').delegate('input[name="add"]', "click", function(e) {
             e.preventDefault();
-            console.log(_options, _data);
+            //console.log(_options, _data);
             // requery the data and draw chart
             _data.defer.done(function () {
                 _draw();
@@ -198,19 +203,19 @@ var lbvisLC = (function (args = {}) {
         OPTS: _options,
         draw: function () { return _draw(); },
         init: function () {
-            LBVIS.defers.indicators.done(function () {
-                var opts = LBVIS.getOptionsIndicators(_options.indicatorID);
-                $(_options.target + ' select[name="indicator"]').html(opts);
-
-                // If we have a default indicatorID to start
-                if (_options.indicatorID) {
-                    LBVIS.getIndicatorInfo(_options.indicatorID, _data.indicators);
-                    //     .done(function () {
-                    // });
-                    // Load comparable countries
-                    _getCountries().done(function () {
-                        _setOptionsCountries();
-                    });
+            var el = $(_options.target + ' select[name="indicator"]');
+            _data.indicators = LBVIS.cache('indicators');
+            el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
+            var opts = LBVIS.generateOptions(_data.indicators, _options.indicator);
+            if (opts) {
+                el.append(opts);
+                el.prop( "disabled", false );
+            }
+            LBVIS.getIndicatorInfo(_options.indicator).done(function () {
+                _data.indicator = LBVIS.cache(_options.indicator)[0];
+                // @@@ If we have an indicator, load comparable countries
+                _getCountries().done(function () {
+                    _setOptionsCountries();
                     // Load available years for this indicator
                     _getYearsIndicator().done(function () {
                         // by default set serie years to min / max
@@ -222,7 +227,7 @@ var lbvisLC = (function (args = {}) {
                             _draw();
                         });
                     });
-                }
+                });
             });
             _bindUI();
             //console.log('LBLC', _options, _data);
