@@ -178,7 +178,7 @@ var lbvisMap = (function (args = {}) {
         };
         _map.mapNavigation = {
             enabled: _options.map.nav,
-            enableMouseWheelZoom: true,
+            enableMouseWheelZoom: false,
             enableDoubleClickZoom: false,
             enableTouchZoom: false,
             buttons: {
