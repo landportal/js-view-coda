@@ -13,6 +13,40 @@
   position: absolute;
   width: 100%; height: 100%;
 }
+.lgaf-value-a,
+.lgaf-value-b,
+.lgaf-value-c,
+.lgaf-value-d,
+.lgaf-value-na {
+    height: 20px;
+    width: 20px;
+    display: inline-block;
+    border-radius: 20px;
+    margin: 0 10px;
+    vertical-align: middle;
+}
+li span[class*="lgaf-value-"]:nth-child(2) {
+    width: 10px;
+    margin-left: -20px;
+    border-radius: 0 20px 20px 0;
+}
+.lgaf-value-a {
+    background-color: #7ED321;
+}
+.lgaf-value-b {
+    background-color: #F8E71C;
+}
+.lgaf-value-c {
+    background-color: #F5A623;
+}
+.lgaf-value-d {
+    background-color: #F6112D;
+}
+.lgaf-value-na {
+    background-color: #CCC;
+}
+
+
     </style>
   </head>
   <body>
@@ -203,7 +237,7 @@
     <script src="js/lbvis.table.js"></script>
     <script type="text/javascript">
       LBV = new lbvis();
-      var defaultParams = {vis: LBV, iso3: 'VNM'};
+      var defaultParams = {vis: LBV, iso3: 'BFA'};
 
       // LB Charts
       Compare = new lbvisLC(defaultParams);
@@ -219,12 +253,14 @@
 
       // Init Charts when LBV is ready (ie: indicators and countries are loaded)
       LBV.ready().done(function () {
+      /*
         Compare.init();
         VMap.init();
         Spider.init();
         Pie.init();
-        LGAF.init();
         Table.init();
+      */
+        LGAF.init();
       });
     </script>
   </body>
