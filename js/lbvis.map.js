@@ -38,7 +38,8 @@ var lbvisMap = (function (args = {}) {
         iso3:           args.iso3       || null,        // iso3 of the country to select
         target:         args.target     || '#map',
         mapTarget:      args.mapTarget  || (args.target ? args.target + '-wrapper' : '#map-wrapper'),
-        showIndicators: args.indicators || false,       // indicators + year select form
+        showYears:      args.years      || false,       // year select form
+        showIndicators: args.indicators || false,       // indicators select form
         indicator:      args.indicator  || null,        // ex: 'WB-SP.RUR.TOTL.ZS'
         data:           args.data       || null,        // static data, array of objects (id/value) where id is iso3
         map: {
@@ -79,7 +80,8 @@ var lbvisMap = (function (args = {}) {
     var _isString = function (s) {
         return Object.prototype.toString.call(s) == '[object String]';
     };
-
+    // TODO: should only be call if option.years is true
+    // Otherwise, just fetch data for the latest year
     var _getYears = function () {
         $(_options.target + ' select[name="year"]').html("");
         _data.years = [];
@@ -283,30 +285,36 @@ var lbvisMap = (function (args = {}) {
      */
     var _bindUI = function () {
         // Country Indicators select
-        $(_options.target).delegate('select[name="indicator"]', "change", function(e) {
-            e.preventDefault();
-            if (e.target.value) {
-                _data.year = null,
-                _data.indicator = null,
-                _options.indicator = e.target.value;
-                _getIndicatorDetails().done(function () {
+        if (_options.showIndicators) {
+            $(_options.target + ' select[name="indicator"]').parent().removeClass("hidden");
+            $(_options.target).delegate('select[name="indicator"]', "change", function(e) {
+                e.preventDefault();
+                if (e.target.value) {
+                    _data.year = null,
+                    _data.indicator = null,
+                    _options.indicator = e.target.value;
+                    _getIndicatorDetails().done(function () {
+                        _getChartData().done(function () {
+                            _mapUpdate();
+                        });
+                        //console.log('Indicator changed', _data);
+                    });
+                }
+            });
+        }
+        if (_options.showYears) {
+            $(_options.target + ' select[name="year"]').parent().removeClass("hidden");
+            $(_options.target).delegate('select[name="year"]', "change", function(e){
+                e.preventDefault();
+                if (e.target.value) {
+                    _data.year = e.target.value;
                     _getChartData().done(function () {
                         _mapUpdate();
                     });
-                    //console.log('Indicator changed', _data);
-                });
-            }
-        });
-        $(_options.target).delegate('select[name="year"]', "change", function(e){
-            e.preventDefault();
-            if (e.target.value) {
-                _data.year = e.target.value;
-                    _getChartData().done(function () {
-                        _mapUpdate();
-                    });
-                //_mapUpdate();
-            }
-        });
+                    //_mapUpdate();
+                }
+            });
+        }
     };
 
 
@@ -334,8 +342,8 @@ var lbvisMap = (function (args = {}) {
             // Fills up Indicators select
             if (_options.showIndicators) {
                 _setOptionsIndicators();
-                _bindUI();
             }
+            _bindUI();
             // Get indicator details (meta + years)
             if (_options.indicator) {
                 _getIndicatorDetails().done(function () {
