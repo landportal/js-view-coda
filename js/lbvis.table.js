@@ -15,7 +15,7 @@ var lbvisTable = (function (args = {}) {
         years: [],
         indicators: []
     };
-    // TODO: Borken all indicators hardcoded in query / awful performance / cleanup use options.indicators for default
+    // Indicators are now loaded 1 by 1
     var _getIndicators = function () {
         _data.defers = [];
         _options.indicators.forEach(function (item) {
@@ -56,7 +56,6 @@ var lbvisTable = (function (args = {}) {
         $(_options.target + ' select[name=year]').html(str);
 	$(_options.target + ' select[name=year]').prop( "disabled", false );
     };
-
     var _setOptionsIndicators = function () {
         var el = $(_options.target + ' select[name="indicator"]');
         el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');

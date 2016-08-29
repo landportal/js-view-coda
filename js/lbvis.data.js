@@ -104,7 +104,7 @@ WHERE { \
 VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
 BIND (REPLACE(STR(?countryURL), '" + lod.uri.country + "','') AS ?iso3) \
 BIND (year(?dateTime) AS ?year) \
-} ORDER BY ?dateTime ?countryURL";
+} ORDER BY ?dateTime DESC(?value)";
     };
 
     // Available countries for a given indicator
