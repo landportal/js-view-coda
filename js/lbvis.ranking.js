@@ -4,7 +4,7 @@ var lbvisRanking = (function (args = {}) {
     var LBVIS = args.vis;
     var _options = {
         target:         args.target || '#ranking',
-        indicator:      null || 'WB-SP.POP.TOTL',
+        indicator:      args.indicator || 'WB-SP.POP.TOTL',
         theme:          null
     };
     var _data = {
