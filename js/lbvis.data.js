@@ -1,6 +1,6 @@
 'use strict';
 
-var lbvisDATA = (function (args = {}) {
+var lbvisDATA = (function (args) {
     //var ISO3 = args.iso3;
     var lod = {
         uri: {

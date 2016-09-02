@@ -1,6 +1,6 @@
 'use strict';
 
-var lbvisTable = (function (args = {}) {
+var lbvisTable = (function (args) {
     var LBVIS = args.vis;
     var _options = {
         target:         args.target || '#table-indicators',
@@ -59,7 +59,8 @@ var lbvisTable = (function (args = {}) {
     var _setOptionsIndicators = function () {
         var el = $(_options.target + ' select[name="indicator"]');
         el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
-        var opts = LBVIS.generateOptions(LBVIS.cache('indicators'), _options.selected);
+        var opts = LBVIS.generateOptions(LBVIS.cache('indicators_' + _options.iso3),
+                                         _options.selected);
         if (opts) {
             el.append(opts);
             el.prop( "disabled", false );
@@ -127,8 +128,9 @@ var lbvisTable = (function (args = {}) {
 
     return {
         init: function () {
-            _setOptionsIndicators();
-
+            LBVIS.getIndicators(_options.iso3).done(function () {
+                _setOptionsIndicators();
+            });
             //console.log('Table indicators', _options, _data);
             if (_options.indicators.length) {
                 $(_options.target + ' .loading').removeClass('hidden');

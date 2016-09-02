@@ -9,7 +9,7 @@
  */
 
 'use strict';
-var lbvisPie = (function (args = {}) {
+var lbvisPie = (function (args) {
     var LBVIS = args.vis;
     var _options = {
         target: args.target     || '#wrapper-piechart',

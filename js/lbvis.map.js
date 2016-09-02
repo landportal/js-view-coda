@@ -29,7 +29,7 @@ tooltip: function () {
 (See: http://api.highcharts.com/highmaps#plotOptions.map.tooltip.pointFormatter)
 
  */
-var lbvisMap = (function (args = {}) {
+var lbvisMap = (function (args) {
     var LBVIS = args.vis;
     var _options = {
         //type: args.type,                // map type: global or local
@@ -157,8 +157,8 @@ var lbvisMap = (function (args = {}) {
 
     var _setOptionsIndicators = function () {
         var el = $(_options.target + ' select[name="indicator"]');
-        _data.indicators = LBVIS.cache('indicators');
         el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
+        _data.indicators = LBVIS.cache('indicators_' + _options.iso3);
         var opts = LBVIS.generateOptions(_data.indicators, _options.indicator);
         if (opts) {
             el.append(opts);
@@ -341,7 +341,10 @@ var lbvisMap = (function (args = {}) {
             }
             // Fills up Indicators select
             if (_options.showIndicators) {
-                _setOptionsIndicators();
+                // get indi
+                LBVIS.getIndicators(_options.iso3).done(function () {
+                    _setOptionsIndicators();
+                });
             }
             _bindUI();
             // Get indicator details (meta + years)

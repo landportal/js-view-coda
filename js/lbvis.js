@@ -22,9 +22,10 @@ VIS.init();
 
 'use strict';
 
-var lbvis = (function (args = {}) {
+var lbvis = (function (args) {
+    args = args || {};
     var _options = {
-        iso3: args.iso3 || null,
+        //iso3: args.iso3 || null,
         loadIndicators: args.loadIndicators || true
     };
     var _defers = { info: {} }; // jQuery deferred
@@ -56,12 +57,14 @@ var lbvis = (function (args = {}) {
         return _getSPARQL(q, 'countries');
     };
     // Get all available indicators
-    var _getIndicators = function () {
+    var _getIndicators = function (iso3) {
+        var def = 'indicators';
         var q = _DATA.queries.indicators;
-        if (_options.iso3) {
-            q = _DATA.queries.countryIndicators(_options.iso3);
+        if (iso3) {
+            def += '_' + iso3;
+            q = _DATA.queries.countryIndicators(iso3);
         }
-        return _getSPARQL(q, 'indicators');
+        return _getSPARQL(q, def);
     };
     // Get an indicator detail
     var _getIndicatorInfo = function (id) {
@@ -83,7 +86,6 @@ var lbvis = (function (args = {}) {
         cache: function (type) { return (type ? _cache[type] : _cache); },
         countries: function () { return _cache['countries']; },
         indicators: function () { return _cache['indicators']; },
-        //indicators_info: function () { return _cache['info']; },
 
         ready: function () {
             if (_options.loadIndicators) {
@@ -91,15 +93,20 @@ var lbvis = (function (args = {}) {
             }
             return _defers['countries'];
         },
-
         getIndicatorInfo: function (indicator) {
-            //console.log('FIX ME', indicator);
             if (!_defers.info[indicator]) {
                 _defers.info[indicator] = _getIndicatorInfo(indicator);
             }
             return _defers.info[indicator];
         },
-
+        getIndicators: function (iso3) {
+            var d = 'indicators';
+            if (iso3) d += '_' + iso3;
+            if (!_defers[d]) {
+                _defers[d] = _getIndicators(iso3);
+            }
+            return _defers[d];
+        },
         // kinda bad...
         generateOptions: function (data, id) {
             var options = '';

@@ -1,11 +1,12 @@
 'use strict';
 
-var lbvisLC = (function (args = {}) {
+var lbvisLC = (function (args) {
     var LBVIS = args.vis;
     var _options = {
         target: args.target || '#compare',
         target_chart: args.target_chart || '#compare-chart',
         indicator: args.indicator || 'WB-SP.RUR.TOTL.ZS',
+        iso3: args.iso3,
         compare: [args.iso3],
         colors: args.colors || ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"],
         max_countries: 20
@@ -198,19 +199,27 @@ var lbvisLC = (function (args = {}) {
             });
         });
     }
-    
+
+    var _setOptionsIndicators = function () {
+        var el = $(_options.target + ' select[name="indicator"]');
+        el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
+        _data.indicators = LBVIS.cache('indicators_' + _options.iso3);
+        var opts = LBVIS.generateOptions(_data.indicators, _options.indicator);
+        if (opts) {
+            el.append(opts);
+            el.prop( "disabled", false );
+        }
+    };
+
     return {
         OPTS: _options,
         draw: function () { return _draw(); },
         init: function () {
-            var el = $(_options.target + ' select[name="indicator"]');
-            _data.indicators = LBVIS.cache('indicators');
-            el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
-            var opts = LBVIS.generateOptions(_data.indicators, _options.indicator);
-            if (opts) {
-                el.append(opts);
-                el.prop( "disabled", false );
-            }
+            //
+            LBVIS.getIndicators(_options.iso3).done(function () {
+                _setOptionsIndicators();
+            });
+
             LBVIS.getIndicatorInfo(_options.indicator).done(function () {
                 _data.indicator = LBVIS.cache(_options.indicator)[0];
                 // @@@ If we have an indicator, load comparable countries

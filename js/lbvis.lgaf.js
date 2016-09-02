@@ -1,5 +1,5 @@
 'use strict';
-var lbvisLGAF = (function (args = {}) {
+var lbvisLGAF = (function (args) {
     var LBVIS = args.vis;
     var _options = {
         iso3: args.iso3,

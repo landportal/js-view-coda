@@ -3,7 +3,8 @@
  */
 'use strict';
 
-var lbvisSpider = (function (args = {}) {
+var lbvisSpider = (function (args) {
+    //args.iso3
     var LBVIS = args.vis;
     var _options = {
         target: args.target || '#wrapper-spiderchart',
@@ -112,6 +113,9 @@ var lbvisSpider = (function (args = {}) {
 
     // Public methods
     return {
+        debug: function () {
+            console.log(_options, LBVIS);
+        },
         init: function () {
             _loadData().done(function () {
                 drawSpider();
