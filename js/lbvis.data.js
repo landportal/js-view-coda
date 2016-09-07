@@ -152,7 +152,7 @@ FROM <http://data.landportal.info> WHERE { \
  ?sourceOrgURL ex:label ?sourceOrg. \
  ?labelURL ex:label ?indicator ; ex:label ?label ; ex:description ?indicatorDescription . \
 VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
-FILTER (str(year(?dateTime)) = ?year) \
+BIND (year(?dateTime) AS ?year) \
 } ORDER BY DESC(?time) LIMIT 1";
     };
 
