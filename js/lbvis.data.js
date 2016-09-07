@@ -16,9 +16,7 @@ var lbvisDATA = (function (args) {
     var query = {
 	prefix: "PREFIX ex: <http://www.example.org/rdf#> \
 PREFIX cex: <http://purl.org/weso/ontology/computex#> \
-PREFIX time: <http://www.w3.org/2006/time#> ",
-
-        prefix_lgaf: "PREFIX cex: <http://purl.org/weso/ontology/computex#> \
+PREFIX time: <http://www.w3.org/2006/time#> \
 PREFIX qb: <http://purl.org/linked-data/cube#>"
     };
 
@@ -47,8 +45,7 @@ BIND (REPLACE(STR(?uri), '" + lod.uri.indicator + "','') AS ?id) \
      * Indicators-based queries
      */
     var _indicatorInfo = function (indicator) {
-	return "PREFIX ex: <http://www.example.org/rdf#> \
-SELECT ?id ?uri ?label ?description ?unit ?datasetURL ?dataset ?sourceOrgURL ?sourceOrg \
+	return query.prefix + "SELECT ?id ?uri ?label ?description ?unit ?datasetURL ?dataset ?sourceOrgURL ?sourceOrg \
 FROM <http://data.landportal.info> \
 WHERE { \
 ?uri ex:label ?label ; \
@@ -223,7 +220,7 @@ WHERE{ \
 
     // LGAF specific : move to vis. module?
 //     var _lgaf_country_years = function () {
-//         return query.prefix_lgaf + " \
+//         return query.prefix + " \
 // SELECT DISTINCT ?dataset \
 // FROM <http://data.landportal.info> \
 // WHERE { \
@@ -234,7 +231,7 @@ WHERE{ \
 //     };
 
     var _lgaf_chart = function (iso3, year) {
-        return query.prefix_lgaf + " \
+        return query.prefix + " \
 SELECT ?id (STR(?value) AS ?value) \
 FROM <http://data.landportal.info> \
 WHERE { \
