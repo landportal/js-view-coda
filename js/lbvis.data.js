@@ -151,8 +151,8 @@ FROM <http://data.landportal.info> WHERE { \
  ?datasetURL ex:label ?dataset ; ex:org ?sourceOrgURL . \
  ?sourceOrgURL ex:label ?sourceOrg. \
  ?labelURL ex:label ?indicator ; ex:label ?label ; ex:description ?indicatorDescription . \
+BIND (STR(YEAR(?dateTime)) AS ?year) \
 VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
-BIND (year(?dateTime) AS ?year) \
 } ORDER BY DESC(?time) LIMIT 1";
     };
 
