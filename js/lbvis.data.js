@@ -18,7 +18,9 @@ var lbvisDATA = (function (args) {
 PREFIX ex: <http://www.example.org/rdf#> \
 PREFIX cex: <http://purl.org/weso/ontology/computex#> \
 PREFIX time: <http://www.w3.org/2006/time#> \
-PREFIX qb: <http://purl.org/linked-data/cube#>"
+PREFIX qb: <http://purl.org/linked-data/cube#> \
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \
+"
     };
 
     /**************************************
@@ -51,16 +53,19 @@ BIND (REPLACE(STR(?uri), '" + lod.uri.indicator + "','') AS ?id) \
      */
     var _indicatorInfo = function (indicator) {
         return query.prefix + " \
-SELECT ?id ?uri ?label ?description ?unit ?datasetURL ?dataset ?sourceOrgURL ?sourceOrg \
+SELECT ?id ?uri ?label ?description ?unit ?indicatorSeeAlso ?datasetURL ?dataset ?datasetSeeAlso ?sourceURL ?source ?sourceSeeAlso \
 FROM <http://data.landportal.info> \
 WHERE { \
 ?uri ex:label ?label ; \
         ex:description ?description ; \
         ex:unit ?unit ; \
-        ex:dataset ?datasetURL . \
+        ex:dataset ?datasetURL ; \
+		rdfs:seeAlso ?indicatorSeeAlso .\
 ?datasetURL ex:label ?dataset ; \
-        ex:org ?sourceOrgURL . \
-?sourceOrgURL ex:label ?sourceOrg . \
+        ex:org ?sourceURL ; \
+		rdfs:seeAlso ?datasetSeeAlso . \
+?sourceURL ex:label ?source ; \
+			  rdfs:seeAlso ?sourceSeeAlso .\
 VALUES (?uri ?id) { (<" + lod.uri.indicator + indicator + "> '" + indicator + "') } \
 }";
     };
@@ -142,23 +147,23 @@ BIND (REPLACE(STR(?uri), '" + lod.uri.indicator + "','') AS ?id) \
     };
 
     var _countryIndicatorValues = function (iso3, indicator, year) {
-        var filters = [ "?country", "?labelURL", "?id" ],
+        var filters = [ "?country", "?indicatorURI", "?id" ],
             values  = [ "<" + lod.uri.country + iso3 + ">", "<" + lod.uri.indicator + indicator + ">", "'"+ indicator +"'" ];
         if (year) {
             filters.push('?year');
             values.push("'" + year + "'");
         }
         return query.prefix + " \
-SELECT ?id ?label ?labelURL ?indicatorDescription ?year ?value ?unit ?datasetURL ?dataset ?sourceOrgURL ?sourceOrg \
+SELECT ?id ?indicator ?indicatorURI ?indicatorSeeAlso ?indicatorDescription ?year ?value ?unit ?datasetURL ?dataset ?datasetSeeAlso ?sourceURL ?source ?sourceSeeAlso \
 FROM <http://data.landportal.info> \
 WHERE { \
-?obs cex:ref-area ?country ; cex:ref-indicator ?labelURL ; cex:value ?value ; cex:ref-time ?time . \
+?obs cex:ref-area ?country ; cex:ref-indicator ?indicatorURI ; cex:value ?value ; cex:ref-time ?time . \
 ?time time:hasBeginning ?timeValue . \
 ?timeValue time:inXSDDateTime ?dateTime . \
-?labelURL ex:unit ?unit ; ex:dataset ?datasetURL . \
-?datasetURL ex:label ?dataset ; ex:org ?sourceOrgURL . \
-?sourceOrgURL ex:label ?sourceOrg. \
-?labelURL ex:label ?indicator ; ex:label ?label ; ex:description ?indicatorDescription . \
+?indicatorURI ex:unit ?unit ; ex:dataset ?datasetURL . \
+?datasetURL ex:label ?dataset ; ex:org ?sourceURL ; rdfs:seeAlso ?datasetSeeAlso. \
+?sourceURL ex:label ?source ; rdfs:seeAlso ?sourceSeeAlso. \
+?indicatorURI ex:label ?indicator ; ex:description ?indicatorDescription ; rdfs:seeAlso ?indicatorSeeAlso. \
 BIND (STR(YEAR(?dateTime)) AS ?year) \
 VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
 } ORDER BY DESC(?time) LIMIT 1";

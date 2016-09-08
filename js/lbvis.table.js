@@ -70,8 +70,8 @@ var lbvisTable = (function (args) {
     var _formatCol = function (col, ind) {
         var tdclass = '';
         var str = ind[col];
-        if (ind[col+'URL']) {
-            str = '<a href="'+ind[col+'URL']+'" target="_blank">' + ind[col] + '</a>';
+        if (ind[col+'SeeAlso']) {
+            str = '<a href="'+ind[col+'SeeAlso']+'" target="_blank">' + ind[col] + '</a>';
         }
         if (ind[col+'Description']) {
             str += ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="' + ind[col+'Description'] + '"></span>';
@@ -79,7 +79,7 @@ var lbvisTable = (function (args) {
         return '<td class="lb-'+ col + tdclass +'" data-'+col+'="'+ind[col]+'">'+str+'</td>';
     };
     var _formatRow = function (ind) {
-        var cols = ['label', 'year', 'value', 'unit', 'dataset', 'sourceOrg'];
+        var cols = ['indicator', 'year', 'value', 'unit', 'dataset', 'source'];
         var row = '<tr>';
         cols.forEach(function (col) {
             row += _formatCol(col, ind);
