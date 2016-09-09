@@ -102,7 +102,8 @@ var lbvisLC = (function (args) {
         _options.compare.forEach(function (country, i) {
             _data.series[i] = {
                 iso3: country,
-                name: LBVIS.countries().find(function (c) { return c.iso3 === country; }).name,
+                name: LBVIS.countries().filter(
+                    function (c) { return c.iso3 === country; })[0].name,
                 color: _options.colors[i],
                 data:  _data.values.filter(function (val) {
                     return (val.country == country && val.year >= _data.from && val.year <= _data.to);

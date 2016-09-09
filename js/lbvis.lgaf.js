@@ -8,7 +8,7 @@ var lbvisLGAF = (function (args) {
         targetGraph: args.targetGraph   || (args.target ? args.target + '-wrapper' : '#lgaf-wrapper'),
         panel: args.panel        || 'WB-LGAF2016-1',
         subpanel: args.indicator || 'WB-LGAF2016-1.1',
-        jsonPath: args.jsonPath  || 'json'
+        jsonPath: args.jsonPath  || window.location.href.split('/').slice(0, -1).join('/') + '/json'
 
     };
     var _defer = null;
@@ -21,7 +21,6 @@ var lbvisLGAF = (function (args) {
     /* GET Data */
     function _getLGAFstructure () {
         return $.getJSON(_options.jsonPath + '/LGAF_structure.json', function(data) {
-            //console.log('GOT LGAF struct:', data);
             for (var y in data) {
                 _data.panels[y] = data[y];
             }
@@ -62,9 +61,9 @@ var lbvisLGAF = (function (args) {
     }
     function setOptionsSubpanels() {
         var str = '<option data-localize="inputs.subpanels">Select a sub-panel...</option>';
-        var panel = _data.panels[_options.year].find(function(panel) {
-            return (panel.id == _options.panel ? panel : null);
-        });
+        var panel = _data.panels[_options.year].filter(function(p) {
+            return (p.id == _options.panel ? p : null);
+        })[0];
         if (panel) {
             panel.subpanels.forEach(function (item) {
                 var selected = (_options.subpanel == item.id ? ' selected="selected"' : '');
@@ -79,11 +78,12 @@ var lbvisLGAF = (function (args) {
         _defer.done(function () {
             // SUCCESS
             var row = '';
-            var subpanel = _data.panels[_options.year].find(function (p) { return p.id == _options.panel; })
-                    .subpanels.find(function(s) { return s.id == _options.subpanel; });
+            var subpanel = _data.panels[_options.year]
+                    .filter(function (p) { return p.id == _options.panel; })[0]
+                    .subpanels.filter(function(s) { return s.id == _options.subpanel; })[0];
             //console.log('LGAF got values ', _options, _data, subpanel);
             subpanel.indicators.forEach(function (indicator) {
-                var ival = _data.series.find(function(v) { return v.id == indicator.id; });
+                var ival = _data.series.filter(function(v) { return v.id == indicator.id; })[0];
                 var value = (ival ? ival.value.toLowerCase() : 'na');
 
                 var vspan = value.split('-').map(function (v) {

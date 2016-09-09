@@ -83,7 +83,8 @@ var lbvisSpider = (function (args) {
                 text: _options.title
             },
             subtitle: {
-                text:  LBVIS.countries().find(function (c) { return c.iso3 === _options.iso3; }).name
+                text: LBVIS.countries().filter(
+                    function (c) { return c.iso3 === _options.iso3; })[0].name
             },
             pane: {
                 size: '80%'
