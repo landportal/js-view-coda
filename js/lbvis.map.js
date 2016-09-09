@@ -32,6 +32,8 @@ tooltip: function () {
 var lbvisMap = (function (args) {
     var LBVIS = args.vis;
     var _options = {
+        width:          args.width      || 1004, // print hack, for wkhtmltopdf
+        height:         args.height     || 500,  // print hack, for wkhtmltopdf
         //type: args.type,                // map type: global or local
         title:          args.title      || null,        // Chart title
         subtitle:       args.subtitle   || null,        // Chart title
@@ -169,6 +171,8 @@ var lbvisMap = (function (args) {
     var _mapOptions = function () {
         _map = {
             chart: {
+                width: _options.width,
+                height: _options.height,
                 backgroundColor: _options.colors.background,
                 margin: (_options.indicator ? [40, 0, 0, 0] : 0)
             },
@@ -326,6 +330,7 @@ var lbvisMap = (function (args) {
         debug: function () {
             console.log(_options, _data, _map);
         },
+        map: function () { return _data.map; },
         draw: _mapDraw,
         init: function () {
             //console.log('Map init', _options, _data);

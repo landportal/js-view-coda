@@ -3,6 +3,8 @@
 var lbvisLC = (function (args) {
     var LBVIS = args.vis;
     var _options = {
+        width:          args.width      || 1004, // print hack, for wkhtmltopdf
+        height:         args.height     || 500,  // print hack, for wkhtmltopdf
         target: args.target || '#compare',
         target_chart: args.target_chart || '#compare-chart',
         indicator: args.indicator || 'WB-SP.RUR.TOTL.ZS',
@@ -120,6 +122,8 @@ var lbvisLC = (function (args) {
         if(_data.from != _data.to) chart_type = "line";
         var CharLineOp = {
             chart: {
+                width: _options.width,
+                height: _options.height,
                 type: chart_type,
                 backgroundColor: "transparent",
                 renderTo: $(_options.target + ' ' + _options.target_chart)[0]
