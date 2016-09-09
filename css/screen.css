@@ -7334,6 +7334,10 @@ button.close {
     display: none !important;
   }
 }
+section:nth-child(even) {
+  background-color: #e6e6e6;
+}
+
 /**
  * Makes a proportionnal 1:2 ratio rectangle "fluid" area to draw the map
  *   set .map-fluid padding-bottom to 66% to have a 4:3 window, etc...

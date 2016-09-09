@@ -3,6 +3,45 @@ $icon-font-path: '';
 @import "bootstrap-compass";
 @import "bootstrap";
 
-nav {
-    @extend .hidden-print;
+@media print {
+    .container {
+        width: auto;
+    }
+    body {
+        //background-color: #F8F8F8 !important;
+        // paper size: A4
+        width: 100%;
+        height: 100%;
+    }
+
+    nav {
+        @extend .hidden-print;
+    }
+
+    section {
+        page-break-inside: avoid;
+    }
+
+
+    #map-wrapper {
+        height: 500px !important;
+    }
+    #compare-chart,
+    #map-wrapper {
+        width: 1004px !important;
+        .highcharts-container {
+            text-align: center;
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+    }
+
+    /* For highstock */
+    span.highcharts-title,
+    span.highcharts-subtitle {
+        left: 0 !important;
+        width: 100% !important;
+        text-align: center !important;
+    }
 }

@@ -7334,3 +7334,41 @@ button.close {
     display: none !important;
   }
 }
+@media print {
+  .container {
+    width: auto;
+  }
+
+  body {
+    width: 100%;
+    height: 100%;
+  }
+
+  section {
+    page-break-inside: avoid;
+  }
+
+  #map-wrapper {
+    height: 500px !important;
+  }
+
+  #compare-chart,
+  #map-wrapper {
+    width: 1004px !important;
+  }
+  #compare-chart .highcharts-container,
+  #map-wrapper .highcharts-container {
+    text-align: center;
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* For highstock */
+  span.highcharts-title,
+  span.highcharts-subtitle {
+    left: 0 !important;
+    width: 100% !important;
+    text-align: center !important;
+  }
+}
