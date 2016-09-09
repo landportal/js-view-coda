@@ -5,10 +5,7 @@
     <title>LB vis examples - JS View CODA</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/screen.css">
-    <style type="text/css">
-
-
-    </style>
+    <link rel="stylesheet" href="css/print.css" media="print">
   </head>
   <body>
 
@@ -40,6 +37,7 @@
       </div>
 
       <footer class="row">
+        <nav>
         <form>
           <div class="form-group col-xs-7 col-sm-6">
             <select name="indicator" class="form-control">
@@ -55,15 +53,16 @@
             <input type="submit" name="add" value="Add" class="btn btn-primary" data-localize="inputs.addindicator"/>
           </div>
         </form>
+        </nav>
       </footer>
     </section>
 
-    <section id="compare" class="container-fluid">
+    <section class="container-fluid">
       <div class="row">
-        <div class="col-sm-6">
+        <div class="col-xs-6">
           <div id="spiderchart"></div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-xs-6">
           <div id="piechart"></div>
         </div>
       </div>
@@ -72,8 +71,8 @@
     <section class="container-fluid">
       <div class="row">
         <!-- LGAF chart markup -->
-        <article id="lgaf" class="col-sm-12 text-center">
-          <header>
+        <article id="lgaf" class="col-sm-12">
+          <header class="text-center">
             <h2 data-localize="global.title.lgaf">Land Governance Assessment Framework (LGAF)</h2>
           </header>
           <nav class="row">
@@ -118,33 +117,36 @@
     </section>
 
     <section id="compare" class="container-fluid">
-      <div class="row">
-        <form>
-          <div class="form-group col-xs-6 col-sm-3">
-            <select name="indicator" class="form-control">
-              <option data-localize="inputs.indicators">Select an indicator...</option>
-            </select>
-          </div>
-          <div class="form-group col-xs-6 col-sm-3">
-            <select name="country" class="form-control" disabled="disabled">
-              <option data-localize="inputs.scountry">Select country ...</option>
-            </select>
-          </div>
-          <div class="form-group col-xs-6 col-sm-2">
-            <select name="year[from]" class="form-control" disabled="disabled">
-              <option data-localize="inputs.speriodfrom">From year ...</option>
-            </select>
-          </div>
-          <div class="form-group col-xs-6 col-sm-2">
-            <select name="year[to]" class="form-control" disabled="disabled">
-              <option data-localize="inputs.speriodto">To year ...</option>
-            </select>
-          </div>
-          <div class="form-group col-xs-6 col-sm-2">
-            <input type="submit" name="add" value="Add country" class="btn btn-primary" data-localize="inputs.addtocompare"/>
-          </div>
-        </form>
-      </div>
+      <header class="text-center row">
+        <h2>Comparison chart</h2>
+        <nav>
+          <form>
+            <div class="form-group col-xs-6 col-sm-3">
+              <select name="indicator" class="form-control">
+                <option data-localize="inputs.indicators">Select an indicator...</option>
+              </select>
+            </div>
+            <div class="form-group col-xs-6 col-sm-3">
+              <select name="country" class="form-control" disabled="disabled">
+                <option data-localize="inputs.scountry">Select country ...</option>
+              </select>
+            </div>
+            <div class="form-group col-xs-5 col-sm-2">
+              <select name="year[from]" class="form-control" disabled="disabled">
+                <option data-localize="inputs.speriodfrom">From year ...</option>
+              </select>
+            </div>
+            <div class="form-group col-xs-5 col-sm-2">
+              <select name="year[to]" class="form-control" disabled="disabled">
+                <option data-localize="inputs.speriodto">To year ...</option>
+              </select>
+            </div>
+            <div class="form-group col-xs-2 col-sm-2">
+              <input type="submit" name="add" value="Add country" class="btn btn-primary" data-localize="inputs.addtocompare"/>
+            </div>
+          </form>
+        </nav>
+      </header>
       <div class="row">
         <div class="col-xs-12 text-center" id="labels-compare">
           <span class="hidden">Remove countries added</span>
@@ -158,8 +160,8 @@
     </section>
 
     <section id="map" class="container-fluid">
-      <article id="indicators" class="row">
-        <header class="col-md-offset-2 col-md-8 text-center">
+      <article class="row">
+        <header class="text-center">
           <h2 data-localize="global.mapping">Mapping</h2>
         </header>
         <nav class="text-center">
@@ -172,7 +174,7 @@
             </div>
           </form>
         </nav>
-        <div class="col-xs-12">
+        <div class="col-xs-12 text-center">
           <div class="map-fluid">
             <div id="map-wrapper" class="map-fluid-wrapper"></div>
           </div>
@@ -181,12 +183,12 @@
     </section>  
 
     <script src="js/vendor/jquery-1.11.2.min.js"></script>
+    <!-- <script src="js/vendor/jquery.localize.min.js"></script> -->
     <script src="js/vendor/bootstrap.min.js"></script>
     <script src="js/vendor/highstock.js"></script>
     <script src="js/vendor/highmaps.js"></script>
     <script src="js/vendor/highcharts-more.js"></script>
-    <!-- <script src="js/vendor/modules/exporting.js"></script> -->
-    <!-- <script src="js/vendor/jquery.localize.min.js"></script> -->
+    <!-- <script src="js/vendor/exporting.js"></script> -->
     <script src="js/lbvis.data.js"></script>
     <script src="js/lbvis.js"></script>
     <script src="js/map_data.js"></script>
@@ -204,8 +206,10 @@
       Compare = new lbvisLC(defaultParams);
       VMap = new lbvisMap($.extend({
         indicator: 'WB-SP.RUR.TOTL.ZS',
-        indicators: true,
-        legend: true
+        indicators: false,
+        legend: true,
+        title: true,
+        subtitle: true,
       }, defaultParams));
       Spider = new lbvisSpider($.extend({target: '#spiderchart'}, defaultParams));
       Pie = new lbvisPie($.extend({target: '#piechart'}, defaultParams));
