@@ -12,6 +12,6 @@ javascripts_dir = "../js"
 
 # Generation settings
 relative_assets = true
-sourcemap = false
+sourcemap = true
 preferred_syntax = :scss
-line_comments = false
+line_comments = true

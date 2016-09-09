@@ -23,6 +23,11 @@ $grey:          #CCCCCC;
 
 
 /* LGAF color coded indicator values */
+#lgaf-wrapper li {
+    padding: .5em 0;
+    border-bottom: 1px solid $grey;
+    &:last-of-type { border-bottom: 0; }
+}
 .lgaf-value-a,
 .lgaf-value-b,
 .lgaf-value-c,
@@ -42,19 +47,19 @@ li span[class*="lgaf-value-"]:nth-child(2) {
     @include border-radius(0 20px 20px 0);
 }
 .lgaf-value-a {
-    background-color: #7ED321;
+    background-color: #7ED321 !important;
 }
 .lgaf-value-b {
-    background-color: #F8E71C;
+    background-color: #F8E71C !important;
 }
 .lgaf-value-c {
-    background-color: #F5A623;
+    background-color: #F5A623 !important;
 }
 .lgaf-value-d {
-    background-color: #F6112D;
+    background-color: #F6112D !important;
 }
 .lgaf-value-na {
-    background-color: $grey;
+    background-color: $grey !important;
 }
 
 
