@@ -122,8 +122,8 @@ var lbvisLC = (function (args) {
         if(_data.from != _data.to) chart_type = "line";
         var CharLineOp = {
             chart: {
-                width: _options.width,
-                height: _options.height,
+                // width: _options.width,
+                // height: _options.height,
                 type: chart_type,
                 backgroundColor: "transparent",
                 renderTo: $(_options.target + ' ' + _options.target_chart)[0]
