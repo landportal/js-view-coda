@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Compare / linechart examples - JS View CODA</title>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+  </head>
+  <body>
+    <header class="container">
+      <h1>JS View CODA</h1>
+      <h2>Compare / linechart examples</h2>
+    </header>
+
+    <nav class="container-fluid">
+      <a href="#compare">Compare</a> |
+    </nav>
+
+    <section id="doc" class="container-fluid clearfix">
+      <h2>Documentation</h2>
+      <h3>Available options</h3>
+      <div class="row">
+      <div class="col-sm-6">
+      <p>Global options</p>
+      <dl>
+        <dt>title, subtitle: bool or string</dt>
+        <dd>False (default) hide sub/title. True: sub/title will be replaced by 'indicator' (see option indicator) label + year for the title and description for the subtitle.  String: set sub/title</dd>
+        <dt>iso3 : country ISO 3 letters code</dt>
+        <dd>Select a specific country</dd>
+        <dt>target, graphTarget: xpath</dt>
+        <dd>XPath to element containing the graph (target) and the element to draw the linechart (graphTarget)</dd>
+        <dt>indicator: indicator code</dt>
+        <dd>Show a specific indicator</dd>
+      </dl>
+      </div>
+      <div class="col-sm-6">
+      <p>Color options</p>
+      <dl>
+        <dt>colors: array</dt>
+        <dd>Colors for compared countries.</dd>
+      </dl>
+      </div>
+    </section>
+
+    <section id="compare" class="container-fluid clearfix">
+      <header class="text-center row">
+        <h2>Comparison chart</h2>
+        <nav>
+          <form>
+            <div class="form-group col-xs-6 col-sm-3">
+              <select name="indicator" class="form-control">
+                <option data-localize="inputs.indicators">Select an indicator...</option>
+              </select>
+            </div>
+            <div class="form-group col-xs-6 col-sm-3">
+              <select name="country" class="form-control" disabled="disabled">
+                <option data-localize="inputs.scountry">Select country ...</option>
+              </select>
+            </div>
+            <div class="form-group col-xs-5 col-sm-2">
+              <select name="year[from]" class="form-control" disabled="disabled">
+                <option data-localize="inputs.speriodfrom">From year ...</option>
+              </select>
+            </div>
+            <div class="form-group col-xs-5 col-sm-2">
+              <select name="year[to]" class="form-control" disabled="disabled">
+                <option data-localize="inputs.speriodto">To year ...</option>
+              </select>
+            </div>
+            <div class="form-group col-xs-2 col-sm-2">
+              <input type="submit" name="add" value="Add country" class="btn btn-primary" data-localize="inputs.addtocompare"/>
+            </div>
+          </form>
+        </nav>
+      </header>
+      <div class="row">
+        <div class="col-xs-12 text-center" id="labels-compare">
+          <span class="hidden">Remove countries added</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div id="compare-chart"></div>
+        </div>
+      </div>
+    </section>  
+
+    <footer class="container">
+      <p>JS View COuntry DAta - https://github.com/landpotal/js-view-coda/</p>
+      <p>2016 © Landportal - Jules Clement</p>
+    </footer>
+
+    <script src="js/vendor/jquery-1.11.2.min.js"></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
+    <script src="js/vendor/highstock.js"></script>
+    <script src="js/lbvis.data.js"></script>
+    <script src="js/lbvis.js"></script>
+    <script src="js/lbvis.linechart.js"></script>
+    <script type="text/javascript">
+      var LBV = new lbvis();
+      var Compare = new lbvisLC({vis: LBV,
+        //target: '#compare',
+        //graphTarget: '#compare-chart',
+        indicator: 'WB-SP.RUR.TOTL.ZS',
+        legend: true,
+        iso3: 'VNM',
+      });
+      LBV.ready().done(function () {
+        Compare.init();
+      });
+    </script>
+    
+  </body>
+</html>
