@@ -46,28 +46,30 @@
         <h2>Comparison chart</h2>
         <nav>
           <form>
-            <div class="form-group col-xs-6 col-sm-3">
+            <div class="form-group col-xs-12 col-sm-3">
               <select name="indicator" class="form-control">
                 <option data-localize="inputs.indicators">Select an indicator...</option>
               </select>
+            </div>
+            <div class="form-group col-xs-6 col-sm-2">
+              <select name="year[from]" class="form-control" disabled="disabled">
+                <option data-localize="inputs.speriodfrom">From year ...</option>
+              </select>
+            </div>
+            <div class="form-group col-xs-6 col-sm-2">
+              <select name="year[to]" class="form-control" disabled="disabled">
+                <option data-localize="inputs.speriodto">To year ...</option>
+              </select>
+            </div>
+            <div class="form-group hidden-xs col-sm-1"> | 
             </div>
             <div class="form-group col-xs-6 col-sm-3">
               <select name="country" class="form-control" disabled="disabled">
                 <option data-localize="inputs.scountry">Select country ...</option>
               </select>
             </div>
-            <div class="form-group col-xs-5 col-sm-2">
-              <select name="year[from]" class="form-control" disabled="disabled">
-                <option data-localize="inputs.speriodfrom">From year ...</option>
-              </select>
-            </div>
-            <div class="form-group col-xs-5 col-sm-2">
-              <select name="year[to]" class="form-control" disabled="disabled">
-                <option data-localize="inputs.speriodto">To year ...</option>
-              </select>
-            </div>
-            <div class="form-group col-xs-2 col-sm-2">
-              <input type="submit" name="add" value="Add country" class="btn btn-primary" data-localize="inputs.addtocompare"/>
+            <div class="form-group col-xs-2 col-sm-1">
+              <input type="submit" name="add" value="Add" class="btn btn-primary" data-localize="inputs.addtocompare"/>
             </div>
           </form>
         </nav>
@@ -82,7 +84,7 @@
           <div id="compare-chart"></div>
         </div>
       </div>
-    </section>  
+    </section>
 
     <footer class="container">
       <p>JS View COuntry DAta - https://github.com/landpotal/js-view-coda/</p>
@@ -108,6 +110,5 @@
         Compare.init();
       });
     </script>
-    
   </body>
 </html>
