@@ -7338,6 +7338,14 @@ section:nth-child(even) {
   background-color: #e6e6e6;
 }
 
+li {
+  padding: .5em 0;
+  border-bottom: 1px solid #CCCCCC;
+}
+li:last-of-type {
+  border-bottom: 0;
+}
+
 /**
  * Makes a proportionnal 1:2 ratio rectangle "fluid" area to draw the map
  *   set .map-fluid padding-bottom to 66% to have a 4:3 window, etc...
@@ -7354,14 +7362,6 @@ section:nth-child(even) {
 }
 
 /* LGAF color coded indicator values */
-#lgaf-wrapper li {
-  padding: .5em 0;
-  border-bottom: 1px solid #CCCCCC;
-}
-#lgaf-wrapper li:last-of-type {
-  border-bottom: 0;
-}
-
 .lgaf-value-a,
 .lgaf-value-b,
 .lgaf-value-c,
@@ -7407,24 +7407,34 @@ li span[class*="lgaf-value-"]:nth-child(2) {
 }
 
 #ranking-wrapper li {
+  background-color: white;
   border-bottom: 1px solid #CCCCCC;
 }
 #ranking-wrapper li:first-of-type {
   text-transform: uppercase;
-  background-color: #green;
+  background-color: #A3C642;
   color: #FFFFFF;
+  font-size: 1.2em;
 }
 #ranking-wrapper li:last-of-type {
   border-bottom: 0;
+}
+#ranking-wrapper li.expand {
+  margin: .5em 0;
+}
+#ranking-wrapper li.expand a {
+  display: block;
+  padding: .5em 0;
+  width: 100%;
 }
 #ranking-wrapper li span.flag {
   vertical-align: middle;
   margin: 10px;
   color: transparent;
 }
-#ranking-wrapper li:first-of-type div,
-#ranking-wrapper li div:nth-child(2) {
-  line-height: 70px;
+#ranking-wrapper li .value {
+  font-size: 1.8em;
+  padding-top: .5em;
 }
 
 span.rank {

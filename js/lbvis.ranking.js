@@ -59,6 +59,17 @@ var lbvisRanking = (function (args = {}) {
         });
     };
 
+    var _getIndicatorDetails = function () {
+        var df = [];
+        // Get indicator metadata
+        df[0] = LBVIS.getIndicatorInfo(_options.indicator).done(function () {
+            _data.indicator = LBVIS.cache(_options.indicator)[0];
+        });
+        // Get Years for which this indicator is available
+        df[1] = _getIndicatorYears();
+        return $.when(df[0], df[1]);
+    };
+
     var _bindUI = function () {
         $(_options.target).delegate("select", "change", function(e) {
             if (e.target.name == 'indicator') {
@@ -71,24 +82,39 @@ var lbvisRanking = (function (args = {}) {
             }
         });
     };
-    var _formatRow = function (ind, pos) {
+    var _formatRow = function (ind, pos, length) {
         var country = LBV.countries().find(function (v) { return v.iso3 == ind.iso3; });
-        var flag = '<span class="rank">' + pos + '</span>',
+        var flag = '<span class="rank">' + (pos + 1) + '</span>',
             rank = '<span class="flag flag-' + ind.iso3 + '">' + ind.iso3 + '</span>';
         //console.log('Row : ', ind, country);
-        return '<li><div class="col-xs-8">' + flag + rank + (country ? country.name : ind.iso3) + '</div>'
-            + '<div class="col-xs-4">' + ind.value + '</div></li>';
+        var rowClass = (pos >= 5 && pos + 5 < length ? ' class="hidden"' : '');
+        return '<li'+rowClass+'><div class="col-xs-8">' + flag + rank + (country ? country.name : ind.iso3) + '</div>'
+            + '<div class="value col-xs-4 text-right">' + ind.value + '</div></li>';
+    };
+    var _expandRow = function () {
+        return '<li class="hidden-print text-center expand"><a name="show">Expand</a><a name="hide" class="hidden">Hide</a></li>';
     };
     var _draw = function () {
+        var max = Math.max.apply(Math, _data.values.map(function (v) { return v.value; }));
+
         var html = '<li><div class="col-xs-8">Country</div>'
-                 + '<div class="col-xs-4">Value</div></li>';
+                 + '<div class="col-xs-4 text-right">Value in '+_data.indicator.unit+'<br/>out of '+max+'</div></li>';
         _data.values.forEach(function (ind, pos) {
-            html += _formatRow(ind, pos);
+            if (pos == 5) html += _expandRow();
+            html += _formatRow(ind, pos, _data.values.length);
         });
-        var t = $(_options.target + '-wrapper');
-        //console.log('draw', t);
-        t.html(html);
+        $(_options.target + '-wrapper').html(html);
 	$(_options.target + ' [data-toggle="tooltip"]').tooltip();
+        $(_options.target + '-wrapper .expand a').on('click', function(e) {
+            e.preventDefault();
+            console.log('click expand', e);
+            $(e.target.parentElement.children).toggleClass('hidden');
+            if (e.target.name == 'show') {
+                $(_options.target + '-wrapper li').removeClass('hidden');
+            } else {
+                $(_options.target + '-wrapper li:nth-child(n+8):nth-last-child(n+6)').addClass('hidden');
+            }
+        });
     };
 
     return {
@@ -98,7 +124,7 @@ var lbvisRanking = (function (args = {}) {
         init: function () {
             _setOptionsIndicators();
             if (_options.indicator) {
-                _getIndicatorYears().done(function () {
+                _getIndicatorDetails().done(function () {
                     _getIndicator().done(function () {
                         _draw();
                     });
