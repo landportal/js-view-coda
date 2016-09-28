@@ -97,8 +97,8 @@ var lbvisRanking = (function (args = {}) {
     var _draw = function () {
         var max = Math.max.apply(Math, _data.values.map(function (v) { return v.value; }));
 
-        var html = '<li><div class="col-xs-8">Country</div>'
-                 + '<div class="col-xs-4 text-right">Value in '+_data.indicator.unit+'<br/>out of '+max+'</div></li>';
+        var html = '<li><div class="col-xs-4">Country</div>'
+                 + '<div class="col-xs-8 text-right">Value in '+_data.indicator.unit+'<br/>out of '+max+'</div></li>';
         _data.values.forEach(function (ind, pos) {
             if (pos == 5) html += _expandRow();
             html += _formatRow(ind, pos, _data.values.length);
