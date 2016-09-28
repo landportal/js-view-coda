@@ -160,7 +160,7 @@ var lbvisMap = (function (args) {
     var _setOptionsIndicators = function () {
         var el = $(_options.target + ' select[name="indicator"]');
         el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
-        _data.indicators = LBVIS.cache('indicators_' + _options.iso3);
+        _data.indicators = LBVIS.cache('indicators' + (_options.iso3 ? '_' + _options.iso3 : ''));
         var opts = LBVIS.generateOptions(_data.indicators, _options.indicator);
         if (opts) {
             el.append(opts);
