@@ -115,6 +115,29 @@ BIND (year(?dateTime) AS ?year) \
 } ORDER BY ?dateTime DESC(?value)";
     };
 
+    // Get an indicator details
+    var _indicatorDetails = function (indicator) {
+        var filters = [ "?uri", "?id" ],
+            values  = [ "<" + lod.uri.indicator + indicator + ">", "'"+ indicator +"'" ];
+        // Add columns: ?yearMin ?yearMax ?nbObs ?missingValues ?nbCountries ?minValue ?maxValue ?avgValue 
+        return query.prefix + " \
+SELECT ?id ?indicator ?indicatorDescription ?unit ?dataset ?source \
+FROM <http://data.landportal.info> \
+WHERE { \
+?uri ex:label ?indicator ; \
+        ex:unit ?unit ; \
+        ex:description ?indicatorDescription ; \
+        ex:dataset ?datasetURL ; \
+		rdfs:seeAlso ?indicatorSeeAlso .\
+?datasetURL ex:label ?dataset ; \
+        ex:org ?sourceURL ; \
+		rdfs:seeAlso ?datasetSeeAlso . \
+?sourceURL ex:label ?source ; \
+			  rdfs:seeAlso ?sourceSeeAlso . \
+VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
+}";
+    };
+
     // Available countries for a given indicator
     var _indicatorCountries = function (indicator) {
         return query.prefix + " \
@@ -396,6 +419,7 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
             indicatorInfo: function (id) { return _indicatorInfo(id); },
             indicatorYears: function (indicator, iso3) { return _indicatorYears(indicator, iso3); },
             indicatorValues: function(indicator, years) { return _indicatorValues(indicator, years); },
+            indicatorDetails: function(indicator) { return _indicatorDetails(indicator); },
             indicatorCountries: function(indicator, countries) { return _indicatorCountries(indicator, countries); },
             // TODO: check/cleanup queries
             line_chart: function(indicator, countries) { return _line_chart(indicator, countries); },
