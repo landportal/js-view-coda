@@ -119,11 +119,11 @@ BIND (year(?dateTime) AS ?year) \
     var _indicatorDetails = function (indicator) {
         var filters = [ "?uri", "?id" ],
             values  = [ "<" + lod.uri.indicator + indicator + ">", "'"+ indicator +"'" ];
-        // Add columns: ?yearMin ?yearMax ?nbObs ?missingValues ?nbCountries ?minValue ?maxValue ?avgValue 
         return query.prefix + " \
-SELECT ?id ?indicator ?indicatorDescription ?unit ?dataset ?source \
+SELECT DISTINCT ?id ?indicator ?indicatorDescription ?indicatorSeeAlso ?minYear ?maxYear ?unit ?nObs ?nYears ?nCountryWithValue ?perMissingValue ?minValue ?maxValue ?dataset ?datasetSeeAlso ?source ?sourceSeeAlso \
 FROM <http://data.landportal.info> \
 WHERE { \
+?obs cex:ref-indicator ?indicatorURL . \
 ?uri ex:label ?indicator ; \
         ex:unit ?unit ; \
         ex:description ?indicatorDescription ; \
@@ -133,8 +133,30 @@ WHERE { \
         ex:org ?sourceURL ; \
 		rdfs:seeAlso ?datasetSeeAlso . \
 ?sourceURL ex:label ?source ; \
-			  rdfs:seeAlso ?sourceSeeAlso . \
+		rdfs:seeAlso ?sourceSeeAlso . \
+{ \
+SELECT DISTINCT \
+?uri \
+year(min(?dateTime)) AS ?minYear \
+year(max(?dateTime)) AS ?maxYear \
+COUNT(?obs) AS ?nObs \
+COUNT(DISTINCT(year(?dateTime))) AS ?nYears \
+COUNT(DISTINCT ?country) AS ?nCountryWithValue \
+min(?value) AS ?minValue \
+max(?value) AS ?maxValue \
+?id \
+FROM <http://data.landportal.info> \
+WHERE{ \
+?obs cex:ref-indicator ?uri  ; \
+    cex:ref-area ?country ; \
+    cex:value ?value; \
+    cex:ref-time ?time . \
+?time time:hasBeginning ?timeValue . \
+    ?timeValue time:inXSDDateTime ?dateTime . \
 VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
+} \
+} \
+BIND ((1-((xsd:float(?nObs))/xsd:float((?nYears*?nCountryWithValue))))*100 AS ?perMissingValue) \
 }";
     };
 

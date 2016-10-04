@@ -84,7 +84,12 @@ var lbvisTable = (function (args) {
         return '<td class="lb-'+ col + tdclass +'" data-'+col+'="'+ind[col]+'">'+str+'</td>';
     };
     var _formatRow = function (ind) {
-        var cols = ['indicator', 'year', 'value', 'unit', 'dataset', 'source'];
+        var cols;
+		if (_options.iso3) {
+			cols = ['indicator', 'year', 'value', 'unit', 'dataset', 'source'];
+		} else {
+			cols = ['indicator', 'minYear', 'maxYear', 'unit', 'nObs', 'nYears', 'nCountryWithValue', 'perMissingValue', 'minValue' , 'maxValue', 'dataset', 'source'];
+		}
         var row = '<tr>';
         cols.forEach(function (col) {
             row += _formatCol(col, ind);
