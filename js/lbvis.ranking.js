@@ -5,7 +5,9 @@ var lbvisRanking = (function (args = {}) {
     var _options = {
         target:         args.target || '#ranking',
         indicator:      args.indicator || 'WB-SP.POP.TOTL',
-        theme:          null
+        expand:         args.expand || 5,
+        expandThreshold:args.expandThreshold || 20,
+        theme:          null // future
     };
     var _data = {
         values: []
@@ -30,14 +32,39 @@ var lbvisRanking = (function (args = {}) {
         $(_options.target + ' select[name=year]').html(str);
 	$(_options.target + ' select[name=year]').prop( "disabled", false );
     };
+    var _setMetadata = function () {
+        $('.metadata span').each(function (n) {
+            var name = $(this).attr('name')
+            switch (name) {
+            case 'indicator':
+                name = 'label';
+            case 'dataset':
+            case 'source':
+                $(this).html(_data.indicator[name]);
+                var p = $(this).parent();
+                if (p[0].nodeName == 'A') p.attr('href', _data.indicator[name + 'SeeAlso']);
+                break;
+            case 'unit':
+            case 'year':
+            case 'description':
+                $(this).html(_data.indicator[name]);
+                break;
+            default:
+                console.log(this);
+            }
+            //console.log('done '+name, $(this));
+        });
+    };
 
     var _getIndicator = function () {
         var query = LBVIS.DATA.queries.indicatorValues(
             _options.indicator, _options.year
         );
         _data.values = [];
-        console.log('get indicator', _options, query);
+        //console.log('get indicator', _options, query);
         return $.getJSON(LBVIS.DATA.sparqlURL(query), function (data) {
+            // set year in info
+            $('.metadata [name="year"]').html('('+_options.year+')');
             data.results.bindings.forEach(function (item) {
                 var ind = {};
                 Object.keys(item).forEach(function (prop) { ind[prop] = item[prop].value; });
@@ -52,29 +79,32 @@ var lbvisRanking = (function (args = {}) {
 	    data.results.bindings.forEach(function (item) {
                 _data.years.push(item.year.value);
             });
-            if (!_options.year) { // TODO also check _options.year exist!
-                _options.year = Math.max.apply(Math, _data.years);
-            }
+            _options.year = Math.max.apply(Math, _data.years);
             _setOptionsYears();
         });
     };
-
     var _getIndicatorDetails = function () {
         var df = [];
         // Get indicator metadata
         df[0] = LBVIS.getIndicatorInfo(_options.indicator).done(function () {
             _data.indicator = LBVIS.cache(_options.indicator)[0];
+            _setMetadata();
         });
         // Get Years for which this indicator is available
-        df[1] = _getIndicatorYears();
+        df[1] = _getIndicatorYears().done(function () {
+        });
         return $.when(df[0], df[1]);
     };
 
     var _bindUI = function () {
         $(_options.target).delegate("select", "change", function(e) {
             if (e.target.name == 'indicator') {
-                _options.selected = e.target.value;
-                _getIndicatorYears();
+                _options.indicator = e.target.value;
+                _getIndicatorDetails().done(function () {
+                    _getIndicator().done(function () {
+                        _draw();
+                    });
+                });
             }
             if (e.target.name == 'year') {
                 _options.year = e.target.value;
@@ -87,27 +117,32 @@ var lbvisRanking = (function (args = {}) {
         var flag = '<span class="rank">' + (pos + 1) + '</span>',
             rank = '<span class="flag flag-' + ind.iso3 + '">' + ind.iso3 + '</span>';
         //console.log('Row : ', ind, country);
-        var rowClass = (pos >= 5 && pos + 5 < length ? ' class="hidden"' : '');
+        var rowClass = (_data.values.length > _options.expandThreshold && pos >= _options.expand && pos + _options.expand < length ? ' class="hidden"' : '');
         return '<li'+rowClass+'><div class="col-xs-8">' + flag + rank + (country ? country.name : ind.iso3) + '</div>'
-            + '<div class="value col-xs-4 text-right">' + ind.value + '</div></li>';
+            + '<div class="value col-xs-4 text-right"'
+            + (parseFloat(ind.value) && ind.value.indexOf('.') > -1 ? ' title="'+ind.value+'"' : '') + '>'
+            + (parseFloat(ind.value) ? LBVIS.round(ind.value, 2) : ind.value)
+            + '</div></li>';
     };
     var _expandRow = function () {
         return '<li class="hidden-print text-center expand"><a name="show">Expand</a><a name="hide" class="hidden">Hide</a></li>';
     };
     var _draw = function () {
         var max = Math.max.apply(Math, _data.values.map(function (v) { return v.value; }));
-
         var html = '<li><div class="col-xs-4">Country</div>'
                  + '<div class="col-xs-8 text-right">Value in '+_data.indicator.unit+'<br/>out of '+max+'</div></li>';
+        // Quickly test data values to see if numeric (should be provided by indicator.hascodedvalue property?)
+        // If NaN, reverse array
+        if (!parseFloat(_data.values[0].value)) _data.values = _data.values.reverse();
         _data.values.forEach(function (ind, pos) {
-            if (pos == 5) html += _expandRow();
+            if (pos == _options.expand && _data.values.length > _options.expandThreshold) html += _expandRow();
             html += _formatRow(ind, pos, _data.values.length);
         });
         $(_options.target + '-wrapper').html(html);
 	$(_options.target + ' [data-toggle="tooltip"]').tooltip();
         $(_options.target + '-wrapper .expand a').on('click', function(e) {
             e.preventDefault();
-            console.log('click expand', e);
+            //console.log('click expand', e);
             $(e.target.parentElement.children).toggleClass('hidden');
             if (e.target.name == 'show') {
                 $(_options.target + '-wrapper li').removeClass('hidden');
