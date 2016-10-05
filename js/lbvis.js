@@ -116,6 +116,12 @@ var lbvis = (function (args) {
                     + item.label + '</option>';
             });
             return options;
+        },
+        // Correct rounding to 2 decimal after floating point (RTFM http://floating-point-gui.de/
+        // or http://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html (if you crave more details)
+        round: function (num, precision) {
+            precision = precision || 2;
+            return +(Math.round(num + "e+"+precision)  + "e-"+precision)
         }
     };
 });
