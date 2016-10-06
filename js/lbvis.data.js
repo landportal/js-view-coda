@@ -115,6 +115,51 @@ BIND (year(?dateTime) AS ?year) \
 } ORDER BY ?dateTime DESC(?value)";
     };
 
+    // Get an indicator details
+    var _indicatorDetails = function (indicator) {
+        var filters = [ "?uri", "?id" ],
+            values  = [ "<" + lod.uri.indicator + indicator + ">", "'"+ indicator +"'" ];
+        return query.prefix + " \
+SELECT DISTINCT ?id ?indicator ?indicatorDescription ?indicatorSeeAlso ?minYear ?maxYear ?unit ?nObs ?nYears ?nCountryWithValue ?perMissingValue ?minValue ?maxValue ?dataset ?datasetSeeAlso ?source ?sourceSeeAlso \
+FROM <http://data.landportal.info> \
+WHERE { \
+?obs cex:ref-indicator ?indicatorURL . \
+?uri ex:label ?indicator ; \
+        ex:unit ?unit ; \
+        ex:description ?indicatorDescription ; \
+        ex:dataset ?datasetURL ; \
+		rdfs:seeAlso ?indicatorSeeAlso .\
+?datasetURL ex:label ?dataset ; \
+        ex:org ?sourceURL ; \
+		rdfs:seeAlso ?datasetSeeAlso . \
+?sourceURL ex:label ?source ; \
+		rdfs:seeAlso ?sourceSeeAlso . \
+{ \
+SELECT DISTINCT \
+?uri \
+year(min(?dateTime)) AS ?minYear \
+year(max(?dateTime)) AS ?maxYear \
+COUNT(?obs) AS ?nObs \
+COUNT(DISTINCT(year(?dateTime))) AS ?nYears \
+COUNT(DISTINCT ?country) AS ?nCountryWithValue \
+min(?value) AS ?minValue \
+max(?value) AS ?maxValue \
+?id \
+FROM <http://data.landportal.info> \
+WHERE{ \
+?obs cex:ref-indicator ?uri  ; \
+    cex:ref-area ?country ; \
+    cex:value ?value; \
+    cex:ref-time ?time . \
+?time time:hasBeginning ?timeValue . \
+    ?timeValue time:inXSDDateTime ?dateTime . \
+VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
+} \
+} \
+BIND ((1-((xsd:float(?nObs))/xsd:float((?nYears*?nCountryWithValue))))*100 AS ?perMissingValue) \
+}";
+    };
+
     // Available countries for a given indicator
     var _indicatorCountries = function (indicator) {
         return query.prefix + " \
@@ -396,6 +441,7 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
             indicatorInfo: function (id) { return _indicatorInfo(id); },
             indicatorYears: function (indicator, iso3) { return _indicatorYears(indicator, iso3); },
             indicatorValues: function(indicator, years) { return _indicatorValues(indicator, years); },
+            indicatorDetails: function(indicator) { return _indicatorDetails(indicator); },
             indicatorCountries: function(indicator, countries) { return _indicatorCountries(indicator, countries); },
             // TODO: check/cleanup queries
             line_chart: function(indicator, countries) { return _line_chart(indicator, countries); },

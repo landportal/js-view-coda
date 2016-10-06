@@ -3,10 +3,10 @@
 var lbvisTable = (function (args) {
     var LBVIS = args.vis;
     var _options = {
-        target:         args.target || '#table-indicators',
-        iso3:           args.iso3,
+        target:         args.target     || '#table-indicators',
+        iso3:           args.iso3       || null,
         // Default indicators for the table
-        indicators:     args.indicators || ["WB-SP.POP.TOTL", "WB-SP.RUR.TOTL.ZS", "WB-NY.GDP.PCAP.PP.KD", "FAO-6601-5110", "FAO-23045-6083", "DP-MOD-O-F", "DP-MOD-O-N", "FAO-LG.1FB"],
+        indicators:     args.indicators || [],
         selected: null,
         year: null
     };
@@ -24,9 +24,14 @@ var lbvisTable = (function (args) {
         return $.when.apply($, _data.defers);
     };
     var _getIndicator = function (id) {
-        var query = LBVIS.DATA.queries.countryIndicatorValues(
-            _options.iso3, id, _options.year
-        );
+        var query;
+        if (_options.iso3) {
+            query = LBVIS.DATA.queries.countryIndicatorValues(
+                _options.iso3, id, _options.year
+            );
+        } else {
+            query = LBVIS.DATA.queries.indicatorDetails(id);
+        }
         //console.log('get indicator', id, _options.year, query);
         return $.getJSON(LBVIS.DATA.sparqlURL(query), function (data) {
             data.results.bindings.forEach(function (item) {
@@ -59,8 +64,8 @@ var lbvisTable = (function (args) {
     var _setOptionsIndicators = function () {
         var el = $(_options.target + ' select[name="indicator"]');
         el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
-        var opts = LBVIS.generateOptions(LBVIS.cache('indicators_' + _options.iso3),
-                                         _options.selected);
+        _data.allIndicators = LBVIS.cache('indicators' + (_options.iso3 ? '_' + _options.iso3 : ''));
+        var opts = LBVIS.generateOptions(_data.allIndicators, _options.indicator);
         if (opts) {
             el.append(opts);
             el.prop( "disabled", false );
@@ -79,7 +84,12 @@ var lbvisTable = (function (args) {
         return '<td class="lb-'+ col + tdclass +'" data-'+col+'="'+ind[col]+'">'+str+'</td>';
     };
     var _formatRow = function (ind) {
-        var cols = ['indicator', 'year', 'value', 'unit', 'dataset', 'source'];
+        var cols;
+		if (_options.iso3) {
+			cols = ['indicator', 'year', 'value', 'unit', 'dataset', 'source'];
+		} else {
+			cols = ['indicator', 'minYear', 'maxYear', 'unit', 'nObs', 'nYears', 'nCountryWithValue', 'perMissingValue', 'minValue' , 'maxValue', 'dataset', 'source'];
+		}
         var row = '<tr>';
         cols.forEach(function (col) {
             row += _formatCol(col, ind);
@@ -127,6 +137,9 @@ var lbvisTable = (function (args) {
     };
 
     return {
+        debug: function () {
+            console.log(_options, _data);
+        },
         init: function () {
             LBVIS.getIndicators(_options.iso3).done(function () {
                 _setOptionsIndicators();

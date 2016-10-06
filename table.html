@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Table LB vis examples - JS View CODA</title>
+    <link rel="stylesheet" href="css/screen.css">
+  </head>
+  <body>
+
+
+    <section id="table-country" class="container-fluid">
+      <header class="row">
+        <div class="col-md-offset-2 col-md-8 text-center">
+          <h2 data-localize="global.indicators">Country Indicators table</h2>
+        </div>
+      </header>
+      <div class="row">
+        <div class="col-xs-12">
+          <table class="table">
+            <thead>
+              <tr>
+                <th data-localize="label.iname">Indicators</th>
+                <th data-localize="label.year">Year</th>
+                <th data-localize="label.val">Value</th>
+                <th data-localize="label.unit">Unit</th>
+                <th data-localize="label.dataset">Dataset</th>
+                <th data-localize="label.source">Source</th>
+                <th data-localize="label.remove">Remove</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <footer class="row">
+        <nav>
+          <form>
+            <div class="form-group col-xs-7 col-sm-6">
+              <select name="indicator" class="form-control">
+                <option data-localize="inputs.indicators">Select an indicator...</option>
+              </select>
+            </div>
+            <div class="form-group col-xs-5 col-sm-3">
+              <select name="year" class="form-control" disabled="disabled">
+                <option data-localize="inputs.years">Year...</option>
+              </select>
+            </div>
+            <div class="form-group col-xs-7 col-sm-3">
+              <input type="submit" name="add" value="Add" class="btn btn-primary" data-localize="inputs.addindicator"/>
+            </div>
+          </form>
+        </nav>
+      </footer>
+    </section>
+
+    <section id="table-indicators" class="container-fluid">
+      <header class="row">
+        <div class="col-md-offset-2 col-md-8 text-center">
+          <h2 data-localize="global.indicators">Indicators detail table</h2>
+        </div>
+      </header>
+      <div class="row">
+        <div class="col-xs-12">
+          <table class="table">
+            <thead>
+              <tr>
+                <th data-localize="label.iname">Indicator</th>
+                <th data-localize="label.minYear">Min Year</th>
+                <th data-localize="label.maxYear">Max Year</th>
+                <th data-localize="label.unit">Unit</th>
+                <th data-localize="label.nObs">Number Observations</th>
+                <th data-localize="label.nYears">Number Years</th>
+                <th data-localize="label.nCountryWithValue">Total Countries</th>
+                <th data-localize="label.perMissingValue">Missing Values (%)</th>
+                <th data-localize="label.minvalue">Min Value</th>
+                <th data-localize="label.maxValue">Max Value</th>
+                <th data-localize="label.dataset">Dataset</th>
+                <th data-localize="label.source">Source</th>
+                <th data-localize="label.remove">Remove</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <footer class="row">
+        <nav>
+          <form>
+            <div class="form-group col-xs-7 col-sm-6">
+              <select name="indicator" class="form-control">
+                <option data-localize="inputs.indicators">Select an indicator...</option>
+              </select>
+            </div>
+            <div class="form-group col-xs-5 col-sm-3">
+              <select name="year" class="form-control" disabled="disabled">
+                <option data-localize="inputs.years">Year...</option>
+              </select>
+            </div>
+            <div class="form-group col-xs-7 col-sm-3">
+              <input type="submit" name="add" value="Add" class="btn btn-primary" data-localize="inputs.addindicator"/>
+            </div>
+          </form>
+        </nav>
+      </footer>
+    </section>
+
+    
+    <script src="js/vendor/jquery-1.11.2.min.js"></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
+    <script src="js/vendor/highstock.js"></script>
+    <script src="js/vendor/highcharts-more.js"></script>
+    <script src="js/lbvis.data.js"></script>
+    <script src="js/lbvis.js"></script>
+    <script src="js/lbvis.table.js"></script>
+    <script type="text/javascript">
+      LBV = new lbvis();
+      var defaultParams = {
+        vis: LBV,
+        indicators: ["WB-SP.POP.TOTL", "WB-SP.RUR.TOTL.ZS"]
+      };
+      Table = new lbvisTable($.extend({
+        iso3: 'THA',
+        target: '#table-country',
+      }, defaultParams));
+
+      Details = new lbvisTable($.extend({
+        target: '#table-indicators',
+      }, defaultParams));
+
+      LBV.ready().done(function () {
+        Table.init();
+        Details.init();
+      });
+    </script>
+  </body>
+</html>

@@ -3,7 +3,6 @@
   <head>
     <meta charset="utf-8">
     <title>LB vis examples - JS View CODA</title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/screen.css">
     <link rel="stylesheet" href="css/print.css" media="print">
   </head>
@@ -214,7 +213,7 @@
       Spider = new lbvisSpider($.extend({target: '#spiderchart'}, defaultParams));
       Pie = new lbvisPie($.extend({target: '#piechart'}, defaultParams));
       LGAF = new lbvisLGAF($.extend({target: '#lgaf'}, defaultParams));
-      Table = new lbvisTable($.extend({target: '#table-indicators'}, defaultParams));
+      Table = new lbvisTable($.extend({target: '#table-indicators', indicators: ["WB-SP.POP.TOTL", "WB-SP.RUR.TOTL.ZS"]}, defaultParams));
 
       // Init Charts when LBV is ready (ie: indicators and countries are loaded)
       LBV.ready().done(function () {
