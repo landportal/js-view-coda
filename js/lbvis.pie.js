@@ -118,7 +118,7 @@ var lbvisPie = (function (args) {
         init: function () {
             // Get main indicator info, then load Pie data
             LBVIS.getIndicatorInfo(_options.indicators.main).done(function () {
-                _data.indicator = LBVIS.cache(_options.indicators.main)[0];
+                _data.indicator = LBVIS.cache('info')[_options.indicators.main][0];
                 _loadData().done(function () {
                     _drawChart();
                 });
