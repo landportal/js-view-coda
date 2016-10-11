@@ -155,8 +155,8 @@ var lbvisMap = (function (args) {
                 backgroundColor: _options.colors.background,
                 margin: (_options.indicator ? [40, 0, 0, 0] : 0)
             },
-            title:      { text: (LBVIS.isString(_options.title) ? _options.title : null) },
-            subtitle:   { text: (LBVIS.isString(_options.subtitle) ? _options.subtitle : null) },
+            title:      { text: (_options.title ? _options.title : null) },
+            subtitle:   { text: (_options.subtitle ? _options.subtitle : null) },
             credits:    { enabled: false },
             legend:     { enabled: _options.map.legend, y: 20 },
             tooltip:    { enabled: (_options.map.tooltip ? true : false), valueDecimals: 2 }
