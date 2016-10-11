@@ -10,8 +10,8 @@ The data comes directly from a LOD sparql endpoint.
 
 Releases
 ========
-v0.1    - Sept. 2016 - Initial release
-v0.2    - Oct.  2016 - Removed dependency on iso3 (can init the lib without specific country selected). Centralized indicators helpers (info/year/details). Reworked core caching. Added more visualization (table details + download data).
+v1.0    - Sept. 2016 - Initial release
+v1.1    - Oct.  2016 - Removed dependency on iso3 (can init the lib without specific country selected). Centralized indicators helpers (info/year/details). Reworked core caching. Added more visualization (table details + download data).
 
 
 Installation
