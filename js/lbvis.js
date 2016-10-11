@@ -29,7 +29,14 @@ var lbvis = (function (args) {
         loadIndicators: args.loadIndicators || true
     };
     var _defers = { info: {} }; // jQuery deferred
-    var _cache = {};            // Internal cache
+    // Internal cache
+    var _cache = {
+        'indicators': [],
+        'countries':  [],
+        'indicatorsByCountry': {},
+        'info':  {},    // store by indicator id
+        'years': {}     // store by indicator id
+    };
     // Data lib
     var _DATA = args.data || new lbvisDATA(_options);
 
@@ -37,15 +44,20 @@ var lbvis = (function (args) {
     //  - store jQuery deferred in _defer by type
     //  - turn results into a hash (named after query SELECTed 'columns'),
     //    and store the data in _cache by type
-    var _getSPARQL = function (query, type) {
+    var _getSPARQL = function (query, type, id) {
         //console.log(type, query);
-        _cache[type] = [];
+        if (id) _cache[type][id] = [];
+        else _cache[type] = [];
         var url = _DATA.sparqlURL(query);
         _defers[type] = $.getJSON(url, function (data) {
             data.results.bindings.forEach(function (item) {
                 var stuff = {};
-                Object.keys(item).forEach(function (prop) { stuff[prop] = item[prop].value; });
-                _cache[type].push(stuff);
+                Object.keys(item).forEach(function (prop) {
+                    var v = item[prop].value;
+                    stuff[prop] = (parseFloat(v) ? parseFloat(v) : v);
+                });
+                if (id) _cache[type][id].push(stuff);
+                else _cache[type].push(stuff);
             });
         });
         return _defers[type];
@@ -61,15 +73,69 @@ var lbvis = (function (args) {
         var def = 'indicators';
         var q = _DATA.queries.indicators;
         if (iso3) {
-            def += '_' + iso3;
+            def = 'indicatorsByCountry';
             q = _DATA.queries.countryIndicators(iso3);
         }
-        return _getSPARQL(q, def);
+        return _getSPARQL(q, def, iso3);
     };
-    // Get an indicator detail
+    // Get an indicator metadata
     var _getIndicatorInfo = function (id) {
+        if (_defers.info[id]) {
+            return _defers.info[id];
+        }
         var q = _DATA.queries.indicatorInfo(id);
-        return _getSPARQL(q, id);
+        return _getSPARQL(q, 'info', id);
+    };
+    // Return valid years for an indicator
+    var _getIndicatorYears = function (id, iso3) {
+        if (_defers.info[id]) {
+            return _defers.info[id];
+        }
+        var q = _DATA.queries.indicatorYears(id);
+        return _getSPARQL(q, 'years', id);
+    };
+    // combine, get info + years
+    // iso3, narrow down the years to the one avail. for a given country
+    var _getIndicatorDetails = function (id, iso3) {
+        var df = [];
+        // Get indicator metadata
+        df[0] = _getIndicatorInfo(id).done(function () {
+        });
+        // Get Years for which this indicator is available
+        df[1] = _getIndicatorYears(id, iso3).done(function () {
+            // Re-process cache for years
+            var years = _cache['years'][id];
+            _cache['years'][id] = [];
+            $.each(years, function (key, value) {
+                _cache['years'][id].push(value.year);
+            });
+        });
+        return $.when(df[0], df[1]);
+    };
+    // MUST be called after _indicatorInfo completed!
+    var _setMetadata = function (target, id) {
+        var indicator = _cache['info'][id][0];
+        console.log(id, indicator);
+        $(target).each(function (n) {
+            var name = $(this).attr('name');
+            switch (name) {
+            case 'indicator':
+                name = 'label';
+            case 'dataset':
+            case 'source':
+                $(this).html(indicator[name]);
+                var p = $(this).parent();
+                if (p[0].nodeName == 'A') p.attr('href', indicator[name + 'SeeAlso']);
+                break;
+            case 'unit':
+            case 'year':
+            case 'description':
+                $(this).html(indicator[name]);
+                break;
+            // default:
+            //     console.log(this);
+            }
+        });
     };
 
     var _init = function () {
@@ -87,26 +153,20 @@ var lbvis = (function (args) {
         countries: function () { return _cache['countries']; },
         indicators: function () { return _cache['indicators']; },
 
+        setMetadata: function (target, id) { return _setMetadata(target, id); },
+        getIndicatorInfo: function (indicator) { return _getIndicatorInfo(indicator); },
+        getIndicatorYears: function (indicator) { return _getIndicatorYears(indicator); },
+        getIndicatorDetails: function (indicator, iso3) { return _getIndicatorDetails(indicator, iso3); },
+        getIndicators: function (indicator) { return _getIndicators(indicator); },
+
         ready: function () {
             if (_options.loadIndicators) {
                 return $.when(_defers['countries'], _defers['indicators']);
             }
             return _defers['countries'];
         },
-        getIndicatorInfo: function (indicator) {
-            if (!_defers.info[indicator]) {
-                _defers.info[indicator] = _getIndicatorInfo(indicator);
-            }
-            return _defers.info[indicator];
-        },
-        getIndicators: function (iso3) {
-            var d = 'indicators';
-            if (iso3) d += '_' + iso3;
-            if (!_defers[d]) {
-                _defers[d] = _getIndicators(iso3);
-            }
-            return _defers[d];
-        },
+
+        // Helpers
         // kinda bad...
         generateOptions: function (data, id) {
             var options = '';
@@ -121,7 +181,13 @@ var lbvis = (function (args) {
         // or http://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html (if you crave more details)
         round: function (num, precision) {
             precision = precision || 2;
-            return +(Math.round(num + "e+"+precision)  + "e-"+precision)
+            return +(Math.round(num + "e+"+precision)  + "e-"+precision);
+        },
+        // This method is used by mainstream libs (underscore...)
+        // See: http://perfectionkills.com/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
+        // http://stackoverflow.com/questions/4059147/check-if-a-variable-is-a-string (read through it)
+        isString: function (s) {
+            return Object.prototype.toString.call(s) == '[object String]';
         }
     };
 });
