@@ -106,7 +106,12 @@ var lbvisLC = (function (args) {
     var _setOptionsIndicators = function () {
         var el = $(_options.target + ' select[name="indicator"]');
         el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
-        _data.indicators = LBVIS.cache('indicators_' + _options.iso3);
+        if (_options.iso3) {
+            _data.indicators = LBVIS.cache('indicatorsByCountry')[_options.iso3];
+        } else {
+            _data.indicators = LBVIS.cache('indicators');
+        }
+        //console.log(_options, _data);
         var opts = LBVIS.generateOptions(_data.indicators, _options.indicator);
         if (opts) {
             el.append(opts);
@@ -233,7 +238,7 @@ var lbvisLC = (function (args) {
                 _options.indicator = e.target.value;
                 //
                 LBVIS.getIndicatorInfo(_options.indicator, _data.indicators).done(function () {
-                    _data.indicator = LBVIS.cache(_options.indicator)[0];
+                    _data.indicator = LBVIS.cache('info')[_options.indicator][0];
                     _loadIndicatorDefault();
                 });
             }
@@ -300,7 +305,7 @@ var lbvisLC = (function (args) {
             });
             // For selected indicators, get details and load 'defaults'
             LBVIS.getIndicatorInfo(_options.indicator).done(function () {
-                _data.indicator = LBVIS.cache(_options.indicator)[0];
+                _data.indicator = LBVIS.cache('info')[_options.indicator][0];
                 _draw();
                 _loadIndicatorDefault();
             });
