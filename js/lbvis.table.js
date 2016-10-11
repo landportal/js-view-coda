@@ -5,15 +5,15 @@ var lbvisTable = (function (args) {
     var _options = {
         target:         args.target     || '#table-indicators',
         iso3:           args.iso3       || null,
-        // Default indicators for the table
-        indicators:     args.indicators || [],
+        indicators:     args.indicators || [], // Default indicators for the table
         selected: null,
         year: null
     };
     var _data = {
         defers: [],
         years: [],
-        indicators: []
+        indicators: [],
+        indicatorValues: []
     };
     // Indicators are now loaded 1 by 1
     var _getIndicators = function () {
@@ -37,7 +37,7 @@ var lbvisTable = (function (args) {
             data.results.bindings.forEach(function (item) {
                 var ind = {};
                 Object.keys(item).forEach(function (prop) { ind[prop] = item[prop].value; });
-                _data.indicators.push(ind);
+                _data.indicatorValues.push(ind);
             });
         });
     };
@@ -64,8 +64,12 @@ var lbvisTable = (function (args) {
     var _setOptionsIndicators = function () {
         var el = $(_options.target + ' select[name="indicator"]');
         el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
-        _data.allIndicators = LBVIS.cache('indicators' + (_options.iso3 ? '_' + _options.iso3 : ''));
-        var opts = LBVIS.generateOptions(_data.allIndicators, _options.indicator);
+        if (_options.iso3) {
+            _data.indicators = LBVIS.cache('indicatorsByCountry')[_options.iso3];
+        } else {
+            _data.indicators = LBVIS.cache('indicators');
+        }
+        var opts = LBVIS.generateOptions(_data.indicators, _options.indicator);
         if (opts) {
             el.append(opts);
             el.prop( "disabled", false );
@@ -100,7 +104,7 @@ var lbvisTable = (function (args) {
     };
     var _draw = function () {
         var tbody = '';
-        _data.indicators.forEach(function (ind) {
+        _data.indicatorValues.forEach(function (ind) {
             tbody += _formatRow(ind);
         });
         var t = $(_options.target + ' table tbody');
@@ -144,7 +148,7 @@ var lbvisTable = (function (args) {
             LBVIS.getIndicators(_options.iso3).done(function () {
                 _setOptionsIndicators();
             });
-            //console.log('Table indicators', _options, _data);
+            console.log('Table indicators', _options, _data);
             if (_options.indicators.length) {
                 $(_options.target + ' .loading').removeClass('hidden');
                 _getIndicators().done(function () {
