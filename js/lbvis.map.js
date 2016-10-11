@@ -76,30 +76,6 @@ var lbvisMap = (function (args) {
     // Highchart parameters
     var _map = {};
 
-    // This method is used by mainstream libs (underscore...)
-    // See: http://perfectionkills.com/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
-    // http://stackoverflow.com/questions/4059147/check-if-a-variable-is-a-string (read through it)
-    var _isString = function (s) {
-        return Object.prototype.toString.call(s) == '[object String]';
-    };
-    // TODO: should only be call if option.years is true
-    // Otherwise, just fetch data for the latest year
-    var _getYears = function () {
-        $(_options.target + ' select[name="year"]').html("");
-        _data.years = [];
-        var query = LBVIS.DATA.queries.indicatorYears(_options.indicator, _options.iso3);
-        return $.getJSON(LBVIS.DATA.sparqlURL(query), function (data) {
-            data.results.bindings.forEach(function (item) {
-                _data.years.push(parseFloat(item.year.value) || item.year.value);
-            });
-            // If year isn't set, pick the latest available year
-            if (!_data.year) {
-                _data.year = Math.max.apply(Math, _data.years);
-            }
-            _setOptionsYears();
-        });
-    };
-
     var _getChartData = function () {
         var query = LBVIS.DATA.queries.indicatorValues(_options.indicator, _data.year);
         return $.getJSON(LBVIS.DATA.sparqlURL(query), function (data) {
@@ -116,14 +92,13 @@ var lbvisMap = (function (args) {
     };
 
     var _getIndicatorDetails = function () {
-        var df = [];
-        // Get indicator metadata
-        df[0] = LBVIS.getIndicatorInfo(_options.indicator).done(function () {
-            _data.indicator = LBVIS.cache(_options.indicator)[0];
-        });
-        // Get Years for which this indicator is available
-        df[1] = _getYears();
-        return $.when(df[0], df[1]).done(function () {
+        return LBVIS.getIndicatorDetails(_options.indicator, _options.iso3).done(function () {
+            _data.indicator = LBVIS.cache('info')[_options.indicator][0];
+            _data.years = LBVIS.cache('years')[_options.indicator];
+            if (!_data.year) {
+                _data.year = Math.max.apply(Math, _data.years);
+            }
+            _setOptionsYears();
             _setTitles(_data.indicator.label + ' - ' + _data.year,
                        _data.indicator.description);
         });
@@ -160,7 +135,11 @@ var lbvisMap = (function (args) {
     var _setOptionsIndicators = function () {
         var el = $(_options.target + ' select[name="indicator"]');
         el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
-        _data.indicators = LBVIS.cache('indicators' + (_options.iso3 ? '_' + _options.iso3 : ''));
+        if (_options.iso3) {
+            _data.indicators = LBVIS.cache('indicatorsByCountry')[_options.iso3];
+        } else {
+            _data.indicators = LBVIS.cache('indicators');
+        }
         var opts = LBVIS.generateOptions(_data.indicators, _options.indicator);
         if (opts) {
             el.append(opts);
@@ -176,8 +155,8 @@ var lbvisMap = (function (args) {
                 backgroundColor: _options.colors.background,
                 margin: (_options.indicator ? [40, 0, 0, 0] : 0)
             },
-            title:      { text: (_isString(_options.title) ? _options.title : null) },
-            subtitle:   { text: (_isString(_options.subtitle) ? _options.subtitle : null) },
+            title:      { text: (LBVIS.isString(_options.title) ? _options.title : null) },
+            subtitle:   { text: (LBVIS.isString(_options.subtitle) ? _options.subtitle : null) },
             credits:    { enabled: false },
             legend:     { enabled: _options.map.legend, y: 20 },
             tooltip:    { enabled: (_options.map.tooltip ? true : false), valueDecimals: 2 }
@@ -265,6 +244,9 @@ var lbvisMap = (function (args) {
     function _mapUpdate() {
         // Update series with (new) data
         var dataset = _mapDataset();
+        // failsafe
+        if (!_data.year) return;
+
         // Method 1: update/replace values in series[0]
         //map.series[0].setData(dataset);
         // Method 2: remove series[0], add a new one
