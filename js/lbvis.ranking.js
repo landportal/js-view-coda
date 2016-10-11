@@ -34,7 +34,7 @@ var lbvisRanking = (function (args = {}) {
     };
     var _setMetadata = function () {
         $('.metadata span').each(function (n) {
-            var name = $(this).attr('name')
+            var name = $(this).attr('name');
             switch (name) {
             case 'indicator':
                 name = 'label';
@@ -72,28 +72,15 @@ var lbvisRanking = (function (args = {}) {
             });
         });
     };
-    var _getIndicatorYears = function () {
-        var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.queries.indicatorYears(_options.indicator));
-        return $.getJSON(query_url, function (data) {
-            _data.years = [];
-	    data.results.bindings.forEach(function (item) {
-                _data.years.push(item.year.value);
-            });
+
+    var _getIndicatorDetails = function () {
+        return LBVIS.getIndicatorDetails(_options.indicator).done(function () {
+            _data.indicator = LBVIS.cache('info')[_options.indicator][0];
+            _data.years = LBVIS.cache('years')[_options.indicator];
             _options.year = Math.max.apply(Math, _data.years);
+            _setMetadata();
             _setOptionsYears();
         });
-    };
-    var _getIndicatorDetails = function () {
-        var df = [];
-        // Get indicator metadata
-        df[0] = LBVIS.getIndicatorInfo(_options.indicator).done(function () {
-            _data.indicator = LBVIS.cache(_options.indicator)[0];
-            _setMetadata();
-        });
-        // Get Years for which this indicator is available
-        df[1] = _getIndicatorYears().done(function () {
-        });
-        return $.when(df[0], df[1]);
     };
 
     var _bindUI = function () {
