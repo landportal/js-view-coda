@@ -4,15 +4,18 @@ JavaScript View COuntry DAta
 About
 =====
 
-This library allows you to visualize country-based dataset in various ways.
-The data comes directly from a LOD sparql endpoint (except for LGAF vis.)
+This JS library was develop for the Land Portal to allow visualization of country-based dataset in various ways.
+The data comes directly from a LOD sparql endpoint.
+
+
+Releases
+========
+v0.1    - Sept. 2016 - Initial release
+v0.2    - Oct.  2016 - Removed dependency on iso3 (can init the lib without specific country selected). Centralized indicators helpers (info/year/details). Reworked core caching. Added more visualization (table details + download data).
 
 
 Installation
 ============
-
-# npm install [project_path OR GIT_url]
-# to deploy / get locally all dependencies (from package.json)
 
 Requirements
 ------------
@@ -37,12 +40,9 @@ Issues list:
   https://github.com/landportal/js-view-coda/issues
 
 
-
 Authors
 =======
 JS library - Jules Clement <jules@ker.bz>
-(Wireframe/POC - Simbiosys)
-
 
 
 Licence
