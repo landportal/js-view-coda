@@ -83,7 +83,9 @@ var lbvisTable = (function (args) {
             str = '<a href="'+ind[col+'SeeAlso']+'" target="_blank">' + ind[col] + '</a>';
         }
         if (ind[col+'Description']) {
-            str += ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="' + ind[col+'Description'] + '"></span>';
+            var desc = $("<div/>").html(ind[col+'Description']).text();
+            //console.log('description', desc);
+            str += ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="' + desc + '"></span>';
         }
         return '<td class="lb-'+ col + tdclass +'" data-'+col+'="'+ind[col]+'">'+str+'</td>';
     };
@@ -148,7 +150,7 @@ var lbvisTable = (function (args) {
             LBVIS.getIndicators(_options.iso3).done(function () {
                 _setOptionsIndicators();
             });
-            console.log('Table indicators', _options, _data);
+            //console.log('Table indicators', _options, _data);
             if (_options.indicators.length) {
                 $(_options.target + ' .loading').removeClass('hidden');
                 _getIndicators().done(function () {
