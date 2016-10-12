@@ -74,7 +74,7 @@ var lbvis = (function (args) {
         var q = _DATA.queries.indicators;
         if (iso3) {
             def = 'indicatorsByCountry';
-            if (_defers[def][iso3]) return _defers[def][iso3];
+            if (_defers[def] && _defers[def][iso3]) return _defers[def][iso3];
             q = _DATA.queries.countryIndicators(iso3);
         } else if (_defers[def]) {
             return _defers[def];
