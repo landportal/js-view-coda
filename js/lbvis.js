@@ -170,13 +170,15 @@ var lbvis = (function (args) {
         },
 
         // Helpers
-        // kinda bad...
-        generateOptions: function (data, id) {
+        generateOptions: function (data, selected) {
             var options = '';
             data.forEach(function (item) {
-                var selected = (item.id === id ? ' selected="selected"' : '');
-                options += '<option value="'+item.id+'"'+selected+'>'
-                    + item.label + '</option>';
+                var id = (typeof item === 'object' ? item.id : item);
+                var label = (typeof item === 'object' ? item.label : item);
+                //console.log(item, id, label);
+                options += '<option value="'+id+'"'
+                    + (id === selected ? ' selected="selected"' : '')
+                    + '>' + label + '</option>';
             });
             return options;
         },
