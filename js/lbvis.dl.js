@@ -58,7 +58,7 @@ lbvis.dl = (function (args) {
     });
     // Public methods
     return {
-        debug: function () { console.log(_options); },
+        debug: function () { console.log(_options, _data); },
     };
 });
 
