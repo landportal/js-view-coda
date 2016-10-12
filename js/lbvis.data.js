@@ -10,7 +10,7 @@ var lbvisDATA = (function (args) {
         },
         sparql: {
             prefix: args.prefix || '//landportal.info/sparql?default-graph-uri=&query=',
-            suffix: args.suffix || '&should-sponge=&format=json&timeout=0&debug=on'
+            suffix: args.suffix || '&should-sponge=&timeout=0&debug=on&format=json'
         }
     };
     var query = {
