@@ -74,7 +74,10 @@ var lbvis = (function (args) {
         var q = _DATA.queries.indicators;
         if (iso3) {
             def = 'indicatorsByCountry';
+            if (_defers[def][iso3]) return _defers[def][iso3];
             q = _DATA.queries.countryIndicators(iso3);
+        } else if (_defers[def]) {
+            return _defers[def];
         }
         return _getSPARQL(q, def, iso3);
     };
@@ -115,7 +118,6 @@ var lbvis = (function (args) {
     // MUST be called after _indicatorInfo completed!
     var _setMetadata = function (target, id) {
         var indicator = _cache['info'][id][0];
-        console.log(id, indicator);
         $(target).each(function (n) {
             var name = $(this).attr('name');
             switch (name) {
@@ -150,6 +152,7 @@ var lbvis = (function (args) {
         DATA: _DATA,
         defers: function (type) { return (type ? _defers[type] : _defers); },
         cache: function (type) { return (type ? _cache[type] : _cache); },
+        debug: function () { console.log(_options,  _cache, _defers); },
         countries: function () { return _cache['countries']; },
         indicators: function () { return _cache['indicators']; },
 
