@@ -28,7 +28,11 @@ var lbvis = (function (args) {
         //iso3: args.iso3 || null,
         loadIndicators: args.loadIndicators || true
     };
-    var _defers = { info: {} }; // jQuery deferred
+    var _defers = {
+        info: {},
+        indicatorsByCountry: {},
+        years: {}
+    }; // jQuery deferred
     // Internal cache
     var _cache = {
         'indicators': [],
@@ -49,7 +53,7 @@ var lbvis = (function (args) {
         if (id) _cache[type][id] = [];
         else _cache[type] = [];
         var url = _DATA.sparqlURL(query);
-        _defers[type] = $.getJSON(url, function (data) {
+        var deferred = $.getJSON(url, function (data) {
             data.results.bindings.forEach(function (item) {
                 var stuff = {};
                 Object.keys(item).forEach(function (prop) {
@@ -60,11 +64,19 @@ var lbvis = (function (args) {
                 else _cache[type].push(stuff);
             });
         });
-        return _defers[type];
+        if (id) {
+            _defers[type][id] = deferred;
+        } else {
+            _defers[type] = deferred;
+        }
+        return deferred;
     };
     
     // Get all countries
     var _getCountries = function () {
+        if (_defers['countries']) {
+            return _defers['countries'];
+        }
         var q = _DATA.queries.countries;
         return _getSPARQL(q, 'countries');
     };
@@ -74,7 +86,7 @@ var lbvis = (function (args) {
         var q = _DATA.queries.indicators;
         if (iso3) {
             def = 'indicatorsByCountry';
-            if (_defers[def] && _defers[def][iso3]) return _defers[def][iso3];
+            if (_defers[def][iso3]) return _defers[def][iso3];
             q = _DATA.queries.countryIndicators(iso3);
         } else if (_defers[def]) {
             return _defers[def];
@@ -90,22 +102,13 @@ var lbvis = (function (args) {
         return _getSPARQL(q, 'info', id);
     };
     // Return valid years for an indicator
-    var _getIndicatorYears = function (id, iso3) {
-        if (_defers.info[id]) {
-            return _defers.info[id];
+    var _getIndicatorYears = function (id) {
+        if (_defers.years[id]) {
+            return _defers.years[id];
         }
         var q = _DATA.queries.indicatorYears(id);
-        return _getSPARQL(q, 'years', id);
-    };
-    // combine, get info + years
-    // iso3, narrow down the years to the one avail. for a given country
-    var _getIndicatorDetails = function (id, iso3) {
-        var df = [];
-        // Get indicator metadata
-        df[0] = _getIndicatorInfo(id).done(function () {
-        });
-        // Get Years for which this indicator is available
-        df[1] = _getIndicatorYears(id, iso3).done(function () {
+        //console.log('get years for', id, q);
+        return _getSPARQL(q, 'years', id).done(function () {
             // Re-process cache for years
             var years = _cache['years'][id];
             _cache['years'][id] = [];
@@ -113,8 +116,16 @@ var lbvis = (function (args) {
                 _cache['years'][id].push(value.year);
             });
         });
-        return $.when(df[0], df[1]);
     };
+    // getIndicator info + years
+    // iso3 (FUTURE), narrow down the years for a given country
+    var _getIndicatorDetails = function (id, iso3) {
+        return $.when(
+            _getIndicatorInfo(id),
+            _getIndicatorYears(id)
+        );
+    };
+
     // MUST be called after _indicatorInfo completed!
     var _setMetadata = function (target, id) {
         var indicator = _cache['info'][id][0];
