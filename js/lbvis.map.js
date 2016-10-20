@@ -84,19 +84,21 @@ var lbvisMap = (function (args) {
                 _data.chart.push({
                     id:  item.iso3.value,
                     value: parseFloat(item.value.value),
-                    year:  parseInt(item.year.value)
+                    year:  item.period.value,
+                    //year:  parseInt(item.year.value)
                 });
             });
-            //console.log(_data.chart[0], _data.chart[42]);
+            //console.log(data.results, _data.chart[0], _data.chart[42]);
         });
     };
 
     var _getIndicatorDetails = function () {
         return LBVIS.getIndicatorDetails(_options.indicator, _options.iso3).done(function () {
             _data.indicator = LBVIS.cache('info')[_options.indicator][0];
-            _data.years = LBVIS.cache('years')[_options.indicator];
+            _data.years = LBVIS.cache('period')[_options.indicator];
             if (!_data.year) {
-                _data.year = Math.max.apply(Math, _data.years);
+                //_data.year = Math.max.apply(Math, _data.years);
+                _data.year = _data.years.sort().reverse()[0];
             }
             _setOptionsYears();
             _setTitles(_data.indicator.label + ' - ' + _data.year,
@@ -295,6 +297,7 @@ var lbvisMap = (function (args) {
                 if (e.target.value) {
                     _data.year = e.target.value;
                     _getChartData().done(function () {
+                        _setTitles(_data.indicator.label + ' - ' + _data.year);
                         _mapUpdate();
                     });
                     //_mapUpdate();

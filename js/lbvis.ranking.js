@@ -76,8 +76,8 @@ var lbvisRanking = (function (args = {}) {
     var _getIndicatorDetails = function () {
         return LBVIS.getIndicatorDetails(_options.indicator).done(function () {
             _data.indicator = LBVIS.cache('info')[_options.indicator][0];
-            _data.years = LBVIS.cache('years')[_options.indicator];
-            _options.year = Math.max.apply(Math, _data.years);
+            _data.years = LBVIS.cache('period')[_options.indicator];
+            _options.year = _data.years.sort().reverse()[0];//Math.max.apply(Math, _data.years);
             _setMetadata();
             _setOptionsYears();
         });
@@ -120,7 +120,7 @@ var lbvisRanking = (function (args = {}) {
                  + '<div class="col-xs-8 text-right">Value in '+_data.indicator.unit+'<br/>out of '+max+'</div></li>';
         // Quickly test data values to see if numeric (should be provided by indicator.hascodedvalue property?)
         // If NaN, reverse array
-        if (!parseFloat(_data.values[0].value)) _data.values = _data.values.reverse();
+        if (_data.values.length && !parseFloat(_data.values[0].value)) _data.values = _data.values.reverse();
         _data.values.forEach(function (ind, pos) {
             if (pos == _options.expand && _data.values.length > _options.expandThreshold) html += _expandRow();
             html += _formatRow(ind, pos, _data.values.length);
