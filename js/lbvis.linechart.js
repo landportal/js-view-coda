@@ -78,7 +78,7 @@ var lbvisLC = (function (args) {
 
     function _setOptionsCountries() {
         var str = '';
-        console.log('For : ' + _options.indicator + ' - ' + _data.countries.length + ' countries');
+        //console.log('For : ' + _options.indicator + ' - ' + _data.countries.length + ' countries');
         _data.countries.forEach(function (item) {
             str += '<option value="'+item.iso3+'">' + item.name + '</option>';
         });
