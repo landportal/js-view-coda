@@ -39,7 +39,8 @@ var lbvis = (function (args) {
         'countries':  [],
         'indicatorsByCountry': {},
         'info':  {},    // store by indicator id
-        'years': {}     // store by indicator id
+        'years': {},    // store by indicator id
+        'period': {}    // store by indicator id
     };
     // Data lib
     var _DATA = args.data || new lbvisDATA(_options);
@@ -58,8 +59,11 @@ var lbvis = (function (args) {
                 var stuff = {};
                 Object.keys(item).forEach(function (prop) {
                     var v = item[prop].value;
-                    stuff[prop] = (parseFloat(v) ? parseFloat(v) : v);
+                    stuff[prop] = (
+                        (item[prop].datatype == 'http://www.w3.org/2001/XMLSchema#integer')
+                            ? parseFloat(v) : v);
                 });
+                //console.log(stuff);
                 if (id) _cache[type][id].push(stuff);
                 else _cache[type].push(stuff);
             });
@@ -112,8 +116,10 @@ var lbvis = (function (args) {
             // Re-process cache for years
             var years = _cache['years'][id];
             _cache['years'][id] = [];
+            _cache['period'][id] = [];
             $.each(years, function (key, value) {
                 _cache['years'][id].push(value.year);
+                _cache['period'][id].push(value.period);
             });
         });
     };
