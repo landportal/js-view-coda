@@ -79,7 +79,7 @@ VALUES (?uri ?id) { (<" + lod.uri.indicator + indicator + "> '" + indicator + "'
             values.push("<" + lod.uri.country + iso3 + ">");
         }
         return query.prefix + " \
-SELECT DISTINCT (year(?dateTime) as ?year) \
+SELECT DISTINCT (year(?dateTime) as ?year) ?period \
 FROM <http://data.landportal.info> \
 WHERE { \
 ?obs cex:ref-indicator ?indicator ; \
@@ -88,6 +88,7 @@ WHERE { \
 ?time time:hasBeginning ?timeValue . \
 ?timeValue time:inXSDDateTime ?dateTime \
 VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
+ BIND (REPLACE(STR(?time), '" + lod.uri.time + "', '') AS ?period) \
 } ORDER BY DESC(?dateTime)";
     };    
 
@@ -100,7 +101,7 @@ VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
             values.push("<" + lod.uri.time + year + ">");
         }
         return query.prefix + " \
-SELECT ?iso3 ?year ?value \
+SELECT ?iso3 ?year ?period ?value \
 FROM <http://data.landportal.info> \
 WHERE { \
 ?obs cex:ref-indicator ?uri ; \
@@ -109,9 +110,10 @@ WHERE { \
      cex:value ?value. \
 ?time time:hasBeginning ?timeValue . \
 ?timeValue time:inXSDDateTime ?dateTime . \
-VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
-BIND (REPLACE(STR(?countryURL), '" + lod.uri.country + "','') AS ?iso3) \
-BIND (year(?dateTime) AS ?year) \
+ VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
+ BIND (REPLACE(STR(?countryURL), '" + lod.uri.country + "','') AS ?iso3) \
+ BIND (year(?dateTime) AS ?year) \
+ BIND (REPLACE(STR(?time), '" + lod.uri.time + "', '') AS ?period) \
 } ORDER BY ?dateTime DESC(?value)";
     };
 
