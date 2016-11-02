@@ -36,6 +36,7 @@ var lbvis = (function (args) {
     // Internal cache
     var _cache = {
         'indicators': [],
+        'datasets':  [],
         'countries':  [],
         'indicatorsByCountry': {},
         'info':  {},    // store by indicator id
@@ -76,6 +77,13 @@ var lbvis = (function (args) {
         return deferred;
     };
     
+    // Get all datasets
+    var _getDatasets = function () {
+        if (_defers['datasets']) {
+            return _defers['datasets'];
+        }
+        return _getSPARQL(_DATA.queries.datasets, 'datasets');
+    };
     // Get all countries
     var _getCountries = function () {
         if (_defers['countries']) {
@@ -160,6 +168,7 @@ var lbvis = (function (args) {
     var _init = function () {
         _getCountries();
         _getIndicators();
+        _getDatasets();
     };
     // Automatically initialize
     _init();
@@ -186,8 +195,24 @@ var lbvis = (function (args) {
             return _defers['countries'];
         },
 
+        indicatorsSelect: function (selected) {
+            var options = '';
+            _cache['datasets'].forEach(function (ds) {
+                options += '<optgroup label="'+ds.label+'">';
+                _cache['indicators'].filter(function (ind) {
+                    if (ind.dataset == ds.id) {
+                        options += '<option value="'+ind.id+'"'
+                            + (ind.id === selected ? ' selected="selected"' : '')
+                            + '>' + ind.label + '</option>';
+                    }
+                });
+                options += '</optgroup>';
+            });
+            return options;
+        },
+
         // Helpers
-        generateOptions: function (data, selected) {
+        generateOptions: function (data, selected, group) {
             var options = '';
             data.forEach(function (item) {
                 var id = (typeof item === 'object' ? item.id : item);
