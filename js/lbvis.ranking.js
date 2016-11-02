@@ -17,7 +17,8 @@ var lbvisRanking = (function (args = {}) {
     var _setOptionsIndicators = function () {
         var el = $(_options.target + ' select[name="indicator"]');
         el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
-        var opts = LBVIS.generateOptions(LBVIS.cache('indicators'), _options.indicator);
+        //var opts = LBVIS.generateOptions(LBVIS.cache('indicators'), _options.indicator);
+        var opts = LBVIS.indicatorsSelect(_options.indicator);
         if (opts) {
             el.append(opts);
             el.prop( "disabled", false );

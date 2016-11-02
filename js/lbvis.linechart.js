@@ -112,7 +112,7 @@ var lbvisLC = (function (args) {
             _data.indicators = LBVIS.cache('indicators');
         }
         //console.log(_options, _data);
-        var opts = LBVIS.generateOptions(_data.indicators, _options.indicator);
+        var opts = LBVIS.indicatorsSelect(_options.indicator);
         if (opts) {
             el.append(opts);
             el.prop( "disabled", false );
