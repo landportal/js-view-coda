@@ -6,7 +6,8 @@ var lbvisDATA = (function (args) {
         uri: {
             time:       "http://data.landportal.info/time/",
             country:    "http://data.landportal.info/geo/",
-            indicator:  "http://data.landportal.info/indicator/"
+            indicator:  "http://data.landportal.info/indicator/",
+            dataset:    "http://data.landportal.info/dataset/"
         },
         sparql: {
             prefix: args.prefix || '//landportal.info/sparql?default-graph-uri=&query=',
@@ -38,13 +39,25 @@ BIND (REPLACE(STR(?uri), '" + lod.uri.country + "','') AS ?iso3) \
     };
     var _indicators = function () {
         return query.prefix + " \
-SELECT * \
+SELECT ?id ?label ?dataset \
 FROM <http://data.landportal.info> \
 WHERE { \
 ?uri a cex:Indicator ; \
+  skos:notation ?id ; \
   ex:label ?label ; \
-  ex:description ?description . \
-BIND (REPLACE(STR(?uri), '" + lod.uri.indicator + "','') AS ?id) \
+  ex:dataset ?datasetURL . \
+?datasetURL skos:notation ?dataset . \
+} ORDER BY ?label";
+    };
+    var _datasets = function () {
+        return query.prefix + " \
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#> \
+SELECT DISTINCT ?id ?label \
+FROM <http://data.landportal.info> \
+WHERE { \
+?dataset a qb:DataSet ; \
+     skos:notation ?id ; \
+     ex:label ?label . \
 } ORDER BY ?label";
     };
 
@@ -216,28 +229,6 @@ VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
 } ORDER BY DESC(?time) LIMIT 1";
     };
 
-    // un-used
-    // var _getObs = function (indicator) {
-    //     var str = "SELECT ?obs FROM <http://data.landportal.info> WHERE { ?obs cex:ref-area <" + lod.uri.country + ISO3 + "> ; cex:ref-indicator <" + lod.uri.indicator + indicator + "> ; cex:ref-time ?time . ?time time:hasBeginning ?timeValue . ?timeValue time:inXSDDateTime ?dateTime } ORDER BY DESC(?dateTime) LIMIT 1";
-    //     return str;
-    // };
-    // Woot? (sameAs _indicatorValues?)
-    // var _indicator_values =  function (indicator) {
-    //     return query.prefix + " \
-// SELECT ?countryISO3 (year(?dateTime) as ?year) ?value \
-// FROM <http://data.landportal.info> \
-// WHERE { \
-// ?obs cex:ref-indicator ?indicatorURL ; \
-//      cex:ref-area ?countryURL ; \
-//      cex:ref-time ?time ; \
-//      cex:value ?value. \
-// ?time time:hasBeginning ?timeValue . \
-// ?timeValue time:inXSDDateTime ?dateTime . \
-// VALUES ?indicatorURL {<" + lod.uri.indicator + indicator + ">} \
-// BIND (REPLACE(STR(?countryURL), '" + lod.uri.country + "','') AS ?countryISO3) \
-// } ORDER BY ?dateTime ?countryURL";
-//     };
-
 
 
     /**************************************
@@ -277,18 +268,6 @@ WHERE{ \
      * TODO Cleanup all those queries
      * remove HARDCODED variables!
      */
-
-    // LGAF specific : move to vis. module?
-//     var _lgaf_country_years = function () {
-//         return query.prefix + " \
-// SELECT DISTINCT ?dataset \
-// FROM <http://data.landportal.info> \
-// WHERE { \
-// ?obs cex:ref-area <" + lod.uri.country + ISO3 + "> ; \
-// qb:dataSet ?dataset. \
-// VALUES ?dataset {<http://data.landportal.info/dataset/WB-LGAF2013> <http://data.landportal.info/dataset/WB-LGAF2016>}\
-// }";
-//     };
 
     var _lgaf_chart = function (iso3, year) {
         return query.prefix + " \
@@ -434,8 +413,10 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
         },
         // Queries that do not have 'dynamic' arguments
         queries: {
-            countries: _countries(),
+            countries:  _countries(),
+	    datasets:   _datasets(),
 	    indicators: _indicators(),
+
             // List of available indicators for a given country
             countryIndicators: function (iso3) { return _countryIndicators(iso3); },
             countryIndicatorValues: function (iso3, indicator, year) { return _countryIndicatorValues(iso3, indicator, year); },
