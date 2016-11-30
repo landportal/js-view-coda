@@ -78,7 +78,7 @@ WHERE { \
         $(_options.target + ' select[name="year"]').html(str);
     }
     function setOptionsPanels() {
-        var str = '<option data-localize="inputs.panels">Select a panel...</option>';
+        var str = '<option data-localize="inputs.panels">Select a group of indicators...</option>';
         _data.panels[_options.year].forEach(function (item) {
             var selected = (_options.panel == item.id ? ' selected="selected"' : '');
             str += '<option value="' + item.id + '"'+selected+'>' + item.label + '</option>';
@@ -87,7 +87,7 @@ WHERE { \
         $(_options.target + ' select[name="panel"]').html(str);
     }
     function setOptionsSubpanels() {
-        var str = '<option data-localize="inputs.subpanels">Select a sub-panel...</option>';
+        var str = '<option data-localize="inputs.subpanels">Select an indicator...</option>';
         var panel = _data.panels[_options.year].filter(function(p) {
             return (p.id == _options.panel ? p : null);
         })[0];
@@ -116,8 +116,11 @@ WHERE { \
             });
             console.log(_options.subpanel, indi);
             // Display anels
-            var panelVal = '<div class="panel"><span class="value-'+indi[0].value.toLocaleLowerCase()+'">'+indi[0].value+'</span>'
-                    + _data.indicator.description + '</div>';
+            var panelVal = '<div class="panel">'
+                    + '<span class="value-'+indi[0].value.toLocaleLowerCase()+'"></span>'
+                    + '<a href="' + _data.indicator.indicatorSeeAlso + '">' + _data.indicator.label + '</a>'
+                    + ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="' + _data.indicator.description + '"></span>'
+                    + '</div>';
             var panelInfo = '<div class="panel">'+indi[0].comment+'</div>';
             $(_options.targetGraph).html(panelVal + panelInfo);
         });
