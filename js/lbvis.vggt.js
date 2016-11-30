@@ -14,8 +14,8 @@ var lbvisVGGT = (function (args) {
     var _defer = null;
     var _data = {
         years: ['2016'],  // Until we can get proper struct/info from the LOD...
-        panels: { 2016: [] }
-//        series: { 2016: [] }  // Series / values
+        panels: { 2016: [] },
+        series: []  // Series / values
     };
 
     function _getStruct() {
@@ -38,11 +38,11 @@ var lbvisVGGT = (function (args) {
                 panel.subpanels.push(item);
             }
         });
-        console.log(_data.panels);
+        //console.log(_data.panels);
     }
 
     function _getValues() {
-        var query = LBVIS.DATA.ns + "SELECT ?indicatorID ?year (STR(?value) AS ?value) (STR(?comment) as ?comment) \
+        var query = LBVIS.DATA.ns + "SELECT ?id ?year (STR(?value) AS ?value) (STR(?comment) as ?comment) \
 FROM <http://data.landportal.info> \
 WHERE { \
     ?obs qb:dataSet <http://data.landportal.info/dataset/NKT-VGGT16> ; \
@@ -51,7 +51,7 @@ WHERE { \
 		cex:ref-time ?year ; \
 		cex:value ?value . \
 		OPTIONAL { ?obs rdfs:comment ?comment } \
-	?indicatorURL skos:notation ?indicatorID ; \
+	?indicatorURL skos:notation ?id ; \
 				  ex:label ?indicatorLabel ; \
 				  ex:description ?indicatorDescription . \
 	VALUES ?countryURL {<http://data.landportal.info/geo/" + _options.iso3 + ">} \
@@ -61,7 +61,7 @@ WHERE { \
             data.results.bindings.forEach(function (item) {
                 var i = {};
                 Object.keys(item).forEach(function (prop) { i[prop] = item[prop].value; });
-                //_data.series.push(i);
+                _data.series.push(i);
             });
         });
         return _defer;
@@ -79,7 +79,6 @@ WHERE { \
     }
     function setOptionsPanels() {
         var str = '<option data-localize="inputs.panels">Select a panel...</option>';
-        console.log(_data.panels[_options.year]);
         _data.panels[_options.year].forEach(function (item) {
             var selected = (_options.panel == item.id ? ' selected="selected"' : '');
             str += '<option value="' + item.id + '"'+selected+'>' + item.label + '</option>';
@@ -111,10 +110,16 @@ WHERE { \
         // fill up some shit
         return LBVIS.getIndicatorInfo(subpanel.id).done(function () {
             _data.indicator = LBVIS.cache('info')[_options.subpanel][0];
-            console.log(_data.indicator);
-            var v = 'b';
-            var val = '<span class="value-'+v+'">'+v+'</span>';
-            $(_options.targetGraph).html(val + _data.indicator.description);
+            console.log(_data.series);
+            var indi = _data.series.filter(function (s) {
+                return s.id == _options.subpanel;// && s.year == _options.year;
+            });
+            console.log(_options.subpanel, indi);
+            // Display anels
+            var panelVal = '<div class="panel"><span class="value-'+indi[0].value.toLocaleLowerCase()+'">'+indi[0].value+'</span>'
+                    + _data.indicator.description + '</div>';
+            var panelInfo = '<div class="panel">'+indi[0].comment+'</div>';
+            $(_options.targetGraph).html(panelVal + panelInfo);
         });
         //$(_options.targetGraph).html('hello VGGT');
     }
@@ -127,10 +132,6 @@ WHERE { \
                 _options.year = e.target.value;
                 _options.panel = null;
                 _options.subpanel = null;
-                // TODO: clear/disable panel & subpanel select
-                _getValues().done(function () {
-                    setOptionsPanels();
-                });
             }
             if (e.target.name == 'panel') {
                 _options.panel = e.target.value;
@@ -153,17 +154,16 @@ WHERE { \
         init: function () {
             // Load indicators
             _getStruct();//.done(function () {
-            _getValues();
             setOptionsYears();
             if (_options.year) {
                 setOptionsPanels();
                 if (_options.panel) {
                 //     // Load values & set panels
-                //     _getValues().done(function () {
-                //         setOptionsPanels();
-                    setOptionsSubpanels();
-                    if (_options.subpanel)
-                        updateInfo();
+                    _getValues().done(function () {
+                        setOptionsSubpanels();
+                        if (_options.subpanel)
+                            updateInfo();
+                    });
                 }
             }
             _bindUI();
