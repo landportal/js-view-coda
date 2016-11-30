@@ -44,7 +44,7 @@ var lbvis = (function (args) {
         'period': {}    // store by indicator id
     };
     // Data lib
-    var _DATA = args.data || new lbvisDATA(_options);
+    var _DATA = args.data || new lbvisDATA(args);
 
     // Get JSON data from a SPARQL query
     //  - store jQuery deferred in _defer by type
