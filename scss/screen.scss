@@ -35,32 +35,45 @@ li {
 
 
 /* LGAF color coded indicator values */
+.value-a,
+.value-b,
+.value-c,
 .lgaf-value-a,
 .lgaf-value-b,
 .lgaf-value-c,
 .lgaf-value-d,
 .lgaf-value-na {
-    height: 20px;
-    width: 20px;
+    height: 2em;
+    width: 2em;
     display: inline-block;
-    margin: 0 10px;
+    margin: 0 1em;
     vertical-align: middle;
-    @include border-radius(20px);
+    @include border-radius(2em);
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 1.4em;
+    padding: .3em 0 0 .1em;
+    float: left;
 }
 /* Hack for bi-value indicators */
+li span[class*="value-"]:nth-child(2),
 li span[class*="lgaf-value-"]:nth-child(2) {
     width: 10px;
     margin-left: -20px;
     @include border-radius(0 20px 20px 0);
 }
+.value-a,
 .lgaf-value-a {
-    background-color: #7ED321 !important;
+  background-color: #7ED321 !important;
 }
+.value-b,
 .lgaf-value-b {
-    background-color: #F8E71C !important;
+  background-color: #F8E71C !important;
 }
+.value-c,
 .lgaf-value-c {
-    background-color: #F5A623 !important;
+  background-color: #F5A623 !important;
 }
 .lgaf-value-d {
     background-color: #F6112D !important;
