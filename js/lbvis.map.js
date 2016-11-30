@@ -153,7 +153,7 @@ var lbvisMap = (function (args) {
         _map = {
             chart: {
                 // width: _options.width,
-                // height: _options.height,
+                height: _options.height,
                 backgroundColor: _options.colors.background,
                 margin: (_options.indicator ? [40, 0, 0, 0] : 0)
             },
