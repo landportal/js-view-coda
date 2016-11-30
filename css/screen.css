@@ -7365,25 +7365,26 @@ li:last-of-type {
 .value-a,
 .value-b,
 .value-c,
+.value-na,
 .lgaf-value-a,
 .lgaf-value-b,
 .lgaf-value-c,
 .lgaf-value-d,
 .lgaf-value-na {
-  height: 2em;
-  width: 2em;
+  height: 20px;
+  width: 20px;
   display: inline-block;
-  margin: 0 1em;
+  margin: 0 10px;
   vertical-align: middle;
-  -moz-border-radius: 2em;
-  -webkit-border-radius: 2em;
-  border-radius: 2em;
-  text-align: center;
-  text-transform: uppercase;
-  font-weight: bold;
-  font-size: 1.4em;
-  padding: .3em 0 0 .1em;
-  float: left;
+  -moz-border-radius: 20px;
+  -webkit-border-radius: 20px;
+  border-radius: 20px;
+  /* text-align: center; */
+  /* text-transform: uppercase; */
+  /* font-weight: bold; */
+  /* font-size: 1.4em; */
+  /* padding: .3em 0 0 .1em; */
+  /* float: left; */
 }
 
 /* Hack for bi-value indicators */
@@ -7406,15 +7407,16 @@ li span[class*="lgaf-value-"]:nth-child(2) {
   background-color: #F8E71C !important;
 }
 
-.value-c,
 .lgaf-value-c {
   background-color: #F5A623 !important;
 }
 
+.value-c,
 .lgaf-value-d {
   background-color: #F6112D !important;
 }
 
+.value-na,
 .lgaf-value-na {
   background-color: #CCCCCC !important;
 }
