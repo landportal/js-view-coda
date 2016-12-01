@@ -411,6 +411,7 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
         sparqlURL: function (query) {
             return lod.sparql.prefix + encodeURIComponent(query) + lod.sparql.suffix;
         },
+        ns: query.prefix,
         // Queries that do not have 'dynamic' arguments
         queries: {
             countries:  _countries(),

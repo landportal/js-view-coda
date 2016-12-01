@@ -310,8 +310,8 @@ th {
 }
 @font-face {
   font-family: 'Glyphicons Halflings';
-  src: url(../fonts/glyphicons-halflings-regular.eot?1472443920);
-  src: url(../fonts/glyphicons-halflings-regular.eot?&1472443920#iefix) format("embedded-opentype"), url(../fonts/glyphicons-halflings-regular.woff2?1472443920) format("woff2"), url(../fonts/glyphicons-halflings-regular.woff?1472443920) format("woff"), url(../fonts/glyphicons-halflings-regular.ttf?1472443920) format("truetype"), url(../fonts/glyphicons-halflings-regular.svg?1472443920#glyphicons_halflingsregular) format("svg");
+  src: url(../fonts/glyphicons-halflings-regular.eot?1476180093);
+  src: url(../fonts/glyphicons-halflings-regular.eot?&1476180093#iefix) format("embedded-opentype"), url(../fonts/glyphicons-halflings-regular.woff2?1476180093) format("woff2"), url(../fonts/glyphicons-halflings-regular.woff?1476180093) format("woff"), url(../fonts/glyphicons-halflings-regular.ttf?1476180093) format("truetype"), url(../fonts/glyphicons-halflings-regular.svg?1476180093#glyphicons_halflingsregular) format("svg");
 }
 .glyphicon {
   position: relative;
@@ -3094,7 +3094,8 @@ input[type="search"] {
   box-sizing: border-box;
 }
 
-input[type="radio"], input[type="checkox"] {
+input[type="radio"],
+input[type="checkbox"] {
   margin: 4px 0 0;
   margin-top: 1px \9;
   line-height: normal;
@@ -3251,7 +3252,10 @@ input[type="search"] {
   cursor: pointer;
 }
 
-.radio input[type="radio"], .radio-inline input[type="radio"], .checkbox input[type="wqe"], .checkbox-inline input[type="checkbox"] {
+.radio input[type="radio"],
+.radio-inline input[type="radio"],
+.checkbox input[type="checkbox"],
+.checkbox-inline input[type="checkbox"] {
   position: absolute;
   margin-left: -20px;
   margin-top: 4px \9;
@@ -7358,6 +7362,10 @@ li:last-of-type {
 }
 
 /* LGAF color coded indicator values */
+.value-a,
+.value-b,
+.value-c,
+.value-na,
 .lgaf-value-a,
 .lgaf-value-b,
 .lgaf-value-c,
@@ -7371,9 +7379,16 @@ li:last-of-type {
   -moz-border-radius: 20px;
   -webkit-border-radius: 20px;
   border-radius: 20px;
+  /* text-align: center; */
+  /* text-transform: uppercase; */
+  /* font-weight: bold; */
+  /* font-size: 1.4em; */
+  /* padding: .3em 0 0 .1em; */
+  /* float: left; */
 }
 
 /* Hack for bi-value indicators */
+li span[class*="value-"]:nth-child(2),
 li span[class*="lgaf-value-"]:nth-child(2) {
   width: 10px;
   margin-left: -20px;
@@ -7382,10 +7397,12 @@ li span[class*="lgaf-value-"]:nth-child(2) {
   border-radius: 0 20px 20px 0;
 }
 
+.value-a,
 .lgaf-value-a {
   background-color: #7ED321 !important;
 }
 
+.value-b,
 .lgaf-value-b {
   background-color: #F8E71C !important;
 }
@@ -7394,10 +7411,12 @@ li span[class*="lgaf-value-"]:nth-child(2) {
   background-color: #F5A623 !important;
 }
 
+.value-c,
 .lgaf-value-d {
   background-color: #F6112D !important;
 }
 
+.value-na,
 .lgaf-value-na {
   background-color: #CCCCCC !important;
 }
