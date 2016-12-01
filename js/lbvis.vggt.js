@@ -7,8 +7,8 @@ var lbvisVGGT = (function (args) {
         target: args.target             || '#vggt',
         targetGraph: args.targetGraph   || (args.target ? args.target + '-wrapper' : '#vggt-wrapper'),
         panel: args.panel        || 'NKT-VGGT16-1',
-        subpanel: args.indicator || 'NKT-VGGT16-1A'
-//        jsonPath: args.jsonPath  || window.location.href.split('/').slice(0, -1).join('/') + '/json'
+        subpanel: args.indicator || 'NKT-VGGT16-1A',
+        jsonPath: args.jsonPath  || window.location.href.split('/').slice(0, -1).join('/') + '/json'
 
     };
     var _defer = null;
@@ -18,6 +18,17 @@ var lbvisVGGT = (function (args) {
         series: []  // Series / values
     };
 
+    function _getLaws() {
+        return $.getJSON(_options.jsonPath + '/vggt-laws.json', function(data) {
+            //for (var law in data) {
+            data.forEach(function (country) {
+                if (country.iso3 == _options.iso3)
+                    _data.laws = country.data;
+            });
+            //}
+            //_data.years = Object.keys(_data.panels);
+        });
+    }
     function _getStruct() {
         LBVIS.cache('indicators').forEach(function (item) {
             if (item.id.startsWith('NKT-VGGT')) {
@@ -116,13 +127,15 @@ WHERE { \
             });
             console.log(_options.subpanel, indi);
             // Display anels
-            var panelVal = '<div class="panel">'
-                    + '<span class="value-'+indi[0].value.toLocaleLowerCase()+'"></span>'
+            var panelVal = '<span class="value-'+indi[0].value.toLocaleLowerCase()+'"></span>'
                     + '<a href="' + _data.indicator.indicatorSeeAlso + '">' + _data.indicator.label + '</a>'
-                    + ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="' + _data.indicator.description + '"></span>'
-                    + '</div>';
-            var panelInfo = '<div class="panel">'+indi[0].comment+'</div>';
-            $(_options.targetGraph).html(panelVal + panelInfo);
+                    + ' <span class="glyphicon glyphicon-info-sign"'
+                    + ' data-toggle="tooltip" data-placement="top"'
+                    + ' title="' + _data.indicator.description +
+                    '"></span>';
+            
+            $(_options.targetGraph + ' .panelVal').html(panelVal);
+            $(_options.targetGraph + ' .panelInfo').html(indi[0].comment);
         });
         //$(_options.targetGraph).html('hello VGGT');
     }
@@ -156,6 +169,10 @@ WHERE { \
         },
         init: function () {
             // Load indicators
+            _getLaws().done(function () {
+                $(_options.targetGraph + ' .countryInfo').html(_data.laws);
+            });
+            
             _getStruct();//.done(function () {
             setOptionsYears();
             if (_options.year) {
