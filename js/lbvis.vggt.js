@@ -121,11 +121,9 @@ WHERE { \
         // fill up some shit
         return LBVIS.getIndicatorInfo(subpanel.id).done(function () {
             _data.indicator = LBVIS.cache('info')[_options.subpanel][0];
-            console.log(_data.series);
             var indi = _data.series.filter(function (s) {
                 return s.id == _options.subpanel;// && s.year == _options.year;
             });
-            console.log(_options.subpanel, indi);
             // Display anels
             var panelVal = '<span class="value-'+indi[0].value.toLocaleLowerCase()+'"></span>'
                     + '<a href="' + _data.indicator.indicatorSeeAlso + '">' + _data.indicator.label + '</a>'
