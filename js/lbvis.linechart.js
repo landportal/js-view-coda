@@ -6,7 +6,7 @@ var lbvisLC = (function (args) {
         width:          args.width      || 1004, // print hack, for wkhtmltopdf
         height:         args.height     || 500,  // print hack, for wkhtmltopdf
         target:         args.target || '#compare',
-        graphTarget:    args.graphTarget || '#compare-chart',
+        graphTarget:    args.graphTarget || (args.target ? args.target + '-wrapper' : '#compare-wrapper'),
         indicator:      args.indicator || 'WB-SP.RUR.TOTL.ZS',
         iso3:           args.iso3,
         compare:        [args.iso3],

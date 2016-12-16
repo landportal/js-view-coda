@@ -103,7 +103,7 @@ var lbvisRanking = (function (args = {}) {
     var _formatRow = function (ind, pos, length) {
         var country = LBV.countries().find(function (v) { return v.iso3 == ind.iso3; });
         var flag = '<span class="rank">' + (pos + 1) + '</span>',
-            rank = '<span class="flag flag-' + ind.iso3 + '">' + ind.iso3 + '</span>';
+            rank = '<span class="flag-icon flag-' + ind.iso3 + '"/>';
         //console.log('Row : ', ind, country);
         var rowClass = (_data.values.length > _options.expandThreshold && pos >= _options.expand && pos + _options.expand < length ? ' class="hidden"' : '');
         return '<li'+rowClass+'><div class="col-xs-8">' + flag + rank + (country ? country.name : ind.iso3) + '</div>'
