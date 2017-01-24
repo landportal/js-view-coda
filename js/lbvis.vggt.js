@@ -129,7 +129,7 @@ WHERE { \
                     + '<a href="' + _data.indicator.indicatorSeeAlso + '">' + _data.indicator.label + '</a>'
                     + ' <span class="glyphicon glyphicon-info-sign"'
                     + ' data-toggle="tooltip" data-placement="top"'
-                    + ' title="' + _data.indicator.description +
+                    + ' title="' + _data.indicator.description.replace(/"/g, "'") +
                     '"></span>';
             
             $(_options.targetGraph + ' .panelVal').html(panelVal);
@@ -168,7 +168,7 @@ WHERE { \
         init: function () {
             // Load indicators
             _getLaws().done(function () {
-                $(_options.targetGraph + ' .countryInfo').html(_data.laws);
+                $(_options.targetGraph + ' .countryInfo').html(_data.laws).linkify();
             });
             
             _getStruct();//.done(function () {
