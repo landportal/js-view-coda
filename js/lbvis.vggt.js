@@ -1,6 +1,15 @@
 'use strict';
 var lbvisVGGT = (function (args) {
     var LBVIS = args.vis;
+	var groupLabels = [{
+		"id": "NKT-VGGT16-1",
+		"label": "VGGT 16.1 Expropriation and Compensation Eligibility Indicators"
+	}, {
+		"id": "NKT-VGGT16-3",
+		"label": "VGGT 16.3 Fair Valuation and Prompt Compensation Indicators"
+	}
+	]
+
     var _options = {
         iso3: args.iso3,
         year: args.year          || '2016',
@@ -29,6 +38,9 @@ var lbvisVGGT = (function (args) {
             //_data.years = Object.keys(_data.panels);
         });
     }
+	function _getGroupLabel(id){
+		return groupLabels.find(item => { return item.id == id	}).label
+	}
     function _getStruct() {
         LBVIS.cache('indicators').forEach(function (item) {
             if (item.id.startsWith('NKT-VGGT')) {
@@ -40,7 +52,7 @@ var lbvisVGGT = (function (args) {
                     var l = _data.panels[2016].push({
                         id: id,
                         year: 2016,
-                        label: 'VGGT ' + item.id.substr(8, 4) + ' Indicators',
+                        label: _getGroupLabel(id),
                         subpanels: []
                     });
                     panel = _data.panels[2016][l -1];
