@@ -44,6 +44,7 @@ var lbvisMap = (function (args) {
         showIndicators: args.indicators || false,       // indicators select form
         indicator:      args.indicator  || null,        // ex: 'WB-SP.RUR.TOTL.ZS'
         data:           args.data       || null,        // static data, array of objects (id/value) where id is iso3
+        serie:          args.serie      || null,        // static serie
         map: {
             events:     args.events     || {},
             legend:     args.legend     || false,
@@ -203,6 +204,7 @@ var lbvisMap = (function (args) {
     var _mapDataset = function () {
         var dataset = [];
         if (_data.chart.length) {
+            // Filter down map data by year or send all data
             if (_data.year && _data.chart[0].year) {
                 dataset = _data.chart.filter(function (i) { return i.year == _data.year; });
             } else {
@@ -218,6 +220,7 @@ var lbvisMap = (function (args) {
     };
 
     var _mapSerie = function(data) {
+//        console.log('data', data);
         data = data || [];
         return {
             data: data,
@@ -246,6 +249,7 @@ var lbvisMap = (function (args) {
     function _mapUpdate() {
         // Update series with (new) data
         var dataset = _mapDataset();
+        //console.log('Indicator changed', JSON.stringify(dataset));
         // failsafe
         if (!_data.year) return;
 
@@ -319,8 +323,15 @@ var lbvisMap = (function (args) {
         draw: _mapDraw,
         init: function () {
             //console.log('Map init', _options, _data);
-            $(_options.target + " .loading").removeClass("hidden");
+            //$(_options.target + " .loading").removeClass("hidden");
             _mapDraw();
+            // 'Static serie'
+            if (_options.serie) {
+                _data.map.series[0].remove();
+                _data.map.addSeries(_options.serie);
+                _data.map.colorAxis[0].update(_map.colorAxis);
+            }
+
             // Select and eventually zoom to country
             if (_options.iso3) {
                 $(_options.mapTarget).highcharts().get(_options.iso3).select();
