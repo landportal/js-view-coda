@@ -75,8 +75,8 @@ WHERE { \
 		cex:value ?value . \
 		OPTIONAL { ?obs rdfs:comment ?comment } \
 	?indicatorURL skos:notation ?id ; \
-				  ex:label ?indicatorLabel ; \
-				  ex:description ?indicatorDescription . \
+				  rdfs:label ?indicatorLabel ; \
+				  dct:description ?indicatorDescription . \
 	VALUES ?countryURL {<http://data.landportal.info/geo/" + _options.iso3 + ">} \
 } ORDER BY ?indicatorURL ?countryURL";
         var query_url = LBVIS.DATA.sparqlURL(query);

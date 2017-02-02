@@ -16,11 +16,12 @@ var lbvisDATA = (function (args) {
     };
     var query = {
 	prefix: " \
-PREFIX ex: <http://www.example.org/rdf#> \
 PREFIX cex: <http://purl.org/weso/ontology/computex#> \
 PREFIX time: <http://www.w3.org/2006/time#> \
 PREFIX qb: <http://purl.org/linked-data/cube#> \
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \
+PREFIX dct: <http://purl.org/dc/terms/> \
+PREFIX sdmx-attribute: <http://purl.org/linked-data/sdmx/2009/attribute#> \
 "
     };
 
@@ -33,7 +34,7 @@ SELECT ?iso3 ?name \
 FROM <http://data.landportal.info> \
 WHERE { \
 ?uri a <http://purl.org/weso/landbook/ontology#Country> ; \
-  ex:label ?name . \
+  rdfs:label ?name . \
 BIND (REPLACE(STR(?uri), '" + lod.uri.country + "','') AS ?iso3) \
 } ORDER BY ?name";
     };
@@ -44,8 +45,8 @@ FROM <http://data.landportal.info> \
 WHERE { \
 ?uri a cex:Indicator ; \
   skos:notation ?id ; \
-  ex:label ?label ; \
-  ex:dataset ?datasetURL . \
+  rdfs:label ?label ; \
+  dct:source ?datasetURL . \
 ?datasetURL skos:notation ?dataset . \
 } ORDER BY ?label";
     };
@@ -57,7 +58,7 @@ FROM <http://data.landportal.info> \
 WHERE { \
 ?dataset a qb:DataSet ; \
      skos:notation ?id ; \
-     ex:label ?label . \
+     rdfs:label ?label . \
 } ORDER BY ?label";
     };
 
@@ -69,15 +70,15 @@ WHERE { \
 SELECT ?id ?uri ?label ?description ?unit ?indicatorSeeAlso ?datasetURL ?dataset ?datasetSeeAlso ?sourceURL ?source ?sourceSeeAlso \
 FROM <http://data.landportal.info> \
 WHERE { \
-?uri ex:label ?label ; \
-        ex:description ?description ; \
-        ex:unit ?unit ; \
-        ex:dataset ?datasetURL ; \
+?uri rdfs:label ?label ; \
+        dct:description ?description ; \
+        sdmx-attribute:unitMeasure ?unit ; \
+        dct:source ?datasetURL ; \
 		rdfs:seeAlso ?indicatorSeeAlso .\
-?datasetURL ex:label ?dataset ; \
-        ex:org ?sourceURL ; \
+?datasetURL rdfs:label ?dataset ; \
+        dct:publisher ?sourceURL ; \
 		rdfs:seeAlso ?datasetSeeAlso . \
-?sourceURL ex:label ?source ; \
+?sourceURL rdfs:label ?source ; \
 			  rdfs:seeAlso ?sourceSeeAlso .\
 VALUES (?uri ?id) { (<" + lod.uri.indicator + indicator + "> '" + indicator + "') } \
 }";
@@ -139,15 +140,15 @@ SELECT DISTINCT ?id ?indicator ?indicatorDescription ?indicatorSeeAlso ?minYear 
 FROM <http://data.landportal.info> \
 WHERE { \
 ?obs cex:ref-indicator ?indicatorURL . \
-?uri ex:label ?indicator ; \
-        ex:unit ?unit ; \
-        ex:description ?indicatorDescription ; \
-        ex:dataset ?datasetURL ; \
+?uri rdfs:label ?indicator ; \
+        sdmx-attribute:unitMeasure ?unit ; \
+        dct:description ?indicatorDescription ; \
+        dct:source ?datasetURL ; \
 		rdfs:seeAlso ?indicatorSeeAlso .\
-?datasetURL ex:label ?dataset ; \
-        ex:org ?sourceURL ; \
+?datasetURL rdfs:label ?dataset ; \
+        dct:publisher ?sourceURL ; \
 		rdfs:seeAlso ?datasetSeeAlso . \
-?sourceURL ex:label ?source ; \
+?sourceURL rdfs:label ?source ; \
 		rdfs:seeAlso ?sourceSeeAlso . \
 { \
 SELECT DISTINCT \
@@ -183,7 +184,7 @@ FROM <http://data.landportal.info> \
 WHERE { \
 ?obs cex:ref-indicator <" + lod.uri.indicator + indicator + "> ; \
 cex:ref-area ?countryURL . \
-?countryURL ex:label ?name. \
+?countryURL rdfs:label ?name. \
 BIND (REPLACE(STR(?countryURL),'" + lod.uri.country + "','') AS ?iso3) \
 } ORDER BY ?name ";
     };
@@ -201,7 +202,7 @@ WHERE { \
 ?obs cex:ref-indicator ?uri ; \
 cex:ref-area <" + lod.uri.country + iso3 +"> ; \
 cex:value ?value . \
-?uri ex:label ?label . \
+?uri rdfs:label ?label . \
 BIND (REPLACE(STR(?uri), '" + lod.uri.indicator + "','') AS ?id) \
 } ORDER BY ?label";
     };
@@ -220,10 +221,10 @@ WHERE { \
 ?obs cex:ref-area ?country ; cex:ref-indicator ?indicatorURI ; cex:value ?value ; cex:ref-time ?time . \
 ?time time:hasBeginning ?timeValue . \
 ?timeValue time:inXSDDateTime ?dateTime . \
-?indicatorURI ex:unit ?unit ; ex:dataset ?datasetURL . \
-?datasetURL ex:label ?dataset ; ex:org ?sourceURL ; rdfs:seeAlso ?datasetSeeAlso. \
-?sourceURL ex:label ?source ; rdfs:seeAlso ?sourceSeeAlso. \
-?indicatorURI ex:label ?indicator ; ex:description ?indicatorDescription ; rdfs:seeAlso ?indicatorSeeAlso. \
+?indicatorURI sdmx-attribute:unitMeasure ?unit ; dct:source ?datasetURL . \
+?datasetURL rdfs:label ?dataset ; dct:publisher ?sourceURL ; rdfs:seeAlso ?datasetSeeAlso. \
+?sourceURL rdfs:label ?source ; rdfs:seeAlso ?sourceSeeAlso. \
+?indicatorURI rdfs:label ?indicator ; dct:description ?indicatorDescription ; rdfs:seeAlso ?indicatorSeeAlso. \
 BIND (STR(YEAR(?dateTime)) AS ?year) \
 VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
 } ORDER BY DESC(?time) LIMIT 1";
