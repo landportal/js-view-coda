@@ -124,16 +124,19 @@ WHERE { \
             var indi = _data.series.filter(function (s) {
                 return s.id == _options.subpanel;// && s.year == _options.year;
             });
-            // Display anels
+            if (!indi.length) {
+                indi.push({value: 'na'});
+            }
+            // Display panels
             var panelVal = '<span class="value-'+indi[0].value.toLocaleLowerCase()+'"></span>'
                     + '<a href="' + _data.indicator.indicatorSeeAlso + '">' + _data.indicator.label + '</a>'
                     + ' <span class="glyphicon glyphicon-info-sign"'
                     + ' data-toggle="tooltip" data-placement="top"'
                     + ' title="' + _data.indicator.description.replace(/"/g, "'") +
                     '"></span>';
-            
             $(_options.targetGraph + ' .panelVal').html(panelVal);
-            $(_options.targetGraph + ' .panelInfo').html(indi[0].comment);
+            if (indi[0].comment)
+                $(_options.targetGraph + ' .panelInfo').html(indi[0].comment);
         });
         //$(_options.targetGraph).html('hello VGGT');
     }
