@@ -290,23 +290,23 @@ SELECT ?ArableLandPer ?PermanentCropsPer ?PermanentPasturesAndMedowsPer ?ForestL
 FROM <http://data.landportal.info> \
 WHERE { \
 ?obs1 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6621-5110> ; \
-     cex:ref-area <" + lod.uri.country + iso3 + "> ; \
+     cex:ref-area ?countryURI ; \
      cex:value ?ArableLandHa ; \
      cex:ref-time ?time . \
 ?obs2 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6650-5110> ; \
-     cex:ref-area <" + lod.uri.country + iso3 + "> ; \
+     cex:ref-area ?countryURI ; \
      cex:value ?PermanentCropsHa ; \
      cex:ref-time ?time . \
 ?obs3 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6655-5110> ; \
-     cex:ref-area <" + lod.uri.country + iso3 + "> ; \
+     cex:ref-area ?countryURI ; \
      cex:value ?PermanentPasturesAndMedowsHa; \
      cex:ref-time ?time . \
 ?obs4 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6661-5110> ; \
-     cex:ref-area <" + lod.uri.country + iso3 + "> ; \
+     cex:ref-area ?countryURI ; \
      cex:value ?ForestLandHa; \
      cex:ref-time ?time . \
 ?obs5 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6601-5110> ; \
-     cex:ref-area <" + lod.uri.country + iso3 + "> ; \
+     cex:ref-area ?countryURI ; \
      cex:value ?mainInd; \
      cex:ref-time ?time . \
      ?time time:hasBeginning ?timeValue . \
@@ -317,23 +317,27 @@ BIND ((xsd:double(xsd:float(?PermanentPasturesAndMedowsHa)      *100/xsd:float(?
 BIND ((xsd:double(xsd:float(?ForestLandHa)                      *100/xsd:float(?mainInd))) AS ?ForestLandPer) \
 BIND ((100 - ?ArableLandPer  - ?PermanentCropsPer - ?PermanentPasturesAndMedowsPer - ?ForestLandPer) AS ?other) \
 { \
- SELECT DISTINCT max(?dateTime) as ?maxdateTime \
+ SELECT DISTINCT (max(?dateTime) as ?maxdateTime) ?countryURI \
  FROM <http://data.landportal.info> \
  WHERE { \
   ?obs1 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6621-5110> ; \
-     cex:ref-area <" + lod.uri.country + iso3 + ">; \
+     cex:ref-area ?countryURI ; \
      cex:ref-time ?time . \
   ?obs2 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6650-5110> ; \
-     cex:ref-area <" + lod.uri.country + iso3 + "> ; \
+     cex:ref-area ?countryURI ; \
      cex:ref-time ?time . \
   ?obs3 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6655-5110> ; \
-     cex:ref-area <" + lod.uri.country + iso3 + "> ; \
+     cex:ref-area ?countryURI ; \
      cex:ref-time ?time . \
   ?obs4 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6661-5110> ; \
-     cex:ref-area <" + lod.uri.country + iso3 + "> ; \
+     cex:ref-area ?countryURI ; \
+     cex:ref-time ?time . \
+  ?obs5 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6601-5110> ; \
+     cex:ref-area ?countryURI ; \
      cex:ref-time ?time . \
   ?time time:hasBeginning ?timeValue . \
   ?timeValue time:inXSDDateTime ?dateTime . \
+  VALUES ?countryURI {<" + lod.uri.country + iso3 + ">} \
  } \
 } \
 }";
