@@ -77,7 +77,6 @@ var lbvisTable = (function (args) {
     };
 
     var _formatCol = function (col, ind) {
-        var tdclass = '';
         var str = ind[col];
         if (ind[col+'SeeAlso']) {
             str = '<a href="'+ind[col+'SeeAlso']+'" target="_blank">' + ind[col] + '</a>';
@@ -87,18 +86,26 @@ var lbvisTable = (function (args) {
             //console.log('description', desc);
             str += ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="' + desc + '"></span>';
         }
-        return '<td class="lb-'+ col + tdclass +'" data-'+col+'="'+ind[col]+'">'+str+'</td>';
+        return str;
     };
     var _formatRow = function (ind) {
         var cols;
 		if (_options.iso3) {
 			cols = ['indicator', 'year', 'value', 'unit', 'dataset', 'source'];
 		} else {
-			cols = ['indicator', 'minYear', 'maxYear', 'unit', 'nObs', 'nYears', 'nCountryWithValue', 'perMissingValue', 'minValue' , 'maxValue', 'dataset', 'source'];
+		    cols = [['indicator', 'dataset', 'source'], 'unit', 'minYear', 'maxYear', 'nYears', 'nCountryWithValue', 'nObs', 'perMissingValue', 'minValue' , 'maxValue'];
 		}
         var row = '<tr>';
         cols.forEach(function (col) {
-            row += _formatCol(col, ind);
+            var str = '';
+            if (typeof col === 'string') {
+                str = _formatCol(col, ind);
+            } else {
+                col.forEach(function (cc) {
+                    str += '<span class="' +  cc + '">' + _formatCol(cc, ind) + '</span>';
+                });
+            }
+            row += '<td class="lb-'+ col + '" data-'+col+'="'+ind[col]+'">' + str + '</td>';
         });
         // Add delete column 
         row += '<td class="text-center"><a href="#" class="delete"><span class="glyphicon glyphicon-trash text-danger"></span></a></td></tr>';
