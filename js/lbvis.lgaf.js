@@ -20,14 +20,17 @@ var lbvisLGAF = (function (args) {
 
     /* GET Data */
     function _getLGAFstructure () {
+        $(_options.target + " .loading").removeClass("hidden");
         return $.getJSON(_options.jsonPath + '/LGAF_structure.json', function(data) {
             for (var y in data) {
                 _data.panels[y] = data[y];
             }
             _data.years = Object.keys(_data.panels);
+            $(_options.target + " .loading").addClass("hidden");
         });
     }
     function _getValues() {
+        $(_options.target + " .loading").removeClass("hidden");
         var query = LBVIS.DATA.queries.lgaf_chart(_options.iso3, _options.year);
         var query_url = LBVIS.DATA.sparqlURL(query);
         _defer = $.getJSON(query_url, function (data) {
@@ -42,7 +45,7 @@ var lbvisLGAF = (function (args) {
 
     /* Build UI elements */
     function setOptionsYears() {
-        var str = '<option data-localize="inputs.years">Select year...</option>';
+        var str = '<option value="" data-localize="inputs.years">Select year...</option>';
         _data.years.forEach(function (y) {
             var selected = (_options.year == y ? ' selected="selected"' : '');
             str += '<option value="' + y + '"' + selected + '>' + y + '</option>';
@@ -51,7 +54,7 @@ var lbvisLGAF = (function (args) {
         $(_options.target + ' select[name="year"]').html(str);
     }
     function setOptionsPanels() {
-        var str = '<option data-localize="inputs.panels">Select a panel...</option>';
+        var str = '<option value="" data-localize="inputs.panels">Select a panel...</option>';
         _data.panels[_options.year].forEach(function (item) {
             var selected = (_options.panel == item.id ? ' selected="selected"' : '');
             str += '<option value="' + item.id + '"'+selected+'>' + item.name + '</option>';
@@ -60,7 +63,7 @@ var lbvisLGAF = (function (args) {
         $(_options.target + ' select[name="panel"]').html(str);
     }
     function setOptionsSubpanels() {
-        var str = '<option data-localize="inputs.subpanels">Select a sub-panel...</option>';
+        var str = '<option value="" data-localize="inputs.subpanels">Select a sub-panel...</option>';
         var panel = _data.panels[_options.year].filter(function(p) {
             return (p.id == _options.panel ? p : null);
         })[0];
@@ -74,27 +77,48 @@ var lbvisLGAF = (function (args) {
         $(_options.target + ' select[name="subpanel"]').html(str);
     }
 
+    function _lgafValueSpan(indicator) {
+        // Indicator Value span
+        var ival = _data.series.filter(function(v) { return v.id == indicator.id; })[0];
+        var value = (ival ? ival.value.toLowerCase() : 'na');
+        var vspan = value.split('-').map(function (v) {
+            return '<span class="value-' + v + '"></span>';
+        }).join('');
+        return vspan;
+    }
     function updateInfo() {
+        if (!_options.panel || !_options.subpanel) {
+            //console.log('Need pan', _options.panel, _options.subpanel);
+            $(_options.targetGraph).empty();
+            $(_options.target + " .empty").removeClass("hidden");
+            return false;
+        }
         _defer.done(function () {
             // SUCCESS
             var row = '';
             var subpanel = _data.panels[_options.year]
                     .filter(function (p) { return p.id == _options.panel; })[0]
-                    .subpanels.filter(function(s) { return s.id == _options.subpanel; })[0];
-            //console.log('LGAF got values ', _options, _data, subpanel);
+                .subpanels.filter(function(s) { return s.id == _options.subpanel; })[0];
+            // Get all subpanel indicators detail
+            $(_options.targetGraph).empty();
+            console.log('LGAF got values ', _options, _data, subpanel);
             subpanel.indicators.forEach(function (indicator) {
-                var ival = _data.series.filter(function(v) { return v.id == indicator.id; })[0];
-                var value = (ival ? ival.value.toLowerCase() : 'na');
-
-                var vspan = value.split('-').map(function (v) {
-                    return '<span class="lgaf-value-'+v+'"></span>';
-                }).join('');
-                row += '<li>' + vspan + indicator.name + '</li>';
-                // var split = indicatorsValues[i].value.split("-");
-                // split[1].toLowerCase()
+                LBVIS.getIndicatorInfo(indicator.id).done(function () {
+                    var details = LBVIS.cache('info')[indicator.id][0];
+                    // Display panels
+                    var row = _lgafValueSpan(indicator)
+                        + '<a href="' + details.indicatorSeeAlso + '">' + details.label + '</a>'
+                        + ' <span class="glyphicon glyphicon-info-sign"'
+                        + ' data-toggle="tooltip" data-placement="top"'
+                        + ' title="' + details.description.replace(/"/g, "'") +
+                        '"></span>';
+                    $(_options.targetGraph).append('<li>' + row + '</li>');
+                    $(_options.target + " .loading").addClass("hidden");
+                    $(_options.target + " .empty").addClass("hidden");
+                });
             });
-            $(_options.target + " .loading").addClass("hidden");
-            $(_options.targetGraph).html(row);
+            //$(_options.target + " .loading").addClass("hidden");
+            //$(_options.targetGraph).html(row);
         }).fail(function () {
             // ERROR
             console.error('LGAF values', _options, _data);
