@@ -187,10 +187,7 @@ var lbvisMap = (function (args) {
             point: { events: _options.map.events }
         }};
         _map.colorAxis = {
-            // startOnTick: false,
-            // endOnTick: false,
-            tickLength: 0,
-            minorTickInterval: 0.1,
+            min: 0,
             maxColor: _options.colors.max,
             minColor: _options.colors.min
         };
@@ -224,7 +221,9 @@ var lbvisMap = (function (args) {
         data = data || [];
         return {
             data: data,
-            name: _data.indicator.label + (_data.year ? ' - ' + _data.year : '')
+            name: _data.indicator.label + (_data.year ? ' - ' + _data.year : ''),
+            events: _options.map.events,
+            cursor: 'pointer'
         };
     };
 
@@ -329,7 +328,7 @@ var lbvisMap = (function (args) {
             if (_options.serie) {
                 _data.map.series[0].remove();
                 _data.map.addSeries(_options.serie);
-                _data.map.colorAxis[0].update(_map.colorAxis);
+                //_data.map.colorAxis[0].update(_map.colorAxis);
             }
 
             // Select and eventually zoom to country
