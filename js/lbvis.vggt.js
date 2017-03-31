@@ -67,6 +67,7 @@ var lbvisVGGT = (function (args) {
     function _getValues() {
         var query = LBVIS.DATA.ns + "SELECT ?id ?year (STR(?value) AS ?value) (STR(?comment) as ?comment) \
 FROM <http://data.landportal.info> \
+FROM <http://countries.landportal.info> \
 FROM <http://datasets.landportal.info> \
 FROM <http://indicators.landportal.info> \
 FROM <http://organizations.landportal.info> \

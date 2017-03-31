@@ -25,6 +25,7 @@ PREFIX sdmx-attribute: <http://purl.org/linked-data/sdmx/2009/attribute#> \
 ",
         from : " \
 FROM <http://data.landportal.info> \
+FROM <http://countries.landportal.info> \
 FROM <http://datasets.landportal.info> \
 FROM <http://indicators.landportal.info> \
 FROM <http://organizations.landportal.info> \
