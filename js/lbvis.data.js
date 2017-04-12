@@ -29,6 +29,9 @@ FROM <http://countries.landportal.info> \
 FROM <http://datasets.landportal.info> \
 FROM <http://indicators.landportal.info> \
 FROM <http://organizations.landportal.info> \
+",
+        from_data : " \
+FROM <http://data.landportal.info> \
 "
     };
 
@@ -295,7 +298,7 @@ BIND (REPLACE(STR(?uri), '" + lod.uri.indicator + "','') AS ?id) \
     var _pie_chart = function (iso3) {
         return query.prefix + " \
 SELECT ?ArableLandPer ?PermanentCropsPer ?PermanentPasturesAndMedowsPer ?ForestLandPer ?mainInd ?other (year(?maxdateTime) as ?year) \
-" + query.from + " \
+" + query.from_data + " \
 WHERE { \
 ?obs1 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6621-5110> ; \
      cex:ref-area ?countryURI ; \
@@ -326,7 +329,7 @@ BIND ((xsd:double(xsd:float(?ForestLandHa)                      *100/xsd:float(?
 BIND ((100 - ?ArableLandPer  - ?PermanentCropsPer - ?PermanentPasturesAndMedowsPer - ?ForestLandPer) AS ?other) \
 { \
  SELECT DISTINCT (max(?dateTime) as ?maxdateTime) ?countryURI \
- " + query.from + " \
+ " + query.from_data + " \
  WHERE { \
   ?obs1 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6621-5110> ; \
      cex:ref-area ?countryURI ; \
