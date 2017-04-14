@@ -122,16 +122,17 @@ var lbvisLC = (function (args) {
     function _setTitle() {
         return {
             text: '<a href="'+_data.indicator.indicatorSeeAlso+'" target="_blank">'
-                + _data.indicator.label + '</a>' +' ('+ _data.indicator.unit +')',
+                + _data.indicator.label + '</a>' +' ('+ _data.indicator.unit +') in <a href="'+_data.indicator.datasetSeeAlso+'" target="_blank" class="txt-l">'
+                + _data.indicator.dataset+'</a> (by <a href="'+ _data.indicator.sourceSeeAlso
+                + '" target="_blank" class="txt-l">'+ _data.indicator.source +'</a>)',
+
             useHTML: true,
             x: -20 //center
         };
     }
     function _setSubTitle() {
         return {
-            text: '<a href="'+_data.indicator.datasetSeeAlso+'" target="_blank" class="txt-l">'
-                + _data.indicator.dataset+'</a> (<a href="'+ _data.indicator.sourceSeeAlso
-                + '" target="_blank" class="txt-l">'+ _data.indicator.source +'</a>)',
+            text: _data.indicator.description,
             useHTML: true,
             x: -20
         };
