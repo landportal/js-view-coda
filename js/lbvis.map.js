@@ -46,6 +46,7 @@ var lbvisMap = (function (args) {
         data:           args.data       || null,        // static data, array of objects (id/value) where id is iso3
         serie:          args.serie      || null,        // static serie
         map: {
+            cursor:     args.cursor     || null,
             events:     args.events     || {},
             legend:     args.legend     || false,
             nav:        args.nav        || false,
@@ -102,8 +103,13 @@ var lbvisMap = (function (args) {
                 _data.year = _data.years.sort().reverse()[0];
             }
             _setOptionsYears();
-            _setTitles(_data.indicator.label + ' - ' + _data.year,
-                       _data.indicator.description);
+            _data.title = '<a href="'+_data.indicator.indicatorSeeAlso+'" target="_blank">' + _data.indicator.label + '</a>' 
+            +' ('+ _data.indicator.unit +') in <a href="'+_data.indicator.datasetSeeAlso+'" target="_blank" class="txt-l">'
+            + _data.indicator.dataset+'</a> (by <a href="'+ _data.indicator.sourceSeeAlso + '" target="_blank" class="txt-l">'+ _data.indicator.source +'</a>)';
+            _data.subtitle = _data.indicator.description;
+
+            _setTitles(_data.title,
+                       _data.subtitle);
         });
     };
 
@@ -156,23 +162,22 @@ var lbvisMap = (function (args) {
                 // width: _options.width,
                 height: _options.height,
                 backgroundColor: _options.colors.background,
-                margin: (_options.indicator ? [40, 0, 0, 0] : 0)
+                margin: (_options.indicator ? null : [0, 0, 0, 0])
             },
-            title:      { text: (_options.title ? _options.title : null) },
-            subtitle:   { text: (_options.subtitle ? _options.subtitle : null) },
+            title:      { text: (_options.title ? _options.title : null) , useHTML: true},
+            subtitle:   { text: (_options.subtitle ? _options.subtitle : null), useHTML: true},
             credits:    { enabled: false },
-            legend:     { enabled: _options.map.legend, y: 20 },
+            legend:     { enabled: _options.map.legend, verticalAlign: 'bottom', },
             tooltip:    { enabled: (_options.map.tooltip ? true : false), valueDecimals: 2 }
         };
         _map.mapNavigation = {
             enabled: _options.map.nav,
             enableMouseWheelZoom: false,
-            enableDoubleClickZoom: false,
+            enableDoubleClickZoom: true,
             enableTouchZoom: false,
-            buttons: {
-                zoomIn:  { y: 20, x: 20 },
-                zoomOut: { y: 50, x: 20 }
-            }
+            buttonOptions: {
+                align: 'right',
+            },
         };
         _map.plotOptions = { map: {
             mapData: _data.mapData,
@@ -223,7 +228,7 @@ var lbvisMap = (function (args) {
             data: data,
             name: _data.indicator.label + (_data.year ? ' - ' + _data.year : ''),
             events: _options.map.events,
-            cursor: 'pointer'
+            cursor: _options.map.cursor
         };
     };
 
