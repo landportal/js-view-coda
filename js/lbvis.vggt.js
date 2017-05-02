@@ -7,6 +7,12 @@ var lbvisVGGT = (function (args) {
 	}, {
 		"id": "NKT-VGGT16-3",
 		"label": "VGGT 16.3 Fair Valuation and Prompt Compensation Indicators"
+	},{
+		"id": "NKT-VGGT16-8",
+		"label": "VGGT 16.8 Resettlement Process Indicators"
+	},{
+		"id": "NKT-VGGT16-9",
+		"label": "VGGT 16.9 Resettlement and Rehabilitation Indicators"
 	}
 	]
 
