@@ -101,7 +101,7 @@ var lbvisLGAF = (function (args) {
                 .subpanels.filter(function(s) { return s.id == _options.subpanel; })[0];
             // Get all subpanel indicators detail
             $(_options.targetGraph).empty();
-            console.log('LGAF got values ', _options, _data, subpanel);
+            //console.log('LGAF got values ', _options, _data, subpanel);
             subpanel.indicators.forEach(function (indicator) {
                 LBVIS.getIndicatorInfo(indicator.id).done(function () {
                     var details = LBVIS.cache('info')[indicator.id][0];

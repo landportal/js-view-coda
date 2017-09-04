@@ -54,16 +54,17 @@ var lbvisMap = (function (args) {
             tooltip:    args.tooltip    || false,
             zoom:       args.zoom       || false
         },
-        colors: args.colors || {
-            background: '#FFFFFF',
-            hover:      '#F5A623',
-            select:     '#F5A623',
-            borders:    '#FFFFFF',
-            max:        '#45551A',
-            min:        '#D9ED7E',
-            na:         '#BBD6D8'
-        }
+        colors: args.colors || {}
     };
+    if (!_options.colors.background) _options.colors.background = '#FFFFFF';
+    if (!_options.colors.hover) _options.colors.hover = '#F5A623';
+    if (!_options.colors.select) _options.colors.select = '#F5A623';
+    if (!_options.colors.borders) _options.colors.borders = '#FFFFFF';
+
+    if (!_options.colors.min) _options.colors.min = '#45551A';
+    if (!_options.colors.max) _options.colors.max = '#D9ED7E';
+    if (!_options.colors.na) _options.colors.na = '#BBD6D8';
+
     // Map internal data
     var _data = {
         mapData: args.map_data || map_data,

@@ -90,11 +90,11 @@ var lbvisTable = (function (args) {
     };
     var _formatRow = function (ind) {
         var cols;
-		if (_options.iso3) {
-			cols = ['indicator', 'year', 'value', 'unit', 'dataset', 'source'];
-		} else {
-		    cols = [['indicator', 'dataset', 'source'], 'unit', 'minYear', 'maxYear', 'nYears', 'nCountryWithValue', 'nObs', 'perMissingValue', 'minValue' , 'maxValue'];
-		}
+	if (_options.iso3) {
+	    cols = ['indicator', 'year', 'value', 'unit', 'dataset', 'source'];
+	} else {
+	    cols = [['indicator', 'dataset', 'source'], 'unit', 'minYear', 'maxYear', 'nYears', 'nCountryWithValue', 'nObs', 'perMissingValue', 'minValue' , 'maxValue'];
+	}
         var row = '<tr>';
         cols.forEach(function (col) {
             var str = '';
