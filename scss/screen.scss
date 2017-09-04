@@ -32,6 +32,17 @@ li {
     height: 100%;
 }
 
+span.source {
+    display: block;
+}
+
+span.source:before {
+    content: "(";
+}
+
+span.source:after {
+    content: ")";
+}
 
 
 /* LGAF color coded indicator values */
