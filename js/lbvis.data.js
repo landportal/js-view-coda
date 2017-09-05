@@ -431,8 +431,8 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
         // Queries that do not have 'dynamic' arguments
         queries: {
             countries:  _countries(),
-	    datasets:   _datasets(),
-	    indicators: _indicators(),
+            datasets:   _datasets(),
+            indicators: _indicators(),
 
             // List of available indicators for a given country
             countryIndicators: function (iso3) { return _countryIndicators(iso3); },
