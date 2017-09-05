@@ -354,6 +354,30 @@ BIND ((100 - ?ArableLandPer  - ?PermanentCropsPer - ?PermanentPasturesAndMedowsP
 }";
     };
 
+	// TESTING
+	// #fixed year
+	var _pie2_chart = function (indicators, iso3) {
+
+      var indicator_stament = " VALUES ?indicator {";
+	  indicators.forEach(function (indicator) {
+		indicator_stament += " <" + lod.uri.indicator + indicator + ">";
+	  });
+      indicator_stament += '}'
+
+	  var result = query.prefix + " \
+SELECT ?indicator ?value\
+" + query.from_data + " \
+WHERE { \
+?obs cex:ref-indicator ?indicator ; \
+     cex:ref-area ?countryURI ; \
+     cex:value ?value . \
+  VALUES ?countryURI {<" + lod.uri.country + iso3 + ">} \
+"  + indicator_stament + "\
+}";
+      return result;
+    };
+
+
     // Spider : remove hardcoded vars, make computation dynamic
     var _spider_chart = function(iso3) {
         return query.prefix + " \
@@ -447,6 +471,7 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
             line_chart: function(indicator, countries) { return _line_chart(indicator, countries); },
             spider_chart: function(iso3) { return _spider_chart(iso3); },
             pie_chart: function(iso3) { return _pie_chart(iso3); },
+            pie2_chart: function(indicators, iso3) { return _pie2_chart(indicators, iso3); },
             lgaf_chart: function(iso3, year) { return _lgaf_chart(iso3, year); }
         }
     };
