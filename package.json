@@ -1,6 +1,6 @@
 {
-    "name": "lb-visualization",
-    "version": "0.1.0",
+    "name": "js-view-coda",
+    "version": "0.1.1",
     "scripts": {
         "install": "echo \"Install app (maybe build sass here?)\"",
         "test": "echo \"Warning: no tests\""
@@ -14,9 +14,9 @@
         "randomcolor": "0.4.*"
     },
     "license": "MIT",
-    "author": "simbiosys",
+    "author": "Jules C",
     "repository": {
         "type": "git",
-        "url": "https://github.com/landportal/lb-visualization.git"
+        "url": "https://github.com/landportal/js-view-coda.git"
     }
 }
