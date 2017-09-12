@@ -77,6 +77,9 @@ var lbvisTable = (function (args) {
     };
 
     var _formatCol = function (col, ind) {
+        if (! ind[col]) {
+            return col;
+        }
         var str = ind[col];
         if (ind[col+'SeeAlso']) {
             str = '<a href="'+ind[col+'SeeAlso']+'" target="_blank">' + ind[col] + '</a>';
@@ -86,26 +89,30 @@ var lbvisTable = (function (args) {
             //console.log('description', desc);
             str += ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="' + desc + '"></span>';
         }
-        return str;
+        return '<span class="' +  col + '">' + str + '</span>';
     };
     var _formatRow = function (ind) {
         var cols;
 	if (_options.iso3) {
 	    cols = ['indicator', 'year', 'value', 'unit', 'dataset', 'source'];
 	} else {
-	    cols = [['indicator', 'dataset', 'source'], 'unit', 'minYear', 'maxYear', 'nYears', 'nCountryWithValue', 'nObs', 'perMissingValue', 'minValue' , 'maxValue'];
+	    cols = [
+                ['indicator', ' (', 'unit', ')', '<br/>', 'dataset', ' (', 'source', ')'],
+                ['minYear', '-', 'maxYear', '<br/>', 'nYears', '&nbsp;', 'years covered'],
+                ['nCountryWithValue', '/', 'nObs', '<br/>', 'perMissingValue'],
+                ['minValue' , '/', 'maxValue']];
 	}
-        var row = '<tr>';
+        var row = '<tr id=' + _options.target + '-' + ind['id'] + '">';
         cols.forEach(function (col) {
             var str = '';
             if (typeof col === 'string') {
                 str = _formatCol(col, ind);
             } else {
                 col.forEach(function (cc) {
-                    str += '<span class="' +  cc + '">' + _formatCol(cc, ind) + '</span>';
+                    str += _formatCol(cc, ind);
                 });
             }
-            row += '<td class="lb-'+ col + '" data-'+col+'="'+ind[col]+'">' + str + '</td>';
+            row += '<td>' + str + '</td>';
         });
         // Add delete column 
         row += '<td class="text-center"><a href="#" class="delete"><span class="glyphicon glyphicon-trash text-danger"></span></a></td></tr>';
