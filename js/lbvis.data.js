@@ -35,6 +35,8 @@ FROM <http://data.landportal.info> \
 "
     };
 
+
+
     /**************************************
      * Generic / basic queries
      */
@@ -358,24 +360,24 @@ BIND ((100 - ?ArableLandPer  - ?PermanentCropsPer - ?PermanentPasturesAndMedowsP
 	// #fixed year
 	var _pie2_chart = function (indicators, iso3) {
 
-      var indicator_stament = " VALUES ?indicator {";
-	  indicators.forEach(function (indicator) {
+            var indicator_stament = " VALUES ?indicator {";
+	    indicators.forEach(function (indicator) {
 		indicator_stament += " <" + lod.uri.indicator + indicator + ">";
-	  });
-      indicator_stament += '}'
+	    });
+            indicator_stament += '}'
 
-	  var result = query.prefix + " \
+	    var result = query.prefix + " \
 SELECT ?indicator ?value\
 " + query.from_data + " \
 WHERE { \
 ?obs cex:ref-indicator ?indicator ; \
      cex:ref-area ?countryURI ; \
      cex:value ?value . \
-  VALUES ?countryURI {<" + lod.uri.country + iso3 + ">} \
+VALUES ?countryURI {<" + lod.uri.country + iso3 + ">} \
 "  + indicator_stament + "\
 }";
-      return result;
-    };
+            return result;
+        };
 
 
     // Spider : remove hardcoded vars, make computation dynamic
@@ -473,6 +475,54 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
             pie_chart: function(iso3) { return _pie_chart(iso3); },
             pie2_chart: function(indicators, iso3) { return _pie2_chart(indicators, iso3); },
             lgaf_chart: function(iso3, year) { return _lgaf_chart(iso3, year); }
+        },
+        obsValues: function (columns, where) {
+            //console.log('===', columns, where, '===');
+            // Try to build a generic query, might get ugly
+            var crit = {};
+            var values = [];
+            var bind = [];
+            // Build up the VALUES conditions (WHERE)
+            $.each(where, function(c, v) {
+                //console.log(c, v);
+                var prefix = lod.uri[c] || '';
+                if ($.inArray(c, columns) != -1) c = 'b'+c; // for BIND
+                values.push("VALUES ?" + c + ' { <' + prefix + v.join('> <' + prefix) + '> }');
+            });
+            console.log('VALUES', values);
+
+            var dirtyObsMapping = {
+                indicator: 'cex:ref-indicator',
+                country: 'cex:ref-area',
+                value:   'cex:value',
+                time:   'cex:ref-time',
+            };
+            // 'main' obs (cex: indicator)
+            var obs = [];
+            columns.forEach(function(c, i) {
+                var prefix = lod.uri[c];
+                if (prefix) {
+                    obs.push(dirtyObsMapping[c] + ' ?b' + c);
+                    bind.push("BIND (REPLACE(STR(?b" + c + "), '"+prefix+"', '') AS ?" + c + ")");
+                    // if (c == 'time') {
+                    //     // do something fuckedup
+                    //     obs.push('?time time:hasBeginning ?timeValue . ?timeValue time:inXSDDateTime ?dateTime . ');
+                    //     bind.push("BIND (REPLACE(STR(?b" + c + "), '"+prefix+"', '') AS ?" + c + ")");
+                    // }
+                } else {
+                    obs.push(dirtyObsMapping[c] + ' ?' + c);
+                }
+            });
+
+            var q = " SELECT ?" + columns.join(' ?')
+                + query.from_data
+                + " WHERE { ?obs " + obs.join('; ') + " . "
+                + " " + values.join(' ')
+                + " " + bind.join(' ')
+                + " }";
+            // DEBUG shit
+            console.log(q);
+            return query.prefix + q; // sparqlURL(query);
         }
     };
 });
