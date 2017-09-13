@@ -14,33 +14,33 @@ var lbvisPie3 = (function (args) {
     var _options = {
         target: args.target     || '#wrapper-piechart',
         iso3:   args.iso3,
-        indicators: {
-            // Default to the original FAO Land Use pie chart
+        legend: false,
+        loadMain: true,         // This will prevent loading main ind. value from LOD
+        indicators: {           // Default to the original FAO Land Use pie chart
             main: args.main     || 'FAO-6601-5110',
             chart: args.indicators || ['FAO-6621-5110', 'FAO-6650-5110', 'FAO-6655-5110', 'FAO-6661-5110']
         },
-        year: args.year || '2014',
-        colors: args.color || ['#8c6d31', '#e7ba52', '#b5cf6b', '#637939', '#9c9ede']
+        year: args.year         || '2014',
+        colors: args.color      || ['#8c6d31', '#e7ba52', '#b5cf6b', '#637939', '#9c9ede']
     };
 
     var _data = {
-        //main: {},
-        //indicator: { label: args.title || 'blabla', desc: args.desc || 'youpi desc' },
         series: [],
-        indicators: args.cache || {}   // Indicators info cache
+        indicators: args.cache  || {}   // Indicators metadata cache
     };
 
     var chart_series = [];
 
     var _loadData = function () {
-        //chart = chart.indexOf(_options.indicators.main);
-        // TMP cheapo
-        var chart = _options.indicators.chart.shift();
-        console.log('BAD SHIFT ' + chart, _options.indicators.chart);
+        var chart = _options.indicators.chart;
+        // If we don't load main indicator data, remove it from the serie
+        if (_options.loadMain) {
+            chart.splice(chart.indexOf(_options.indicators.main), 1);
+        }
 
         var qvalues = LBVIS.DATA.obsValues(
             ['indicator', 'country', 'value', 'time'],
-            { country: [_options.iso3], indicator: _options.indicators.chart, time: [_options.year] }
+            { country: [_options.iso3], indicator: chart, time: [_options.year] }
         );
         //console.log('G', qvalues);
         return $.getJSON(LBVIS.DATA.sparqlURL(qvalues), function (data) {
@@ -55,6 +55,7 @@ var lbvisPie3 = (function (args) {
                     color: _options.colors[i],
                     y: parseFloat(d.value.value),
                 };
+                _data.indicators[lbid].value = d.value.value;
                 _data.series.push(serie);
                 console.log(d, i);
             });
@@ -64,7 +65,7 @@ var lbvisPie3 = (function (args) {
 
     var _drawChart = function () {
         //console.log('Draw Pie', _data.series);
-        var CharPieOp = {
+        var ChartPieOp = {
             chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
@@ -75,35 +76,30 @@ var lbvisPie3 = (function (args) {
             },
             credits: { enabled: false },
             title: {
-                text: _data.indicators[_options.indicators.main].label + ' ('+ _options.year +')',
+                text: _data.indicators[_options.indicators.main].label + ' ('+ _options.iso3 + ':' + _options.year +')',
                 align: 'center'
             },
             subtitle: {
-                text: _data.indicators[_options.indicators.main].desc,
+                text: _data.indicators[_options.indicators.main].value,
                 align: 'center'
             },
-            legend: {
-                itemWidth: 300,
-                labelFormat: '{name}',
-                //<span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="{desc}"></span>'
+            tooltip: {
+                headerFormat: '<b>{point.key}: {point.y}</b><br/>',
+                pointFormat: '{point.percentage:.1f}%</b>',
             },
             plotOptions: {
-                tooltip: {
-                    headerFormat: '{point.name}',
-                    pointFormat: '<b>{point.id}: {point.percentage:.1f}</b>'
-                },
                 pie: {
                     allowPointSelect: true,
                     cursor: 'pointer',
                     dataLabels: {
                         enabled: true,
-                        // Carlos prefers dataLabels, new pie style...
-			format: '<b>{point.name}</b>: {point.y}',
+                        // Carlos also want to show dataLabels directly... fancy ^^^
+			format: '<b>{point.name}</b>: {point.y}', // TODO add ind. unit
 			style: {
 			    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
 			}                        
                     },
-                    showInLegend: true
+                    showInLegend: _options.legend
                 }
             },
             series: [{
@@ -112,7 +108,13 @@ var lbvisPie3 = (function (args) {
                 data: _data.series
             }]
         };
-        return new Highcharts.Chart(CharPieOp);
+        if (_options.legend) {
+            ChartPieOp.legend = {
+                itemWidth: 300,
+                labelFormat: '{name}',
+            };
+        }
+        return new Highcharts.Chart(ChartPieOp);
     };
 
     // Public interfaces
