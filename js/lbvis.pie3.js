@@ -34,7 +34,7 @@ var lbvisPie3 = (function (args) {
     var _loadData = function () {
         var chart = _options.indicators.chart;
         // If we don't load main indicator data, remove it from the serie
-        if (_options.loadMain) {
+        if (!_options.loadMain) {
             chart.splice(chart.indexOf(_options.indicators.main), 1);
         }
 
