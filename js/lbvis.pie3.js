@@ -89,6 +89,7 @@ var lbvisPie3 = (function (args) {
             },
             plotOptions: {
                 pie: {
+                    size: '75%',
                     allowPointSelect: true,
                     cursor: 'pointer',
                     dataLabels: {
@@ -110,7 +111,7 @@ var lbvisPie3 = (function (args) {
         };
         if (_options.legend) {
             ChartPieOp.legend = {
-                itemWidth: 300,
+                //itemWidth: 300,
                 labelFormat: '{name}',
             };
         }
