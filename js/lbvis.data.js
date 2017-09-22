@@ -468,7 +468,7 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
             indicatorYears: function (indicator, iso3) { return _indicatorYears(indicator, iso3); },
             indicatorValues: function(indicator, years) { return _indicatorValues(indicator, years); },
             indicatorDetails: function(indicator) { return _indicatorDetails(indicator); },
-            indicatorCountries: function(indicator, countries) { return _indicatorCountries(indicator, countries); },
+            indicatorCountries: function(indicator) { return _indicatorCountries(indicator); },
             // TODO: check/cleanup queries
             line_chart: function(indicator, countries) { return _line_chart(indicator, countries); },
             spider_chart: function(iso3) { return _spider_chart(iso3); },
@@ -489,7 +489,7 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
                 if ($.inArray(c, columns) != -1) c = 'b'+c; // for BIND
                 values.push("VALUES ?" + c + ' { <' + prefix + v.join('> <' + prefix) + '> }');
             });
-            console.log('VALUES', values);
+            //console.log('VALUES', values);
 
             var dirtyObsMapping = {
                 indicator: 'cex:ref-indicator',
@@ -521,7 +521,7 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
                 + " " + bind.join(' ')
                 + " }";
             // DEBUG shit
-            console.log(q);
+            //console.log(q);
             return query.prefix + q; // sparqlURL(query);
         }
     };

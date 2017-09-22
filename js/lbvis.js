@@ -31,6 +31,7 @@ var lbvis = (function (args) {
     var _defers = {
         info: {},
         indicatorsByCountry: {},
+        countriesByIndicator: {},
         years: {}
     }; // jQuery deferred
     // Internal cache
@@ -39,6 +40,7 @@ var lbvis = (function (args) {
         'datasets':  [],
         'countries':  [],
         'indicatorsByCountry': {},
+        'countriesByIndicator': {},
         'info':  {},    // store by indicator id
         'years': {},    // store by indicator id
         'period': {}    // store by indicator id
@@ -114,6 +116,14 @@ var lbvis = (function (args) {
         return _getSPARQL(q, 'info', id);
     };
     // Return valid years for an indicator
+    var _getIndicatorCountries = function (id) {
+        if (_defers.countriesByIndicator[id]) {
+            return _defers.countriesByIndicator[id];
+        }
+        var q = _DATA.queries.indicatorCountries(id);
+        return _getSPARQL(q, 'countriesByIndicator', id);
+    }
+    // Return valid years for an indicator
     var _getIndicatorYears = function (id) {
         if (_defers.years[id]) {
             return _defers.years[id];
@@ -185,6 +195,7 @@ var lbvis = (function (args) {
         setMetadata: function (target, id) { return _setMetadata(target, id); },
         getIndicatorInfo: function (indicator) { return _getIndicatorInfo(indicator); },
         getIndicatorYears: function (indicator) { return _getIndicatorYears(indicator); },
+        getIndicatorCountries: function (indicator) { return _getIndicatorCountries(indicator); },
         getIndicatorDetails: function (indicator, iso3) { return _getIndicatorDetails(indicator, iso3); },
         getIndicators: function (indicator) { return _getIndicators(indicator); },
 
