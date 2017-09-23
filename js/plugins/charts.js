@@ -15,7 +15,7 @@ var lbvisCharts = (function (LBV, args) {
         target:         '#wrapper',
         legend:         false,
         iso3:           'PER', // dummy country , works for PRIndex
-        year:           '2014',
+        year:           '2017',
         indicators:     [],
     };
     $.extend(_options, args);
@@ -25,7 +25,7 @@ var lbvisCharts = (function (LBV, args) {
             console.log(_options, _data);
         },
         init: function () {
-            console.log('hello charts');
+            console.log('hello charts', _options);
         }
     };
 });

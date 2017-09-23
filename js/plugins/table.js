@@ -1,7 +1,7 @@
 'use strict';
 
-var lbvisTable = (function (args) {
-    var LBVIS = args.vis;
+var lbvisTable = (function (LBV, args) {
+    var LBVIS = LBV;
     var _options = {
         target:         args.target     || '#table-indicators',
         iso3:           args.iso3       || null,

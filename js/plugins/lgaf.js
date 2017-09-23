@@ -1,6 +1,6 @@
 'use strict';
-var lbvisLGAF = (function (args) {
-    var LBVIS = args.vis;
+var lbvisLGAF = (function (LBV, args) {
+    var LBVIS = LBV;
     var _options = {
         iso3: args.iso3,
         year: args.year          || '2016',

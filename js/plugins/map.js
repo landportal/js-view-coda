@@ -29,8 +29,8 @@ tooltip: function () {
 (See: http://api.highcharts.com/highmaps#plotOptions.map.tooltip.pointFormatter)
 
  */
-var lbvisMap = (function (args) {
-    var LBVIS = args.vis;
+var lbvisMap = (function (LBV, args) {
+    var LBVIS = LBV;
     var _options = {
         width:          args.width      || 1004, // print hack, for wkhtmltopdf
         height:         args.height     || 500,  // print hack, for wkhtmltopdf

@@ -144,14 +144,14 @@ var lbvisPie = (function (LBV, args) {
             // });
             //console.log('FreeStyle options yeay!', _options);
             _loadData().done(function () {
-                console.log('IND', _data.indicators);
-                console.log('CAC', _data.cache);
-                if (_options.loadCountries) {
-                    // Assesment based on first indicator with data
-                    LBVIS.getIndicatorCountries(_options.indicators[3]).done(function() {
-                        console.log('GOT CC: ', LBVIS.cache('countriesByIndicator'));//[_options.indicators[0]]);
-                    });
-                }
+//                console.log('IND', _data.indicators);
+//                console.log('CAC', _data.cache);
+                // if (_options.loadCountries) {
+                //     // Assesment based on first indicator with data
+                //     // LBVIS.getIndicatorCountries(_options.indicators[3]).done(function() {
+                //     //     console.log('GOT CC: ', LBVIS.cache('countriesByIndicator'));//[_options.indicators[0]]);
+                //     // });
+                // }
                 _drawChart();
             });
         }

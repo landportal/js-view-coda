@@ -1,5 +1,5 @@
-lbvis.dl = (function (args) {
-    var LBVIS = args.vis;
+lbvis.dl = (function (LBV, args) {
+    var LBVIS = LBV;
     _options = {
         indicator: args.indicator,
         year: args.year         || null,

@@ -22,7 +22,7 @@
     "main": "js/lbvis.js",
     "plugins": {
         "map": "Map projection",
-        "charts": "Charts (bar and lines)",
+        "charts": "Charts (dots, bars, lines...)",
         "pie": "A pie",
         "download": "Download",
         "table": "An HTML table",

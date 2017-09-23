@@ -1,7 +1,7 @@
 'use strict';
 
-var lbvisRanking = (function (args = {}) {
-    var LBVIS = args.vis;
+var lbvisRanking = (function (LBV, args) {
+    var LBVIS = LBV;
     var _options = {
         target:         args.target || '#ranking',
         indicator:      args.indicator || 'WB-SP.POP.TOTL',
