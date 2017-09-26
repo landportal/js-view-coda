@@ -75,24 +75,27 @@
 
     </section>
 
-    <script src="js/vendor/jquery-1.11.2.min.js"></script>
-    <!-- <script src="js/vendor/jquery.localize.min.js"></script> -->
-    <script src="js/vendor/bootstrap.min.js"></script>
-    <script src="js/vendor/highstock.js"></script>
-    <script src="js/vendor/highmaps.js"></script>
-    <script src="js/vendor/highcharts-more.js"></script>
-    <!-- <script src="js/vendor/exporting.js"></script> -->
-    <script src="js/lbvis.data.js"></script>
-    <script src="js/lbvis.js"></script>
-    <script src="js/map_data.js"></script>
-    <script src="js/lbvis.map.js"></script>
-    <script src="js/lbvis.ranking.js"></script>
+    <script src="../js/vendor/jquery-1.11.2.min.js"></script>
+    <!-- <script src="../js/vendor/jquery.localize.min.js"></script> -->
+    <script src="../js/vendor/bootstrap.min.js"></script>
+    <script src="../js/vendor/highstock.js"></script>
+    <script src="../js/vendor/highmaps.js"></script>
+    <script src="../js/vendor/highcharts-more.js"></script>
+    <!-- <script src="../js/vendor/exporting.js"></script> -->
+    <script src="../js/lbvis.data.js"></script>
+    <script src="../js/lbvis.js"></script>
+    <script src="../js/map_data.js"></script>
+    <script src="../js/plugins/map.js"></script>
+    <script src="../js/plugins/ranking.js"></script>
     <script type="text/javascript">
       LBV = new lbvis();
-      var defaultParams = {vis: LBV, iso3: false, indicator: "WB-SP.DYN.LE00.FE.IN"};
+      var defaultParams = {
+      iso3: false, indicators: ["WB-SP.DYN.LE00.FE.IN"],
+      cache: {"WB-SP.DYN.LE00.FE.IN": { label: 'fake stuff' } }
+      };
 
-      RANKING = new lbvisRanking(defaultParams);
-      MAP = new lbvisMap($.extend({
+      RANKING = new lbvisRanking(LBV, defaultParams);
+      MAP = new lbvisMap(map_data, LBV, $.extend({
         years: true,
         legend: true,
         subtitle: true,

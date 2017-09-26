@@ -28,7 +28,7 @@ var lbvisPie = (function (LBV, args) {
     var _data = {
         series: [],
         cache: {},
-        indicators: args.cache  || {}   // Indicators metadata cache
+        //indicators: args.cache  || {}   // Indicators metadata cache
     };
 
     var chart_series = [];
@@ -52,32 +52,9 @@ var lbvisPie = (function (LBV, args) {
                 if (!_data.cache[d.country.value]) _data.cache[d.country.value] = {};
                 _data.cache[d.country.value][lbid] = d; //parseFloat(d.value.value);
             });
-            $.each(_data.cache, function (iso3, sdata) {
-                var serie = {
-                    type: 'pie',
-                    name: iso3 + ' serie',
-                    data: [],
-                    //showInLegend: true,
-                    visible: (iso3 == _options.iso3 ? true : false),
-                };
-                //console.log(iso3, sdata);
-                $.each(sdata, function (lbid, d) {
-                    serie.data.push({
-                        id: lbid,
-                        name: _data.indicators[lbid].label,
-                        desc: _data.indicators[lbid].desc,
-                        //color: _options.colors[i],
-                        cc: d.country.value,
-                        y: parseFloat(d.value.value),
-                        //console.log(i + ' ' + lbid, d);
-                    });
-                });
-                _data.series.push(serie);
-            });
             //console.log('GOTCHA', data.results.bindings);
         });
     };
-
     var _drawChart = function () {
         //console.log('Draw Pie', _data.series);
         var ChartPieOp = {
@@ -90,14 +67,15 @@ var lbvisPie = (function (LBV, args) {
                 backgroundColor: 'transparent'
             },
             credits: { enabled: false },
-            // title: {
-            //     text: _data.indicators[_options.main].label + ' ('+ _options.iso3 + ':' + _options.year +')',
-            //     align: 'center'
-            // },
-            // subtitle: {
-            //     text: _data.indicators[_options.main].value,
-            //     align: 'center'
-            // },
+            title: {
+                useHTML: true,
+                text: _options.cache[_options.main].render,
+                align: 'center'
+            },
+            subtitle: {
+                text: '('+ _options.iso3 + ':' + _options.year +')',
+                align: 'center'
+            },
             // tooltip: {
             //     headerFormat: '<b>{point.key}: {point.y}</b><br/>',
             //     pointFormat: '{point.percentage:.1f}%</b>',
@@ -131,6 +109,33 @@ var lbvisPie = (function (LBV, args) {
         return _data.chart;
     };
 
+    var HCseries = function() {
+        //$.each(_data.cache, function (iso3, sdata) {
+        $.each(_options.tree, function (main, inds) {
+            var serie = {
+                type: 'pie',
+                name: _options.iso3, // _options.cache[main].label + ' - ' + 
+                data: [],
+                //showInLegend: true,
+                visible: (main == _options.main ? true : false),
+            };
+            //console.log(iso3, sdata);
+            inds.forEach(function (lbid) {
+                var dt = _data.cache[_options.iso3][lbid];
+                serie.data.push({
+                    //id: lbid,
+                    name: _options.cache[lbid].label,
+                    //desc: _options.cache[lbid].desc,
+                    //color: _options.colors[i],
+                    //cc: d.country.value,
+                    y: parseFloat(dt.value.value),
+                    //console.log(i + ' ' + lbid, d);
+                });
+            });
+            _data.series.push(serie);
+        });
+    };
+
     // Public interfaces
     return {
         debug: function () {
@@ -144,6 +149,7 @@ var lbvisPie = (function (LBV, args) {
             // });
             //console.log('FreeStyle options yeay!', _options);
             _loadData().done(function () {
+                HCseries();
 //                console.log('IND', _data.indicators);
 //                console.log('CAC', _data.cache);
                 // if (_options.loadCountries) {

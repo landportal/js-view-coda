@@ -3,36 +3,58 @@
 var lbvisRanking = (function (LBV, args) {
     var LBVIS = LBV;
     var _options = {
-        target:         args.target || '#ranking',
-        indicator:      args.indicator || 'WB-SP.POP.TOTL',
-        expand:         args.expand || 5,
-        expandThreshold:args.expandThreshold || 20,
-        theme:          null // future
+        target:         '#ranking',
+        indicator:      'WB-SP.POP.TOTL',
+        expand:         5,
+        expandThreshold: 20,
     };
+    $.extend(true, _options, args); // true = deep merge
+
     var _data = {
         values: []
     };
 
     // TODO: this is for all indicators, if a theme is provided, filter them
-    var _setOptionsIndicators = function () {
-        var el = $(_options.target + ' select[name="indicator"]');
-        el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
-        //var opts = LBVIS.generateOptions(LBVIS.cache('indicators'), _options.indicator);
-        var opts = LBVIS.indicatorsSelect(_options.indicator);
-        if (opts) {
-            el.append(opts);
-            el.prop( "disabled", false );
-        }
-    };
-    var _setOptionsYears = function () {
-        var str = '<option data-localize="inputs.years">Year...</option>';
-        _data.years.forEach(function (y) {
-            var selected = (_options.year == y ? ' selected="selected"' : '');
-	    str += '<option value="' + y + '"' + selected + '>' + y + '</option>';
-        });
-        $(_options.target + ' select[name=year]').html(str);
-	$(_options.target + ' select[name=year]').prop( "disabled", false );
-    };
+    // var _setOptionsIndicators = function () {
+    //     var el = $(_options.target + ' select[name="indicator"]');
+    //     el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
+    //     //var opts = LBVIS.generateOptions(LBVIS.cache('indicators'), _options.indicator);
+    //     var opts = LBVIS.indicatorsSelect(_options.indicator);
+    //     if (opts) {
+    //         el.append(opts);
+    //         el.prop( "disabled", false );
+    //     }
+    // };
+    // var _setOptionsYears = function () {
+    //     var str = '<option data-localize="inputs.years">Year...</option>';
+    //     _data.years.forEach(function (y) {
+    //         var selected = (_options.year == y ? ' selected="selected"' : '');
+    //         str += '<option value="' + y + '"' + selected + '>' + y + '</option>';
+    //     });
+    //     $(_options.target + ' select[name=year]').html(str);
+    //     $(_options.target + ' select[name=year]').prop( "disabled", false );
+    // };
+
+    // var _bindUI = function () {
+    //     $(_options.target).delegate("select", "change", function(e) {
+    //         if (e.target.name == 'indicator') {
+    //             _options.indicator = e.target.value;
+    //             _getIndicatorDetails().done(function () {
+    //                 _getIndicator().done(function () {
+    //                     _draw();
+    //                 });
+    //             });
+    //         }
+    //         if (e.target.name == 'year') {
+    //             _options.year = e.target.value;
+    //             _getIndicator().done(function () { _draw(); });
+    //         }
+    //     });
+    // };
+
+
+
+    
     var _setMetadata = function () {
         $('.metadata span').each(function (n) {
             var name = $(this).attr('name');
@@ -75,31 +97,16 @@ var lbvisRanking = (function (LBV, args) {
     };
 
     var _getIndicatorDetails = function () {
-        return LBVIS.getIndicatorDetails(_options.indicator).done(function () {
-            _data.indicator = LBVIS.cache('info')[_options.indicator][0];
-            _data.years = LBVIS.cache('period')[_options.indicator];
+        return LBVIS.getIndicatorDetails(_options.indicators[0]).done(function () {
+            
+            _data.indicator = LBVIS.cache('info')[_options.indicators[0]][0];
+            _data.years = LBVIS.cache('years')[_options.indicators[0]];
             _options.year = _data.years.sort().reverse()[0];//Math.max.apply(Math, _data.years);
             _setMetadata();
-            _setOptionsYears();
+//            _setOptionsYears();
         });
     };
 
-    var _bindUI = function () {
-        $(_options.target).delegate("select", "change", function(e) {
-            if (e.target.name == 'indicator') {
-                _options.indicator = e.target.value;
-                _getIndicatorDetails().done(function () {
-                    _getIndicator().done(function () {
-                        _draw();
-                    });
-                });
-            }
-            if (e.target.name == 'year') {
-                _options.year = e.target.value;
-                _getIndicator().done(function () { _draw(); });
-            }
-        });
-    };
     var _formatRow = function (ind, pos, length) {
         var country = LBV.countries().find(function (v) { return v.iso3 == ind.iso3; });
         var flag = '<span class="rank">' + (pos + 1) + '</span>',
@@ -126,14 +133,14 @@ var lbvisRanking = (function (LBV, args) {
             if (pos == _options.expand && _data.values.length > _options.expandThreshold) html += _expandRow();
             html += _formatRow(ind, pos, _data.values.length);
         });
-        $(_options.target + '-wrapper').html(html);
+        $(_options.target).html(html);
 	$(_options.target + ' [data-toggle="tooltip"]').tooltip();
-        $(_options.target + '-wrapper .expand a').on('click', function(e) {
+        $(_options.target + ' .expand a').on('click', function(e) {
             e.preventDefault();
             //console.log('click expand', e);
             $(e.target.parentElement.children).toggleClass('hidden');
             if (e.target.name == 'show') {
-                $(_options.target + '-wrapper li').removeClass('hidden');
+                $(_options.target + ' li').removeClass('hidden');
             } else {
                 $(_options.target + '-wrapper li:nth-child(n+8):nth-last-child(n+6)').addClass('hidden');
             }
@@ -145,15 +152,15 @@ var lbvisRanking = (function (LBV, args) {
             console.log(_options, _data);
         },
         init: function () {
-            _setOptionsIndicators();
-            if (_options.indicator) {
+//            _setOptionsIndicators();
+            if (_options.indicators) {
                 _getIndicatorDetails().done(function () {
                     _getIndicator().done(function () {
                         _draw();
                     });
                 });
             }
-            _bindUI();
+            //_bindUI();
         }
     };
 });
