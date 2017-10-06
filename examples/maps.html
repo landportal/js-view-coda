@@ -194,14 +194,14 @@
 
     
 
-    <script src="js/vendor/jquery-1.11.2.min.js"></script>
-    <script src="js/vendor/bootstrap.min.js"></script>
-    <!-- <script src="js/vendor/randomColor.js"></script> -->
-    <script src="js/vendor/highstock.js"></script>
-    <script src="js/vendor/highmaps.js"></script>
-    <!-- <script src="js/vendor/highcharts-more.js"></script> -->
-    <!-- <script src="js/vendor/modules/exporting.js"></script> -->
-    <!-- <script src="js/vendor/jquery.localize.min.js"></script> -->
+    <script src="../js/vendor/jquery-1.11.2.min.js"></script>
+    <script src="../js/vendor/bootstrap.min.js"></script>
+    <!-- <script src="../js/vendor/randomColor.js"></script> -->
+    <script src="../js/vendor/highstock.js"></script>
+    <script src="../js/vendor/highmaps.js"></script>
+    <!-- <script src="../js/vendor/highcharts-more.js"></script> -->
+    <!-- <script src="../js/vendor/modules/exporting.js"></script> -->
+    <!-- <script src="../js/vendor/jquery.localize.min.js"></script> -->
 
     <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
     <!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> -->
@@ -212,10 +212,10 @@
     <!-- <script src="//code.highcharts.com/maps/modules/map.js"></script> -->
     <!-- <script src="//code.highcharts.com/modules/exporting.js"></script> -->
 
-    <script src="js/lbvis.data.js"></script>
-    <script src="js/lbvis.js"></script>
-    <script src="js/map_data.js"></script>
-    <script src="js/lbvis.map.js"></script>
+    <script src="../js/lbvis.data.js"></script>
+    <script src="../js/lbvis.js"></script>
+    <script src="../js/map_data.js"></script>
+    <script src="../js/plugins/map.js"></script>
     <script type="text/javascript">
       // Maps 'without' data
       var MapCountry = new lbvisMap({
@@ -236,7 +236,7 @@
 
       // With data
       var LBV = new lbvis();
-      var MapIndicator = new lbvisMap({vis: LBV,
+      var MapIndicator = new lbvisMap(LBV, map_data, {
         target: '#simple',
         mapTarget: '#indicator',
         indicator: 'WB-SP.RUR.TOTL.ZS',
