@@ -3,9 +3,8 @@
  */
 'use strict';
 
-var lbvisSpider = (function (args) {
-    //args.iso3
-    var LBVIS = args.vis;
+var lbvisSpider = (function (LBV, args) {
+    var LBVIS = LBV;
     var _options = {
         target: args.target || '#wrapper-spiderchart',
         title: args.title || 'Main indexes',

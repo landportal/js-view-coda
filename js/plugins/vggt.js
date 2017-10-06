@@ -1,6 +1,6 @@
 'use strict';
-var lbvisVGGT = (function (args) {
-    var LBVIS = args.vis;
+var lbvisVGGT = (function (LBV, args) {
+    var LBVIS = LBV;
 	var groupLabels = [{
 		"id": "NKT-VGGT16-1",
 		"label": "VGGT 16.1 Expropriation and Compensation Eligibility Indicators"

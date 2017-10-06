@@ -81,23 +81,24 @@ var lbvisTable = (function (LBV, args) {
             return col;
         }
         var str = ind[col];
-        if (ind[col+'SeeAlso']) {
-            str = '<a href="'+ind[col+'SeeAlso']+'" target="_blank">' + ind[col] + '</a>';
-        }
-        if (ind[col+'Description']) {
-            var desc = $("<div/>").html(ind[col+'Description']).text();
-            //console.log('description', desc);
-            str += ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="' + desc + '"></span>';
-        }
+        // TODO : use cache render (from Drupal)
+        // if (ind[col+'SeeAlso']) {
+        //     str = '<a href="'+ind[col+'SeeAlso']+'" target="_blank">' + ind[col] + '</a>';
+        // }
+        // if (ind[col+'Description']) {
+        //     var desc = $("<div/>").html(ind[col+'Description']).text();
+        //     //console.log('description', desc);
+        //     str += ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="' + desc + '"></span>';
+        // }
         return '<span class="' +  col + '">' + str + '</span>';
     };
     var _formatRow = function (ind) {
         var cols;
 	if (_options.iso3) {
-	    cols = ['indicator', 'year', 'value', 'unit', 'dataset', 'source'];
+	    cols = ['indicator', 'year', 'value'];//, 'unit', 'dataset', 'source'];
 	} else {
 	    cols = [
-                ['indicator', ' (', 'unit', ')', '<br/>', 'dataset', ' (', 'source', ')'],
+                ['indicator'], //, ' (', 'unit', ')', '<br/>', 'dataset', ' (', 'source', ')'],
                 ['minYear', '-', 'maxYear', '<br/>', 'nYears', '&nbsp;', 'years covered'],
                 ['nCountryWithValue', '/', 'nObs', '<br/>', 'perMissingValue'],
                 ['minValue' , '/', 'maxValue']];

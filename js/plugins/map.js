@@ -272,7 +272,7 @@ var lbvisMap = (function (MAP, LBV, args) {
     var _mapOptions = function () {
         _data.chartOptions = {
             chart: {
-                width: _options.width,
+                //width: _options.width,
                 height: _options.height,
                 backgroundColor: _options.colors.background,
                 //margin: (_options.indicator ? null : [0, 0, 0, 0])
