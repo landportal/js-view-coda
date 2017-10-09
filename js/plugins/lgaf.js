@@ -29,9 +29,23 @@ var lbvisLGAF = (function (LBV, args) {
             $(_options.target + " .loading").addClass("hidden");
         });
     }
+    function _lgaf_chart(iso3, year) {
+
+        return LBVIS.DATA.query.prefix + " \
+SELECT ?id (STR(?value) AS ?value) \
+" + LBVIS.DATA.query.from + " \
+WHERE { \
+?obs cex:ref-area <" + LBVIS.DATA.lod.uri.country + iso3 + "> ; \
+qb:dataSet <http://data.landportal.info/dataset/WB-LGAF" + year + "> ; \
+cex:ref-indicator ?uri ; \
+cex:value ?value. \
+BIND (REPLACE(STR(?uri), '" + LBVIS.DATA.lod.uri.indicator + "','') AS ?id) \
+} ORDER BY ?uri ";
+    };
+
     function _getValues() {
         $(_options.target + " .loading").removeClass("hidden");
-        var query = LBVIS.DATA.queries.lgaf_chart(_options.iso3, _options.year);
+        var query = _lgaf_chart(_options.iso3, _options.year);
         var query_url = LBVIS.DATA.sparqlURL(query);
         _defer = $.getJSON(query_url, function (data) {
             data.results.bindings.forEach(function (item) {

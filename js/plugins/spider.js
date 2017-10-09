@@ -13,8 +13,75 @@ var lbvisSpider = (function (LBV, args) {
     var categories_names = [];
     var chart_series = [];
 
+    // Spider : remove hardcoded vars, make computation dynamic
+    var _spider_chart = function(iso3) {
+        var query = LBVIS.DATA.query;
+        var lod = LBVIS.DATA.lod;
+        return query.prefix + " \
+SELECT  ?sigi ?sigiTo100 ?sigiYear ?gini ?giniTo100 ?giniYear ?hdi ?hdiTo100 ?hdiYear ?ghi ?ghiTo100 ?ghiYear \
+" + query.from + " \
+WHERE { \
+OPTIONAL{ \
+SELECT ?sigi (year(?dateTime) as ?sigiYear) \
+" + query.from + " \
+WHERE { \
+?obs cex:ref-area <" + lod.uri.country + iso3 + "> ; \
+     cex:ref-indicator <http://data.landportal.info/indicator/OECD-SIGI-0> ; \
+     cex:ref-time ?time ; \
+     cex:value ?sigi . \
+     ?time time:hasBeginning ?timeValue . \
+     ?timeValue time:inXSDDateTime ?dateTime . \
+} ORDER BY DESC(?dateTime) \
+  LIMIT 1 \
+} \
+OPTIONAL{ \
+SELECT ?hdi (year(?dateTime) as ?hdiYear) \
+" + query.from + " \
+WHERE { \
+?obs cex:ref-area <" + lod.uri.country + iso3 + "> ; \
+     cex:ref-indicator <http://data.landportal.info/indicator/UNDP-HDI-INDEX> ; \
+     cex:ref-time ?time ; \
+     cex:value ?hdi . \
+     ?time time:hasBeginning ?timeValue . \
+     ?timeValue time:inXSDDateTime ?dateTime . \
+} ORDER BY DESC(?dateTime) \
+  LIMIT 1 \
+} \
+OPTIONAL{ \
+SELECT ?gini (year(?dateTime) as ?giniYear) \
+" + query.from + " \
+WHERE { \
+?obs cex:ref-area <" + lod.uri.country + iso3 + "> ; \
+     cex:ref-indicator <http://data.landportal.info/indicator/WB-SI.POV.GINI> ; \
+     cex:ref-time ?time ; \
+     cex:value ?gini . \
+     ?time time:hasBeginning ?timeValue . \
+     ?timeValue time:inXSDDateTime ?dateTime . \
+} ORDER BY DESC(?dateTime) \
+  LIMIT 1 \
+} \
+OPTIONAL{ \
+SELECT ?ghi (year(?dateTime) as ?ghiYear) \
+" + query.from + " \
+WHERE { \
+?obs cex:ref-area <" + lod.uri.country + iso3 + "> ; \
+     cex:ref-indicator <http://data.landportal.info/indicator/IFPRI-GHI> ; \
+     cex:ref-time ?time ; \
+     cex:value ?ghi . \
+     ?time time:hasBeginning ?timeValue . \
+     ?timeValue time:inXSDDateTime ?dateTime . \
+} ORDER BY DESC(?dateTime) \
+  LIMIT 1 \
+} \
+BIND ((xsd:float(100) - (?sigi)*100)  AS ?sigiTo100) . \
+BIND ((xsd:float(100) - (?gini))  AS ?giniTo100) . \
+BIND ((?hdi)*100 AS ?hdiTo100) . \
+BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
+    }";
+    };
+
     var _loadData = function () {
-        var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.queries.spider_chart(_options.iso3));
+        var query_url = LBVIS.DATA.sparqlURL(_spider_chart(_options.iso3));
         return $.getJSON(query_url, function (data) {
             // Un-cleaned , mad code to parse serie data
             // TODO: re-do :)

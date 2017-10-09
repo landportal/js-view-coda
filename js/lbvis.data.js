@@ -246,220 +246,19 @@ VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
 
 
     /**************************************
-     *  Specific 'graph' queries
-     */
-    var _line_chart = function (indicator, countries) {
-        var str = query.prefix + " \
-SELECT ?countryISO3 (year(?dateTime) as ?year) ?value \
-" + query.from + " \
-WHERE { \
-?obs cex:ref-area ?countryURL ; \
-     cex:ref-time ?time ; \
-     cex:value ?value. \
-     ?time time:hasBeginning ?timeValue . \
-     ?timeValue time:inXSDDateTime ?dateTime . \
-BIND (REPLACE(STR(?countryURL),'" + lod.uri.country + "','') AS ?countryISO3) \
-{ \
-SELECT ?obs \
-" + query.from + " \
-WHERE{ \
-  ?obs cex:ref-indicator <" + lod.uri.indicator + indicator + "> . \
-  ?obs cex:ref-area ?country . \
-  VALUES ?country {";
-        countries.forEach(function (country) {
-	    str += " <" + lod.uri.country + country + ">";
-	});
-        str += '} \
-} \
-} \
-    } ORDER BY ?dateTime ?countryURL';
-        return str;
-    };
-
-
-
-    /**************************************
-     * TODO Cleanup all those queries
-     * remove HARDCODED variables!
-     */
-
-    var _lgaf_chart = function (iso3, year) {
-        return query.prefix + " \
-SELECT ?id (STR(?value) AS ?value) \
-" + query.from + " \
-WHERE { \
-?obs cex:ref-area <" + lod.uri.country + iso3 + "> ; \
-qb:dataSet <http://data.landportal.info/dataset/WB-LGAF" + year + "> ; \
-cex:ref-indicator ?uri ; \
-cex:value ?value. \
-BIND (REPLACE(STR(?uri), '" + lod.uri.indicator + "','') AS ?id) \
-} ORDER BY ?uri ";
-    };
-
-    // PIE : remove hardcoded vars, make computation dynamic
-    var _pie_chart = function (iso3) {
-        return query.prefix + " \
-SELECT ?ArableLandPer ?PermanentCropsPer ?PermanentPasturesAndMedowsPer ?ForestLandPer ?mainInd ?other (year(?maxdateTime) as ?year) \
-" + query.from_data + " \
-WHERE { \
-?obs1 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6621-5110> ; \
-     cex:ref-area ?countryURI ; \
-     cex:value ?ArableLandHa ; \
-     cex:ref-time ?time . \
-?obs2 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6650-5110> ; \
-     cex:ref-area ?countryURI ; \
-     cex:value ?PermanentCropsHa ; \
-     cex:ref-time ?time . \
-?obs3 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6655-5110> ; \
-     cex:ref-area ?countryURI ; \
-     cex:value ?PermanentPasturesAndMedowsHa; \
-     cex:ref-time ?time . \
-?obs4 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6661-5110> ; \
-     cex:ref-area ?countryURI ; \
-     cex:value ?ForestLandHa; \
-     cex:ref-time ?time . \
-?obs5 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6601-5110> ; \
-     cex:ref-area ?countryURI ; \
-     cex:value ?mainInd; \
-     cex:ref-time ?time . \
-     ?time time:hasBeginning ?timeValue . \
-     ?timeValue time:inXSDDateTime ?maxdateTime . \
-BIND ((xsd:double(xsd:float(?ArableLandHa)                      *100/xsd:float(?mainInd))) AS ?ArableLandPer) \
-BIND ((xsd:double(xsd:float(?PermanentCropsHa)                  *100/xsd:float(?mainInd))) AS ?PermanentCropsPer) \
-BIND ((xsd:double(xsd:float(?PermanentPasturesAndMedowsHa)      *100/xsd:float(?mainInd))) AS ?PermanentPasturesAndMedowsPer) \
-BIND ((xsd:double(xsd:float(?ForestLandHa)                      *100/xsd:float(?mainInd))) AS ?ForestLandPer) \
-BIND ((100 - ?ArableLandPer  - ?PermanentCropsPer - ?PermanentPasturesAndMedowsPer - ?ForestLandPer) AS ?other) \
-{ \
- SELECT DISTINCT (max(?dateTime) as ?maxdateTime) ?countryURI \
- " + query.from_data + " \
- WHERE { \
-  ?obs1 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6621-5110> ; \
-     cex:ref-area ?countryURI ; \
-     cex:ref-time ?time . \
-  ?obs2 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6650-5110> ; \
-     cex:ref-area ?countryURI ; \
-     cex:ref-time ?time . \
-  ?obs3 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6655-5110> ; \
-     cex:ref-area ?countryURI ; \
-     cex:ref-time ?time . \
-  ?obs4 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6661-5110> ; \
-     cex:ref-area ?countryURI ; \
-     cex:ref-time ?time . \
-  ?obs5 cex:ref-indicator <http://data.landportal.info/indicator/FAO-6601-5110> ; \
-     cex:ref-area ?countryURI ; \
-     cex:ref-time ?time . \
-  ?time time:hasBeginning ?timeValue . \
-  ?timeValue time:inXSDDateTime ?dateTime . \
-  VALUES ?countryURI {<" + lod.uri.country + iso3 + ">} \
- } \
-} \
-}";
-    };
-
-	// TESTING
-	// #fixed year
-	var _pie2_chart = function (indicators, iso3) {
-
-            var indicator_stament = " VALUES ?indicator {";
-	    indicators.forEach(function (indicator) {
-		indicator_stament += " <" + lod.uri.indicator + indicator + ">";
-	    });
-            indicator_stament += '}'
-
-	    var result = query.prefix + " \
-SELECT ?indicator ?value\
-" + query.from_data + " \
-WHERE { \
-?obs cex:ref-indicator ?indicator ; \
-     cex:ref-area ?countryURI ; \
-     cex:value ?value . \
-VALUES ?countryURI {<" + lod.uri.country + iso3 + ">} \
-"  + indicator_stament + "\
-}";
-            return result;
-        };
-
-
-    // Spider : remove hardcoded vars, make computation dynamic
-    var _spider_chart = function(iso3) {
-        return query.prefix + " \
-SELECT  ?sigi ?sigiTo100 ?sigiYear ?gini ?giniTo100 ?giniYear ?hdi ?hdiTo100 ?hdiYear ?ghi ?ghiTo100 ?ghiYear \
-" + query.from + " \
-WHERE { \
-OPTIONAL{ \
-SELECT ?sigi (year(?dateTime) as ?sigiYear) \
-" + query.from + " \
-WHERE { \
-?obs cex:ref-area <" + lod.uri.country + iso3 + "> ; \
-     cex:ref-indicator <http://data.landportal.info/indicator/OECD-SIGI-0> ; \
-     cex:ref-time ?time ; \
-     cex:value ?sigi . \
-     ?time time:hasBeginning ?timeValue . \
-     ?timeValue time:inXSDDateTime ?dateTime . \
-} ORDER BY DESC(?dateTime) \
-  LIMIT 1 \
-} \
-OPTIONAL{ \
-SELECT ?hdi (year(?dateTime) as ?hdiYear) \
-" + query.from + " \
-WHERE { \
-?obs cex:ref-area <" + lod.uri.country + iso3 + "> ; \
-     cex:ref-indicator <http://data.landportal.info/indicator/UNDP-HDI-INDEX> ; \
-     cex:ref-time ?time ; \
-     cex:value ?hdi . \
-     ?time time:hasBeginning ?timeValue . \
-     ?timeValue time:inXSDDateTime ?dateTime . \
-} ORDER BY DESC(?dateTime) \
-  LIMIT 1 \
-} \
-OPTIONAL{ \
-SELECT ?gini (year(?dateTime) as ?giniYear) \
-" + query.from + " \
-WHERE { \
-?obs cex:ref-area <" + lod.uri.country + iso3 + "> ; \
-     cex:ref-indicator <http://data.landportal.info/indicator/WB-SI.POV.GINI> ; \
-     cex:ref-time ?time ; \
-     cex:value ?gini . \
-     ?time time:hasBeginning ?timeValue . \
-     ?timeValue time:inXSDDateTime ?dateTime . \
-} ORDER BY DESC(?dateTime) \
-  LIMIT 1 \
-} \
-OPTIONAL{ \
-SELECT ?ghi (year(?dateTime) as ?ghiYear) \
-" + query.from + " \
-WHERE { \
-?obs cex:ref-area <" + lod.uri.country + iso3 + "> ; \
-     cex:ref-indicator <http://data.landportal.info/indicator/IFPRI-GHI> ; \
-     cex:ref-time ?time ; \
-     cex:value ?ghi . \
-     ?time time:hasBeginning ?timeValue . \
-     ?timeValue time:inXSDDateTime ?dateTime . \
-} ORDER BY DESC(?dateTime) \
-  LIMIT 1 \
-} \
-BIND ((xsd:float(100) - (?sigi)*100)  AS ?sigiTo100) . \
-BIND ((xsd:float(100) - (?gini))  AS ?giniTo100) . \
-BIND ((?hdi)*100 AS ?hdiTo100) . \
-BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
-    }";
-    };
-
-    
-    /**************************************
      * Public methods
      */
     return {
         sparqlURL: function (query) {
             return lod.sparql.prefix + encodeURIComponent(query) + lod.sparql.suffix;
         },
-        ns: query.prefix,
+        lod: lod,
+        query: query,
         // Queries that do not have 'dynamic' arguments
         queries: {
             countries:  _countries(),
             datasets:   _datasets(),
             indicators: _indicators(),
-
             // List of available indicators for a given country
             countryIndicators: function (iso3) { return _countryIndicators(iso3); },
             countryIndicatorValues: function (iso3, indicator, year) { return _countryIndicatorValues(iso3, indicator, year); },
@@ -469,13 +268,13 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
             indicatorValues: function(indicator, years) { return _indicatorValues(indicator, years); },
             indicatorDetails: function(indicator) { return _indicatorDetails(indicator); },
             indicatorCountries: function(indicator) { return _indicatorCountries(indicator); },
-            // TODO: check/cleanup queries
-            line_chart: function(indicator, countries) { return _line_chart(indicator, countries); },
-            spider_chart: function(iso3) { return _spider_chart(iso3); },
-            pie_chart: function(iso3) { return _pie_chart(iso3); },
-            pie2_chart: function(indicators, iso3) { return _pie2_chart(indicators, iso3); },
-            lgaf_chart: function(iso3, year) { return _lgaf_chart(iso3, year); }
         },
+
+
+
+        //
+        // NEW query method for Computex-based indicators
+        //
         obsValues: function (columns, where) {
             //console.log('===', columns, where, '===');
             // Try to build a generic query, might get ugly
@@ -520,7 +319,7 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
                 + " " + values.join(' ')
                 + " " + bind.join(' ')
                 + " }";
-            // DEBUG shit
+            // DEBUG
             //console.log(q);
             return query.prefix + q; // sparqlURL(query);
         }
