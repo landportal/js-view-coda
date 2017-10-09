@@ -59,6 +59,7 @@ var lbvisPie = (function (LBV, args) {
     };
     var _drawChart = function () {
         //console.log('Draw Pie', _data.series);
+        var title = (_options.cache[_options.main] ? _options.cache[_options.main].render : _options.main);
         var ChartPieOp = {
             chart: {
                 plotBackgroundColor: null,
@@ -71,7 +72,7 @@ var lbvisPie = (function (LBV, args) {
             credits: { enabled: false },
             title: {
                 useHTML: true,
-                text: _options.cache[_options.main].render,
+                text: title,
                 align: 'center'
             },
             subtitle: {

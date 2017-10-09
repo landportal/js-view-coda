@@ -23,6 +23,7 @@ var lbvisCharts = (function (LBV, args) {
     var _data = {
         cache: {},
         years: [],
+        categories: [],
     };
     var _loadData = function () {
         var filters = { indicator: _options.indicators } //country: [_options.iso3], time: [_options.year] }
@@ -54,7 +55,9 @@ var lbvisCharts = (function (LBV, args) {
         var cYear = (_options.year ? _options.year : _data.years[0]);
         var data = [];
         $.each(sdata[cYear], function (c, d) {
-            categories.push(d.country.value);
+            if (_data.categories.indexOf(d.country.value) == -1) {
+                _data.categories.push(d.country.value);
+            }
             data.push({
                 id: d.country.value,
                 //name: 
@@ -69,16 +72,19 @@ var lbvisCharts = (function (LBV, args) {
     }
     var CountrySerie = function (sdata) {
         var data = [];
-        $.each(sdata, function (c, d) {
-            //categories.push(d[_options.iso3].value);
+        console.log(sdata);
+        $.each(sdata, function (year, cdata) {
+            if (_data.categories.indexOf(year) == -1) {
+                _data.categories.push(year);
+            }
             data.push({
-                id: c,
-                x: parseFloat(c),
+                id: _options.iso3 + '-' + year,
+                x: parseFloat(year),
                 //name: 
                 // desc: _data.indicators[lbid].desc,
                 // color: _options.colors[i],
                 // cc: d.country.value,
-                y: parseFloat(d[_options.iso3].value.value),
+                y: parseFloat(cdata[_options.iso3].value.value),
                 //console.log(i + ' ' + lbid, d);
             });
         });
@@ -87,13 +93,12 @@ var lbvisCharts = (function (LBV, args) {
     // Column series, by country
     var HCseries = function () {
         var series = [];
-        var categories = [];
         var lbid = _options.main ? _options.main : _options.indicators[0];
         var cName = _options.cache[lbid].label + (_options.year ? ' - ' + _options.year : '');
         $.each(_data.cache, function (lbid, sdata) {
             var serie = {
-                type: _options.ctype ? _options.ctype : 'column',
-                name: cName,
+                type: _options.ctype ? _options.ctype : 'line', //column',
+                name: (_options.iso3 ? _options.iso3 : cName),
                 data: [],
                 //visible: false,
             };
@@ -117,7 +122,6 @@ var lbvisCharts = (function (LBV, args) {
             series.push(serie);
         });
         _data.series = series;
-        _data.categories = categories;
     }
 
     var _drawChart = function (series) {
@@ -130,6 +134,7 @@ var lbvisCharts = (function (LBV, args) {
                 align: 'center'
             },
             chart: {
+                backgroundColor: 'transparent',//_options.colors.background,
                 //type: 'charts'
                 renderTo: $(_options.target)[0],
             },
