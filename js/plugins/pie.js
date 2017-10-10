@@ -15,7 +15,7 @@ var lbvisPie = (function (LBV, args) {
     var _options = {
         target:         '#wrapper-piechart',
         legend:         false,
-        iso3:           'PER', // dummy country , works for PRIndex
+        iso3:           '',
         colors:         ['#8c6d31', '#e7ba52', '#b5cf6b', '#637939', '#9c9ede'],
         // Default FAO pie chart
         main:           'FAO-6601-5110',
@@ -31,8 +31,6 @@ var lbvisPie = (function (LBV, args) {
         countries: [],
         //indicators: args.cache  || {}   // Indicators metadata cache
     };
-
-    var chart_series = [];
 
     var _loadData = function () {
         var chart = _options.indicators;
@@ -76,7 +74,7 @@ var lbvisPie = (function (LBV, args) {
                 align: 'center'
             },
             subtitle: {
-                text: '('+ _options.iso3 + ':' + _options.year +')',
+                //text: '('+ _options.iso3 + ':' + _options.year +')',
                 align: 'center'
             },
             // tooltip: {
@@ -114,36 +112,56 @@ var lbvisPie = (function (LBV, args) {
 
     var TreeSerie = function () {
         $.each(_options.tree, function (main, inds) {
-            console.log("TREE " + main, inds);
+            //console.log("TREE " + main, inds);
             HCseries(main, inds);
         });
     }
     
     var HCseries = function(main, indicators) {
-        var cIso3 = _options.iso3 ? _options.iso3 : _data.countries[0];
-        var serie = {
-            type: 'pie',
-            name: cIso3, // _options.cache[main].label + ' - ' + 
-            data: [],
-            //showInLegend: true,
-            visible: (main == _options.main ? true : false),
-        };
-        //console.log(iso3, sdata);
-        indicators.forEach(function (lbid) {
-            var dt = _data.cache[cIso3][lbid];
-            serie.data.push({
-                //id: lbid,
-                name: _options.cache[lbid].label,
+        //var cIso3 = _options.iso3 ? _options.iso3 : _data.countries[0];
+        //console.log(main, indicators);
+        Object.keys(_data.cache).forEach(function(iso3) {
+            var serie = {
+                type: 'pie',
+                name: iso3 + '-' + main, // _options.cache[main].label + ' - ' + 
+                data: [],
+                //showInLegend: true,
+                visible: (main == _options.main && iso3 == _options.iso3 ? true : false),
+            };
+            //console.log(iso3, _data.cache[iso3]);
+            indicators.forEach(function (lbid) {
+                //Object.keys(_data.cache[iso3]).forEach(function (lbid) {
+                var dt = _data.cache[iso3][lbid];
+                serie.data.push({
+                    //id: lbid,
+                    name: _options.cache[lbid].label,
                 //desc: _options.cache[lbid].desc,
                 //color: _options.colors[i],
                 //cc: d.country.value,
-                y: parseFloat(dt.value.value),
+                    y: parseFloat(dt.value.value),
                 //console.log(i + ' ' + lbid, d);
+                });
             });
+            _data.series.push(serie);
         });
-        _data.series.push(serie);
     };
 
+    var _bindUI = function () {
+        $(_options.target + '-form').delegate("select", "change", function(e) {
+            if (e.target.name == 'countries') _options.iso3 = e.target.value;
+            if (e.target.name == 'observations') _options.main = e.target.value;
+            var sid = _options.iso3 + '-' + _options.main;
+            _data.chart.series.forEach(function(serie, id) {
+                if (serie.name == sid) {
+                    console.log('show #' + id, serie.name);
+                    serie.show();
+                } else {
+                    serie.hide();
+                }
+            });
+        });
+    };
+        
     // Public interfaces
     return {
         debug: function () {
@@ -164,13 +182,23 @@ var lbvisPie = (function (LBV, args) {
                 }
 //                console.log('IND', _data.indicators);
 //                console.log('CAC', _data.cache);
-                // if (_options.loadCountries) {
-                //     // Assesment based on first indicator with data
-                //     // LBVIS.getIndicatorCountries(_options.indicators[3]).done(function() {
-                //     //     console.log('GOT CC: ', LBVIS.cache('countriesByIndicator'));//[_options.indicators[0]]);
-                //     // });
-                // }
+                if (_options.loadCountries) {
+                    var cc = [];
+                    LBVIS.cache('countries').forEach(function (c) {
+                        if (_data.countries.indexOf(c.iso3) > 0) {
+                            cc.push({id: c.iso3, label: c.name});
+                        }
+                    });
+                    var countr = LBVIS.generateOptions(cc, 'PER');
+                    //console.log('LDC', _data.countries, countr);
+                    $(_options.target + '-countries').html(countr);
+                    // //Assesment based on first indicator with data
+                    // LBVIS.getIndicatorCountries(_options.indicators[0]).done(function() {
+                    //     console.log('GOT CC: ', LBVIS.cache('countriesByIndicator'));//[_options.indicators[0]]);
+                    // });
+                }
                 _drawChart();
+                _bindUI();
             });
         }
     };
