@@ -196,7 +196,7 @@ var lbvisPie = (function (LBV, args) {
                             cc.push({id: c.iso3, label: c.name});
                         }
                     });
-                    var countr = LBVIS.generateOptions(cc, 'PER');
+                    var countr = LBVIS.generateOptions(cc, _options.iso3);
                     //console.log('LDC', _data.countries, countr);
                     $(_options.target + '-countries').html(countr);
                     // //Assesment based on first indicator with data
