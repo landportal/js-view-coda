@@ -128,7 +128,7 @@ VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
         }
         return query.prefix + " \
 SELECT ?iso3 ?year ?period ?value \
-" + query.from + " \
+" + query.from_data + " \
 WHERE { \
 ?obs cex:ref-indicator ?uri ; \
      cex:ref-area ?countryURL ; \
