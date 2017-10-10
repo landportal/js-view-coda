@@ -29,6 +29,7 @@ var lbvisPie = (function (LBV, args) {
         series: [],
         cache: {},
         countries: [],
+        country: {},
         //indicators: args.cache  || {}   // Indicators metadata cache
     };
 
@@ -145,6 +146,10 @@ var lbvisPie = (function (LBV, args) {
             _data.series.push(serie);
         });
     };
+    var _chartTitle = function  () {
+        _options.iso3 + '-' + _options.main;
+        _data.chart.setTitle({text: _options.cache[_options.main].label}, {text: _data.country[_options.iso3]});
+    }
 
     var _bindUI = function () {
         $(_options.target + '-form').delegate("select", "change", function(e) {
@@ -153,12 +158,13 @@ var lbvisPie = (function (LBV, args) {
             var sid = _options.iso3 + '-' + _options.main;
             _data.chart.series.forEach(function(serie, id) {
                 if (serie.name == sid) {
-                    console.log('show #' + id, serie.name);
+                    //console.log('show #' + id, serie.name);
                     serie.show();
                 } else {
                     serie.hide();
                 }
             });
+            _chartTitle();
         });
     };
         
@@ -186,6 +192,7 @@ var lbvisPie = (function (LBV, args) {
                     var cc = [];
                     LBVIS.cache('countries').forEach(function (c) {
                         if (_data.countries.indexOf(c.iso3) > 0) {
+                            _data.country[c.iso3] = c.name;
                             cc.push({id: c.iso3, label: c.name});
                         }
                     });
@@ -199,6 +206,7 @@ var lbvisPie = (function (LBV, args) {
                 }
                 _drawChart();
                 _bindUI();
+                _chartTitle();
             });
         }
     };
