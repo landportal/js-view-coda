@@ -127,13 +127,14 @@ VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
             values.push("<" + lod.uri.time + year + ">");
         }
         return query.prefix + " \
-SELECT ?iso3 ?year ?period ?value \
+SELECT ?iso3 ?year ?period ?value ?note \
 " + query.from_data + " \
 WHERE { \
 ?obs cex:ref-indicator ?uri ; \
      cex:ref-area ?countryURL ; \
      cex:ref-time ?time ; \
      cex:value ?value. \
+     OPTIONAL {?obs rdfs:comment ?note } \
 ?time time:hasBeginning ?timeValue . \
 ?timeValue time:inXSDDateTime ?dateTime . \
  VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
