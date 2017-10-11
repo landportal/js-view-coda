@@ -111,10 +111,15 @@ var lbvisPie = (function (LBV, args) {
         return _data.chart;
     };
 
-    var TreeSerie = function () {
-        $.each(_options.tree, function (main, inds) {
-            //console.log("TREE " + main, inds);
-            HCseries(main, inds);
+    var TreeSerie = function (tree=_options.tree) {
+        $.each(tree, function (main, inds) {
+            if (inds.constructor === Array) {
+                //console.log("TREE " + main, inds);
+                HCseries(main, inds);
+            } else {
+                TreeSerie(inds);
+                //console.log("ELSE " + main, inds);
+            }
         });
     }
     
@@ -174,20 +179,17 @@ var lbvisPie = (function (LBV, args) {
             console.log(_options, _data);
         },
         init: function () {
-            // Get main indicator info, then load Pie data
-            // may not exists?
+            // Get main indicator info, then load Pie data. It may not exists?
             // LBVIS.getIndicatorInfo(_options.main).done(function () {
             //     _data.indicator = LBVIS.cache('info')[_options.main][0];
             // });
-            //console.log('FreeStyle options yeay!', _options);
+
             _loadData().done(function () {
                 if (_options.tree) {
                     TreeSerie();
                 } else {
                     HCseries(_options.main, _options.indicators);
                 }
-//                console.log('IND', _data.indicators);
-//                console.log('CAC', _data.cache);
                 if (_options.loadCountries) {
                     var cc = [];
                     LBVIS.cache('countries').forEach(function (c) {
@@ -197,12 +199,7 @@ var lbvisPie = (function (LBV, args) {
                         }
                     });
                     var countr = LBVIS.generateOptions(cc, _options.iso3);
-                    //console.log('LDC', _data.countries, countr);
                     $(_options.target + '-countries').html(countr);
-                    // //Assesment based on first indicator with data
-                    // LBVIS.getIndicatorCountries(_options.indicators[0]).done(function() {
-                    //     console.log('GOT CC: ', LBVIS.cache('countriesByIndicator'));//[_options.indicators[0]]);
-                    // });
                 }
                 _drawChart();
                 _bindUI();

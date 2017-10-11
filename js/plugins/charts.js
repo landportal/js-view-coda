@@ -10,12 +10,13 @@
 
 'use strict';
 var lbvisCharts = (function (LBV, args) {
-    var LBVIS = LBV; // Main lbvis object
+    var LBVIS = LBV;
     var _options = {
         target:         '#wrapper',
+        ctype:          'line',         // Can be 'line' or 'column'
         legend:         false,
-        iso3:           'PER', // dummy country , works for PRIndex
-        year:           '',
+        iso3:           null,
+        year:           null,
         indicators:     [],
     };
     $.extend(_options, args);
@@ -25,11 +26,11 @@ var lbvisCharts = (function (LBV, args) {
         years: [],
         categories: [],
     };
+
     var _loadData = function () {
         var filters = { indicator: _options.indicators } //country: [_options.iso3], time: [_options.year] }
         if (_options.iso3) filters.country = [ _options.iso3 ];
         if (_options.year) filters.time = [ _options.year ];
-        
         var qvalues = LBVIS.DATA.obsValues(
             ['indicator', 'country', 'time', 'value'], // 'year'
             filters
@@ -49,8 +50,8 @@ var lbvisCharts = (function (LBV, args) {
             //console.log('GOTCHA', data.results.bindings);
         });
     };
-    // Line series, by year
 
+    // Line series, by year
     var YearSerie = function (sdata) {
         var cYear = (_options.year ? _options.year : _data.years[0]);
         var data = [];
@@ -60,16 +61,13 @@ var lbvisCharts = (function (LBV, args) {
             }
             data.push({
                 id: d.country.value,
-                //name: 
-                // desc: _data.indicators[lbid].desc,
-                // color: _options.colors[i],
-                // cc: d.country.value,
+                name: d.country.value + '-' + cYear,
                 y: parseFloat(d.value.value),
-                //console.log(i + ' ' + lbid, d);
             });
         });
         return data;
     }
+
     var CountrySerie = function (sdata) {
         var data = [];
         console.log(sdata);
@@ -80,27 +78,35 @@ var lbvisCharts = (function (LBV, args) {
             data.push({
                 id: _options.iso3 + '-' + year,
                 x: parseFloat(year),
-                //name: 
-                // desc: _data.indicators[lbid].desc,
-                // color: _options.colors[i],
-                // cc: d.country.value,
                 y: parseFloat(cdata[_options.iso3].value.value),
-                //console.log(i + ' ' + lbid, d);
             });
         });
         return data;
     }    
-    // Column series, by country
-    var HCseries = function () {
+
+    var TreeSerie = function (tree=_options.tree) {
+        $.each(tree, function (main, inds) {
+            if (inds.constructor === Array) {
+                //console.log("TREE " + main, inds);
+                HCseries(main, inds);
+            } else {
+                TreeSerie(inds);
+                //console.log("ELSE " + main, inds);
+            }
+        });
+    }
+
+    var HCseries = function (main, indicators=_options.indicators) {
         var series = [];
-        var lbid = _options.main ? _options.main : _options.indicators[0];
-        var cName = _options.cache[lbid].label + (_options.year ? ' - ' + _options.year : '');
-        $.each(_data.cache, function (lbid, sdata) {
+//        var cName = _options.cache[lbid].label;// + (_options.year ? ' - ' + _options.year : '');
+        indicators.forEach(function (lbid) {
+            var sdata = _data.cache[lbid];
             var serie = {
-                type: _options.ctype ? _options.ctype : 'line', //column',
-                name: (_options.iso3 ? _options.iso3 : cName),
+                type: _options.ctype,
+                name: _options.cache[lbid].label,//main + '-' + lbid,
                 data: [],
-                //visible: false,
+                visible: (main == _options.main ? true : false),
+                showInLegend: (main == _options.main ? true : false),
             };
             if (_options.iso3) {
                 serie.data = CountrySerie(sdata);
@@ -121,11 +127,11 @@ var lbvisCharts = (function (LBV, args) {
             // });
             series.push(serie);
         });
+        console.log(main + ' serie', series, _options.main);
         _data.series = series;
     }
 
-    var _drawChart = function (series) {
-        //console.log('Draw Pie', _data.series);
+    var _drawChart = function () {
         var HCopts = {
             credits: { enabled: false },
             title: {
@@ -153,11 +159,17 @@ var lbvisCharts = (function (LBV, args) {
         },
         init: function () {
             _loadData().done(function () {
+                if (_options.tree) {
+                    TreeSerie();
+                } else {
+                    // Pick first indicator with data
+                    var main = _options.main ? _options.main : _data.cache.keys()[0];
+                    HCseries(main, _options.indicators);
+                }
+
+                //HCseries();
+                _drawChart();
                 //console.log(_options, _data);
-                HCseries();
-                //console.log(_data);
-                _drawChart([]);
-                //_data.chart.series[0].visible = true;
             });
         }
     };
