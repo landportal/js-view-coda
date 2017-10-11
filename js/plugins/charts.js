@@ -54,15 +54,16 @@ var lbvisCharts = (function (LBV, args) {
 
     // Line series, by year
     var YearSerie = function (sdata) {
-        var cYear = (_options.year ? _options.year : _data.years[0]);
+        //var cYear = (_options.year ? _options.year : _data.years[0]);
+        if (!_options.year) _options.year = _data.years[0];
         var data = [];
-        $.each(sdata[cYear], function (c, d) {
+        $.each(sdata[_options.year], function (c, d) {
             if (_data.categories.indexOf(d.country.value) == -1) {
                 _data.categories.push(d.country.value);
             }
             data.push({
                 id: d.country.value,
-                name: d.country.value + '-' + cYear,
+                name: d.country.value + '-' + _options.year,
                 y: parseFloat(d.value.value),
             });
         });
@@ -71,7 +72,7 @@ var lbvisCharts = (function (LBV, args) {
 
     var CountrySerie = function (sdata) {
         var data = [];
-        console.log(sdata);
+        console.log('Cserie', sdata);
         $.each(sdata, function (year, cdata) {
             if (_data.categories.indexOf(year) == -1) {
                 _data.categories.push(year);
@@ -88,11 +89,9 @@ var lbvisCharts = (function (LBV, args) {
     var TreeSerie = function (tree=_options.tree) {
         $.each(tree, function (main, inds) {
             if (inds.constructor === Array) {
-                console.log("TREE " + main, inds);
                 HCseries(main, inds);
             } else {
                 TreeSerie(inds);
-                //console.log("ELSE " + main, inds);
             }
         });
     }
@@ -148,7 +147,7 @@ var lbvisCharts = (function (LBV, args) {
     // Generic Vis. private method
     var _chartTitle = function  () {
         //_options.iso3 + '-' + _options.main;
-        _data.chart.setTitle({text: _options.cache[_options.main].label}, {text: '@@@YEAR@@@'});
+        _data.chart.setTitle({text: _options.cache[_options.main].label}, {text: _options.year});
     }
 
     var _bindUI = function () {
@@ -182,6 +181,7 @@ var lbvisCharts = (function (LBV, args) {
                 }
                 _drawChart();
                 _bindUI();
+                _chartTitle();
                 //console.log(_options, _data);
             });
         }
