@@ -163,7 +163,7 @@ var lbvisCharts = (function (LBV, args) {
                     TreeSerie();
                 } else {
                     // Pick first indicator with data
-                    var main = _options.main ? _options.main : _data.cache.keys()[0];
+                    var main = _options.main ? _options.main : Object.keys(_data.cache)[0];
                     HCseries(main, _options.indicators);
                 }
 
