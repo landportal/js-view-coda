@@ -76,6 +76,28 @@ var lbvisTable = (function (LBV, args) {
         }
     };
 
+    var _header = function () {
+        var cols;
+	if (_options.iso3) {
+	    cols = ['indicator', 'year', 'value'];//, 'unit', 'dataset', 'source'];
+	} else {
+	    cols = ['Indicator', 'First, Last years<br/>Coverage', 'Countries / Observations<br/>Missing values', 'Min/Max values']
+	}
+        return cols;
+    }
+    var _columns = function () {
+        var cols;
+	if (_options.iso3) {
+	    cols = ['indicator', 'year', 'value'];//, 'unit', 'dataset', 'source'];
+	} else {
+	    cols = [
+                ['indicator'], //, ' (', 'unit', ')', '<br/>', 'dataset', ' (', 'source', ')'],
+                ['minYear', '-', 'maxYear', '<br/>', 'nYears', '&nbsp;', 'years covered'],
+                ['nCountryWithValue', '/', 'nObs', '<br/>', 'perMissingValue'],
+                ['minValue' , '/', 'maxValue']];
+	}
+        return cols;
+    }
     var _formatCol = function (col, ind) {
         if (! ind[col]) {
             return col;
@@ -93,16 +115,7 @@ var lbvisTable = (function (LBV, args) {
         return '<span class="' +  col + '">' + str + '</span>';
     };
     var _formatRow = function (ind) {
-        var cols;
-	if (_options.iso3) {
-	    cols = ['indicator', 'year', 'value'];//, 'unit', 'dataset', 'source'];
-	} else {
-	    cols = [
-                ['indicator'], //, ' (', 'unit', ')', '<br/>', 'dataset', ' (', 'source', ')'],
-                ['minYear', '-', 'maxYear', '<br/>', 'nYears', '&nbsp;', 'years covered'],
-                ['nCountryWithValue', '/', 'nObs', '<br/>', 'perMissingValue'],
-                ['minValue' , '/', 'maxValue']];
-	}
+        var cols = _columns();
         var row = '<tr id=' + _options.target + '-' + ind['id'] + '">';
         cols.forEach(function (col) {
             var str = '';
@@ -120,13 +133,27 @@ var lbvisTable = (function (LBV, args) {
         return row;
     };
     var _draw = function () {
+        var thead = '';
+        var row = '<tr>';
+        var cols = _header();
+        cols.forEach(function (col) {
+            var str = '';
+            if (typeof col === 'string') {
+                str = col;
+            } else {
+                col.forEach(function (cc) {
+                    str += cc;
+                });
+            }
+            row += '<th>' + str + '</th>';
+        });
+        $(_options.target + ' table thead').html(row);
+
         var tbody = '';
         _data.indicatorValues.forEach(function (ind) {
             tbody += _formatRow(ind);
         });
-        var t = $(_options.target + ' table tbody');
-        //console.log('draw', t);
-        t.html(tbody);
+        $(_options.target + ' table tbody').html(tbody);
 	$(_options.target + ' [data-toggle="tooltip"]').tooltip();
     };
 
