@@ -20,6 +20,7 @@ var lbvisPie = (function (LBV, args) {
         // Default FAO pie chart
         main:           'FAO-6601-5110',
         loadMain:       true,
+        mainDelta:      false,
         indicators:     ['FAO-6621-5110', 'FAO-6650-5110', 'FAO-6655-5110', 'FAO-6661-5110'],
         year:           '2014',
     };
@@ -115,6 +116,7 @@ var lbvisPie = (function (LBV, args) {
         //var cIso3 = _options.iso3 ? _options.iso3 : _data.countries[0];
         //console.log(main, indicators);
         Object.keys(_data.cache).forEach(function(iso3) {
+            //console.log('serie ', main, iso3);
             var serie = {
                 type: 'pie',
                 name: iso3 + '-' + main, // _options.cache[main].label + ' - ' + 
@@ -122,19 +124,21 @@ var lbvisPie = (function (LBV, args) {
                 //showInLegend: true,
                 visible: (main == _options.main && iso3 == _options.iso3 ? true : false),
             };
-            //console.log(iso3, _data.cache[iso3]);
             indicators.forEach(function (lbid) {
                 //Object.keys(_data.cache[iso3]).forEach(function (lbid) {
-                var dt = _data.cache[iso3][lbid];
-                serie.data.push({
-                    //id: lbid,
-                    name: _options.cache[lbid].label,
-                //desc: _options.cache[lbid].desc,
-                //color: _options.colors[i],
-                //cc: d.country.value,
-                    y: parseFloat(dt.value.value),
-                //console.log(i + ' ' + lbid, d);
-                });
+                //console.log('iso: '+ iso3, 'id: '+ lbid, _data.cache[iso3]);
+                if (_data.cache[iso3][lbid]) {
+                    var dt = _data.cache[iso3][lbid];
+                    serie.data.push({
+                        //id: lbid,
+                        name: _options.cache[lbid].label,
+                        //desc: _options.cache[lbid].desc,
+                        //color: _options.colors[i],
+                        //cc: d.country.value,
+                        y: dt.value.value ? parseFloat(dt.value.value) : 0,
+                        //console.log(i + ' ' + lbid, d);
+                    });
+                }
             });
             _data.series.push(serie);
         });

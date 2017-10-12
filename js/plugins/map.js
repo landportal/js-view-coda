@@ -59,7 +59,7 @@ var lbvisMap = (function (MAP, LBV, args) {
             legend:     false,
             nav:        false,
             selectable: false,
-            tooltip:    false,
+            tooltip:    true,
             zoom:       false
         },
     };
