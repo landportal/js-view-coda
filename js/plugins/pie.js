@@ -39,7 +39,6 @@ var lbvisPie = (function (LBV, args) {
         if (!_options.loadMain) {
             chart.splice(chart.indexOf(_options.main), 1);
         }
-
         var qvalues = LBVIS.DATA.obsValues(
             ['indicator', 'country', 'time', 'value'], // 'year'
             { indicator: chart } //country: [_options.iso3], time: [_options.year] }
@@ -56,6 +55,7 @@ var lbvisPie = (function (LBV, args) {
             _data.countries = Object.keys(_data.cache);
         });
     };
+
     var _drawChart = function () {
         //console.log('Draw Pie', _data.series);
         var title = (_options.cache[_options.main] ? _options.cache[_options.main].render : _options.main);
@@ -70,32 +70,20 @@ var lbvisPie = (function (LBV, args) {
             },
             credits: { enabled: false },
             title: {
-                useHTML: true,
                 text: title,
+                useHTML: true,
                 align: 'center'
             },
             subtitle: {
-                //text: '('+ _options.iso3 + ':' + _options.year +')',
+                useHTML: true,
                 align: 'center'
             },
-            // tooltip: {
-            //     headerFormat: '<b>{point.key}: {point.y}</b><br/>',
-            //     pointFormat: '{point.percentage:.1f}%</b>',
-            // },
             plotOptions: {
+                // Force pie to render in 75% of the space
                 pie: {
                     size: '75%',
                     allowPointSelect: true,
                     cursor: 'pointer',
-                    // dataLabels: {
-                    //     enabled: true,
-                    //     // Carlos also want to show dataLabels directly... fancy ^^^
-		    //     format: '<b>{point.name}</b>: {point.y}', // TODO add ind. unit
-		    //     style: {
-		    //         color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-		    //     }                        
-                    // },
-                    //showInLegend: _options.legend
                 }
             },
             series: _data.series
@@ -193,11 +181,12 @@ var lbvisPie = (function (LBV, args) {
                 if (_options.loadCountries) {
                     var cc = [];
                     LBVIS.cache('countries').forEach(function (c) {
-                        if (_data.countries.indexOf(c.iso3) > 0) {
+                        if (_data.countries.indexOf(c.iso3) >= 0) {
                             _data.country[c.iso3] = c.name;
                             cc.push({id: c.iso3, label: c.name});
                         }
                     });
+                    console.log(cc);
                     var countr = LBVIS.generateOptions(cc, _options.iso3);
                     $(_options.target + '-countries').html(countr);
                 }

@@ -18,6 +18,7 @@ var lbvisCharts = (function (LBV, args) {
         iso3:           null,
         year:           null,
         indicators:     [],
+        //obs:            'all',
     };
     $.extend(_options, args);
 
@@ -26,6 +27,7 @@ var lbvisCharts = (function (LBV, args) {
         series: [],
         years: [],
         categories: [],
+        active: { 'indicators': [], 'observations': [] },
     };
 
     var _loadData = function () {
@@ -63,7 +65,7 @@ var lbvisCharts = (function (LBV, args) {
             }
             data.push({
                 id: d.country.value,
-                name: d.country.value + '-' + _options.year,
+                name: d.country.value + '-' + d.indicator.value,
                 y: parseFloat(d.value.value),
             });
         });
@@ -78,7 +80,7 @@ var lbvisCharts = (function (LBV, args) {
                 _data.categories.push(year);
             }
             data.push({
-                id: _options.iso3 + '-' + year,
+                id: _options.iso3 + '-' + _options.main, // + year,
                 x: parseFloat(year),
                 y: parseFloat(cdata[_options.iso3].value.value),
             });
@@ -104,11 +106,12 @@ var lbvisCharts = (function (LBV, args) {
             var serie = {
                 type: _options.ctype,
                 sgid: main,
+                //soid: _options.observations[lbid] ? _options.observations[lbid] : [],
                 id: lbid,
                 name: _options.cache[lbid].label,//main + '-' + lbid,
                 data: [],
                 visible: (main == _options.main ? true : false),
-                showInLegend: (main == _options.main ? true : false),
+                showInLegend: false,//(main == _options.main ? true : false),
             };
             if (_options.iso3) {
                 serie.data = CountrySerie(sdata);
@@ -125,8 +128,12 @@ var lbvisCharts = (function (LBV, args) {
         var HCopts = {
             credits: { enabled: false },
             title: {
-                useHTML: true,
                 text: (_options.main ? _options.cache[_options.main].render : ''),
+                useHTML: true,
+                align: 'center'
+            },
+            subtitle: {
+                useHTML: true,
                 align: 'center'
             },
             chart: {
@@ -151,10 +158,12 @@ var lbvisCharts = (function (LBV, args) {
     }
 
     var _bindUI = function () {
-        $(_options.target + '-form').delegate("select", "change", function(e) {
+        $(_options.target + '-form').delegate("input", "change", function(e) {
             //if (e.target.name == 'countries') _options.iso3 = e.target.value;
-            if (e.target.name == 'observations') _options.main = e.target.value;
+            if (e.target.name == 'indicators') _options.main = e.target.value;
+            if (e.target.name == 'observations') _options.obs = e.target.value;
             var sid = _options.main;
+            console.log('change to : ', sid, _options.obs);
             _data.series.forEach(function(serie, id) {
                 if (serie.sgid == sid) {
                     _data.chart.series[id].show();
@@ -164,6 +173,15 @@ var lbvisCharts = (function (LBV, args) {
             });
             _chartTitle();
         });
+
+        if (_options.observations) {
+            var e = $(_options.target + '-observations');
+            //console.log(_options.main, _options.observations[_options.main]);//.main, _options.observations);//[_options.main]);
+            Object.keys(_options.observations).forEach(function(k) {
+                //console.log(k, _options.observations[k]);
+            });
+        }
+
     };
 
     return {
@@ -180,8 +198,8 @@ var lbvisCharts = (function (LBV, args) {
                     HCseries(main, _options.indicators);
                 }
                 _drawChart();
-                _bindUI();
                 _chartTitle();
+                _bindUI();
                 //console.log(_options, _data);
             });
         }
