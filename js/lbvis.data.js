@@ -127,13 +127,14 @@ VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
             values.push("<" + lod.uri.time + year + ">");
         }
         return query.prefix + " \
-SELECT ?iso3 ?year ?period ?value \
+SELECT ?iso3 ?year ?period ?value ?note \
 " + query.from_data + " \
 WHERE { \
 ?obs cex:ref-indicator ?uri ; \
      cex:ref-area ?countryURL ; \
      cex:ref-time ?time ; \
      cex:value ?value. \
+     OPTIONAL {?obs rdfs:comment ?note } \
 ?time time:hasBeginning ?timeValue . \
 ?timeValue time:inXSDDateTime ?dateTime . \
  VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
@@ -142,6 +143,34 @@ WHERE { \
  BIND (REPLACE(STR(?time), '" + lod.uri.time + "', '') AS ?period) \
 } ORDER BY ?dateTime DESC(?value)";
     };
+
+    // Get all dataset values (aka obs), optionally filter by year
+    var _datasetValues = function (dataset, year) {
+        var filters = [ "?datasetURL", "?id" ], // uri = indicatorURL
+            values  = [ "<" + lod.uri.dataset + dataset + ">", "'"+ dataset +"'" ];
+        if (year) {
+            filters.push('?time');
+            values.push("<" + lod.uri.time + year + ">");
+        }
+        return query.prefix + " \
+SELECT ?uri ?iso3 ?year str(?value) as ?value str(?note) as ?note \
+" + query.from_data + " \
+WHERE { \
+?obs cex:ref-indicator ?indicatorURL ; \
+     cex:ref-area ?countryURL ; \
+     qb:dataSet ?datasetURL ; \
+     cex:ref-time ?time ; \
+     cex:value ?value. \
+     OPTIONAL {?obs rdfs:comment ?note } \
+?time time:hasBeginning ?timeValue . \
+?timeValue time:inXSDDateTime ?dateTime . \
+ VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
+ BIND (REPLACE(STR(?indicatorURL), '" + lod.uri.indicator + "','') AS ?indicator) \
+ BIND (REPLACE(STR(?countryURL), '" + lod.uri.country + "','') AS ?iso3) \
+ BIND (year(?dateTime) AS ?year) \
+} ORDER BY ?indicator DESC(?year) ?iso3";
+    };
+
 
     // Get an indicator details
     var _indicatorDetails = function (indicator) {
@@ -268,6 +297,7 @@ VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
             indicatorValues: function(indicator, years) { return _indicatorValues(indicator, years); },
             indicatorDetails: function(indicator) { return _indicatorDetails(indicator); },
             indicatorCountries: function(indicator) { return _indicatorCountries(indicator); },
+            datasetValues: function(dataset, years) { return _datasetValues(dataset, years); },
         },
 
 
