@@ -42,7 +42,7 @@ var lbvisMap = (function (MAP, LBV, args) {
         // title:          args.title      || null,        // Chart title
         // subtitle:       args.subtitle   || null,        // Chart title
         // iso3:           null,   // iso3 of the country to select
-        // year:
+        year:           null,
         colors: {
             background: 'transparent',
             hover: '#F5A623',
@@ -117,94 +117,73 @@ var lbvisMap = (function (MAP, LBV, args) {
     //     });
     // };
 
-    // var _getIndicatorDetails = function () {
-    //     return LBVIS.getIndicatorDetails(_options.indicator, _options.iso3).done(function () {
-    //         _data.indicator = LBVIS.cache('info')[_options.indicator][0];
-    //         _data.years = LBVIS.cache('period')[_options.indicator];
-    //         if (!_data.year) {
-    //             //_data.year = Math.max.apply(Math, _data.years);
-    //             _data.year = _data.years.sort().reverse()[0];
-    //         }
-    //         _setOptionsYears();
-    //         _data.title = '<a href="'+_data.indicator.indicatorSeeAlso+'" target="_blank">' + _data.indicator.label + '</a>' 
-    //         +' ('+ _data.indicator.unit +') in <a href="'+_data.indicator.datasetSeeAlso+'" target="_blank" class="txt-l">'
-    //         + _data.indicator.dataset+'</a> (by <a href="'+ _data.indicator.sourceSeeAlso + '" target="_blank" class="txt-l">'+ _data.indicator.source +'</a>)';
-    //         _data.subtitle = _data.indicator.description;
-
-    //         _setTitles(_data.title,
-    //                    _data.subtitle);
-    //     });
+    // /*
+    //  * Take this out of vis (for now) // 'actions' form are created 'outside' the #target
+    //  * @TODO: this should feedback into vis. form ID
+    //  */
+    // var _bindUI = function () {
+    //     // Country Indicators select
+    //     if (_options.showIndicators) {
+    //         $(_options.target + ' select[name="indicator"]').parent().removeClass("hidden");
+    //         $(_options.target).delegate('select[name="indicator"]', "change", function(e) {
+    //             e.preventDefault();
+    //             if (e.target.value) {
+    //                 _data.year = null,
+    //                 _data.indicator = null,
+    //                 _options.indicator = e.target.value;
+    //                 _getIndicatorDetails().done(function () {
+    //                     _getChartData().done(function () {
+    //                         _mapUpdate();
+    //                     });
+    //                     //console.log('Indicator changed', _data);
+    //                 });
+    //             }
+    //         });
+    //     }
+    //     if (_options.showYears) {
+    //         $(_options.target + ' select[name="year"]').parent().removeClass("hidden");
+    //         $(_options.target).delegate('select[name="year"]', "change", function(e){
+    //             e.preventDefault();
+    //             if (e.target.value) {
+    //                 _data.year = e.target.value;
+    //                 _getChartData().done(function () {
+    //                     _setTitles(_data.indicator.label + ' - ' + _data.year);
+    //                     _mapUpdate();
+    //                 });
+    //                 //_mapUpdate();
+    //             }
+    //         });
+    //     }
     // };
-
-
-
-    /*
-     * Take this out of vis (for now) // 'actions' form are created 'outside' the #target
-     * @TODO: this should feedback into vis. form ID
-     */
-    var _bindUI = function () {
-        // Country Indicators select
-        if (_options.showIndicators) {
-            $(_options.target + ' select[name="indicator"]').parent().removeClass("hidden");
-            $(_options.target).delegate('select[name="indicator"]', "change", function(e) {
-                e.preventDefault();
-                if (e.target.value) {
-                    _data.year = null,
-                    _data.indicator = null,
-                    _options.indicator = e.target.value;
-                    _getIndicatorDetails().done(function () {
-                        _getChartData().done(function () {
-                            _mapUpdate();
-                        });
-                        //console.log('Indicator changed', _data);
-                    });
-                }
-            });
-        }
-        if (_options.showYears) {
-            $(_options.target + ' select[name="year"]').parent().removeClass("hidden");
-            $(_options.target).delegate('select[name="year"]', "change", function(e){
-                e.preventDefault();
-                if (e.target.value) {
-                    _data.year = e.target.value;
-                    _getChartData().done(function () {
-                        _setTitles(_data.indicator.label + ' - ' + _data.year);
-                        _mapUpdate();
-                    });
-                    //_mapUpdate();
-                }
-            });
-        }
-    };
-    var _setOptionsYears = function () {
-        var el = $(_options.target + ' select[name="year"]');
-        var str = '';
-        _data.years.forEach(function(year) {
-            str += '<option value="'+year+'"'
-                + (year == _data.year ? ' selected="selected"' : '')
-                + '>'+year+'</option>';
-        });
-        el.html('<option data-localize="inputs.syear">Select a year...</option>');
-        if(str.length) {
-            el.append(str);
-            el.prop( "disabled", false );
-        }
-        return str;
-    };
-    var _setOptionsIndicators = function () {
-        var el = $(_options.target + ' select[name="indicator"]');
-        el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
-        if (_options.iso3) {
-            _data.indicators = LBVIS.cache('indicatorsByCountry')[_options.iso3];
-        } else {
-            _data.indicators = LBVIS.cache('indicators');
-        }
-        var opts = LBVIS.indicatorsSelect(_options.indicator);
-        if (opts) {
-            el.append(opts);
-            el.prop( "disabled", false );
-        }
-    };
+    // var _setOptionsYears = function () {
+    //     var el = $(_options.target + ' select[name="year"]');
+    //     var str = '';
+    //     _data.years.forEach(function(year) {
+    //         str += '<option value="'+year+'"'
+    //             + (year == _data.year ? ' selected="selected"' : '')
+    //             + '>'+year+'</option>';
+    //     });
+    //     el.html('<option data-localize="inputs.syear">Select a year...</option>');
+    //     if(str.length) {
+    //         el.append(str);
+    //         el.prop( "disabled", false );
+    //     }
+    //     return str;
+    // };
+    // var _setOptionsIndicators = function () {
+    //     var el = $(_options.target + ' select[name="indicator"]');
+    //     el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
+    //     if (_options.iso3) {
+    //         _data.indicators = LBVIS.cache('indicatorsByCountry')[_options.iso3];
+    //     } else {
+    //         _data.indicators = LBVIS.cache('indicators');
+    //     }
+    //     var opts = LBVIS.indicatorsSelect(_options.indicator);
+    //     if (opts) {
+    //         el.append(opts);
+    //         el.prop( "disabled", false );
+    //     }
+    // };
 
 
     
@@ -247,8 +226,9 @@ var lbvisMap = (function (MAP, LBV, args) {
                 //visible: false,
             };
             _data.years[lbid] = Object.keys(sdata);
+            if (!_options.year) _options.year = _data.years[lbid][_data.years[lbid].length - 1];
             // TODO latest year?
-            $.each(sdata[_data.years[lbid][_data.years[lbid].length - 1]], function (c, d) {
+            $.each(sdata[_options.year], function (c, d) {
                 //categories.push(d.country.value);
                 serie.data.push({
                     id: d.country.value,
@@ -275,6 +255,7 @@ var lbvisMap = (function (MAP, LBV, args) {
                 //width: _options.width,
                 height: _options.height,
                 backgroundColor: _options.colors.background,
+                renderTo: $(_options.target)[0],
                 //margin: (_options.indicator ? null : [0, 0, 0, 0])
             },
             title:      { text: (_options.title ? _options.title : null) , useHTML: true},
@@ -316,20 +297,23 @@ var lbvisMap = (function (MAP, LBV, args) {
         }
     };
 
-    var _setTitles = function(title, subtitle) {
-        _data.chartOptions
-        _data.chart.setTitle(title, subtitle);
-    };
+    // var _setTitles = function(title, subtitle) {
+    //     _data.chartOptions
+    //     _data.chart.setTitle(title, subtitle);
+    // };
 
     function _mapDraw() {
         _mapOptions();
+        console.log(_data.chartOptions);
+        _data.chartOptions.series = _mapSeries();
+        _data.chart = new Highcharts.Map(_data.chartOptions);
         // var data = _options.data || null;
         // if (!data && !_options.indicator && _options.map.selectable) {
         //     data = _data.mapData.map(function (c) { return {id: c.id, value: 0}; }); // fake dataset based on mapData
         // }
-        _data.chart = $(_options.target).highcharts('Map', $.extend(_data.chartOptions, {
-            series: _mapSeries()
-        }));
+        // _data.chart = $(_options.target).highcharts('Map', $.extend(_data.chartOptions, {
+        //     series: _mapSeries()
+        // }));
         //console.log('drawMap with ', _options, _data, _map);
 
         //$(_options.target + " .loading").removeClass("hidden");
@@ -365,6 +349,11 @@ var lbvisMap = (function (MAP, LBV, args) {
 
 
 
+    // Generic Vis. private method
+    var _chartTitle = function  () {
+        _data.chart.setTitle({text: _options.cache[_options.main].label}, {text: _options.year});
+    }
+
     /*
      * Public methods
      */
@@ -376,8 +365,10 @@ var lbvisMap = (function (MAP, LBV, args) {
         draw: _mapDraw,
         init: function () {
             _loadData().done(function () {
+                if (!_options.main) _options.main = Object.keys(_data.cache)[0];
                 //console.log('Map init', _options, _data);
                 _mapDraw();
+                _chartTitle();
             });
 
             // 'Static serie'
