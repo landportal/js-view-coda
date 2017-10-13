@@ -74,7 +74,7 @@ var lbvisCharts = (function (LBV, args) {
 
     var CountrySerie = function (sdata) {
         var data = [];
-        console.log('Cserie', sdata);
+        //console.log('Cserie', sdata);
         $.each(sdata, function (year, cdata) {
             if (_data.categories.indexOf(year) == -1) {
                 _data.categories.push(year);

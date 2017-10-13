@@ -33,15 +33,13 @@ var lbvisMap = (function (MAP, LBV, args) {
     var JSONMAP = MAP; // Geo-JSON map with countries obj 'id' as iso3
     var LBVIS = LBV;
     var _options = {
-        width:          1004, // print hack, for wkhtmltopdf
-        height:         500,  // print hack, for wkhtmltopdf
         target:         '#map',
         indicators:     [],     // ex: 'WB-SP.RUR.TOTL.ZS'
         series:         null,   // static series
         //type: args.type,                // map type: global or local
         // title:          args.title      || null,        // Chart title
         // subtitle:       args.subtitle   || null,        // Chart title
-        // iso3:           null,   // iso3 of the country to select
+        iso3:           null,   // iso3 of the country to select
         year:           null,
         colors: {
             background: 'transparent',
@@ -54,6 +52,8 @@ var lbvisMap = (function (MAP, LBV, args) {
         },
         // Map options
         map: {
+            width:      1004, // print hack, for wkhtmltopdf
+            height:     500,  // print hack, for wkhtmltopdf
             cursor:     null,
             events:     {},
             legend:     false,
@@ -185,29 +185,48 @@ var lbvisMap = (function (MAP, LBV, args) {
     //     }
     // };
 
+    // function _mapUpdate() {
+    //     // Update series with (new) data
+    //     var dataset = _mapDataset();
+    //     //console.log('Indicator changed', JSON.stringify(dataset));
+    //     // failsafe
+    //     if (!_data.year) return;
+    //     // Method 1: update/replace values in series[0]
+    //     //map.series[0].setData(dataset);
+    //     // Method 2: remove series[0], add a new one
+    //     _data.map.series[0].remove();
+    //     _data.map.addSeries(_mapSerie(dataset));
+    //     // Borken config? (sort of, legend doesn't show min/max values)
+    //     _data.map.colorAxis[0].update(_map.colorAxis);
+    //     if (_options.iso3) {
+    //         // Re-select country, update selected point(s)
+    //         // Otherwise selected color isn't (re)set properly. Highchart (re)coloring bug?
+    //         _data.map.get(_options.iso3).select();
+    //         _data.map.getSelectedPoints().forEach(function (p) {
+    //             p.update();
+    //         });
+    //     }
+    // }
+    // var _mapDataset = function () {
+    //     var dataset = [];
+    //     if (_data.chart.length) {
+    //         // Filter down map data by year or send all data
+    //         if (_data.year && _data.chart[0].year) {
+    //             dataset = _data.chart.filter(function (i) { return i.year == _data.year; });
+    //         } else {
+    //             dataset = _data.chart;
+    //         }
+    //         // Get min/max values for this dataset
+    //         // TODO: borken colorAxis / refresh options?
+    //         var d = dataset.map(function (i) { return i.value; });
+    //         _map.colorAxis.min = Math.min.apply(Math, d);
+    //         _map.colorAxis.max = Math.max.apply(Math, d);
+    //     }
+    //     return dataset;
+    // };
 
-    
     // Series formatters
-    var _mapDataset = function () {
-        var dataset = [];
-        if (_data.chart.length) {
-            // Filter down map data by year or send all data
-            if (_data.year && _data.chart[0].year) {
-                dataset = _data.chart.filter(function (i) { return i.year == _data.year; });
-            } else {
-                dataset = _data.chart;
-            }
-            // Get min/max values for this dataset
-            // TODO: borken colorAxis / refresh options?
-            var d = dataset.map(function (i) { return i.value; });
-            _map.colorAxis.min = Math.min.apply(Math, d);
-            _map.colorAxis.max = Math.max.apply(Math, d);
-        }
-        return dataset;
-    };
-
     var _mapSerie = function(data) {
-//        console.log('data', data);
         data = data || [];
         return {
             data: data,
@@ -216,6 +235,7 @@ var lbvisMap = (function (MAP, LBV, args) {
             cursor: _options.map.cursor
         };
     };
+
     // Returns HightChart map series
     var _mapSeries = function () {
         var series = [];
@@ -252,10 +272,11 @@ var lbvisMap = (function (MAP, LBV, args) {
     var _mapOptions = function () {
         _data.chartOptions = {
             chart: {
-                //width: _options.width,
-                height: _options.height,
+                //width: _options.map.width,
+                height: _options.map.height,
                 backgroundColor: _options.colors.background,
                 renderTo: $(_options.target)[0],
+                margin: [0, 0, 0, 0]
                 //margin: (_options.indicator ? null : [0, 0, 0, 0])
             },
             title:      { text: (_options.title ? _options.title : null) , useHTML: true},
@@ -297,61 +318,33 @@ var lbvisMap = (function (MAP, LBV, args) {
         }
     };
 
-    // var _setTitles = function(title, subtitle) {
-    //     _data.chartOptions
-    //     _data.chart.setTitle(title, subtitle);
-    // };
+    // Generic Vis. private method
+    var _chartTitle = function  () {
+        var title = (_options.main ? _options.cache[_options.main].label : '');
+        var subtitle = (_options.year ? _options.year : '');
+        if (title || subtitle) {
+            _data.chart.setTitle({text: title}, {text: subtitle});
+        }
+    }
 
-    function _mapDraw() {
+    var _mapDraw = function(series) {
         _mapOptions();
-        console.log(_data.chartOptions);
-        _data.chartOptions.series = _mapSeries();
+        _data.chartOptions.series = series;// ? series : _mapSeries;
+        //console.log('Draw', series, _data.chartOptions);
         _data.chart = new Highcharts.Map(_data.chartOptions);
+
         // var data = _options.data || null;
         // if (!data && !_options.indicator && _options.map.selectable) {
         //     data = _data.mapData.map(function (c) { return {id: c.id, value: 0}; }); // fake dataset based on mapData
         // }
-        // _data.chart = $(_options.target).highcharts('Map', $.extend(_data.chartOptions, {
-        //     series: _mapSeries()
-        // }));
-        //console.log('drawMap with ', _options, _data, _map);
 
         //$(_options.target + " .loading").removeClass("hidden");
-        //_data.chart = $(_options.mapTarget).highcharts();
-        return _data.chart;
-    }
 
-    function _mapUpdate() {
-        // Update series with (new) data
-        var dataset = _mapDataset();
-        //console.log('Indicator changed', JSON.stringify(dataset));
-        // failsafe
-        if (!_data.year) return;
-
-        // Method 1: update/replace values in series[0]
-        //map.series[0].setData(dataset);
-        // Method 2: remove series[0], add a new one
-        _data.map.series[0].remove();
-        _data.map.addSeries(_mapSerie(dataset));
-        // Borken config? (sort of, legend doesn't show min/max values)
-        _data.map.colorAxis[0].update(_map.colorAxis);
-        if (_options.iso3) {
-            // Re-select country, update selected point(s)
-            // Otherwise selected color isn't (re)set properly. Highchart (re)coloring bug?
-            _data.map.get(_options.iso3).select();
-            _data.map.getSelectedPoints().forEach(function (p) {
-                p.update();
-            });
+        if (_options.map.zoom) {
+            _data.chart.get(_options.iso3).zoomTo();
+            _data.chart.mapZoom(_options.map.zoom);
         }
-    }
-
-
-
-
-
-    // Generic Vis. private method
-    var _chartTitle = function  () {
-        _data.chart.setTitle({text: _options.cache[_options.main].label}, {text: _options.year});
+        return _data.chart;
     }
 
     /*
@@ -360,31 +353,29 @@ var lbvisMap = (function (MAP, LBV, args) {
     return {
         debug: function () {
             console.log(_options, _data);
-            return _data.chart;
+            //return _data.chart;
         },
-        draw: _mapDraw,
+        //draw: _mapDraw,
         init: function () {
-            _loadData().done(function () {
-                if (!_options.main) _options.main = Object.keys(_data.cache)[0];
-                //console.log('Map init', _options, _data);
-                _mapDraw();
-                _chartTitle();
-            });
-
+            if (_options.series) {
+                _mapDraw(_options.series);
+            } else {
+                _loadData().done(function () {
+                    if (!_options.main) _options.main = Object.keys(_data.cache)[0];
+                    //console.log('Map init', _options, _data);
+                    _mapDraw(_mapSeries());
+                    _chartTitle();
+                });
+            }
+            if (_options.debug)
+                console.log(_options, _data);
             // 'Static serie'
             // if (_options.serie) {
             //     _data.map.series[0].remove();
             //     _data.map.addSeries(_options.serie);
             //     //_data.map.colorAxis[0].update(_map.colorAxis);
             // }
-            // // Select and eventually zoom to country
-            // if (_options.iso3) {
-            //     $(_options.mapTarget).highcharts().get(_options.iso3).select();
-            //     if (_options.map.zoom) {
-            //         $(_options.mapTarget).highcharts().get(_options.iso3).zoomTo();
-            //         $(_options.mapTarget).highcharts().mapZoom(_options.map.zoom);
-            //     }
-            // }
+
             // // Fills up Indicators select
             // if (_options.showIndicators) {
             //     // get indi
