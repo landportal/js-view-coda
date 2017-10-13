@@ -145,7 +145,7 @@ var lbvisPie = (function (LBV, args) {
     };
     var _chartTitle = function  () {
         _options.iso3 + '-' + _options.main;
-        _data.chart.setTitle({text: _options.cache[_options.main].label}, {text: _data.country[_options.iso3]});
+        _data.chart.setTitle({text: _options.cache[_options.main].render}, {text: _data.country[_options.iso3]});
     }
 
     var _bindUI = function () {

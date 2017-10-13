@@ -154,7 +154,7 @@ var lbvisCharts = (function (LBV, args) {
     // Generic Vis. private method
     var _chartTitle = function  () {
         //_options.iso3 + '-' + _options.main;
-        _data.chart.setTitle({text: _options.cache[_options.main].label}, {text: _options.year});
+        _data.chart.setTitle({text: _options.cache[_options.main].render}, {text: _options.year});
     }
 
     var _bindUI = function () {

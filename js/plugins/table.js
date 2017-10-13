@@ -3,18 +3,23 @@
 var lbvisTable = (function (LBV, args) {
     var LBVIS = LBV;
     var _options = {
-        target:         args.target     || '#table-indicators',
-        iso3:           args.iso3       || null,
-        indicators:     args.indicators || [], // Default indicators for the table
-        selected: null,
-        year: null
+        target:         '#table',
+        iso3:           null,
+        indicators:     [],
+        selected:       null,
+        year:           null
     };
+    $.extend(true, _options, args); // true = deep merge
+
     var _data = {
         defers: [],
         years: [],
         indicators: [],
         indicatorValues: []
     };
+
+
+
     // Indicators are now loaded 1 by 1
     var _getIndicators = function () {
         _data.defers = [];
@@ -98,11 +103,18 @@ var lbvisTable = (function (LBV, args) {
 	}
         return cols;
     }
+
     var _formatCol = function (col, ind) {
         if (! ind[col]) {
             return col;
         }
-        var str = ind[col];
+        var str = '';
+        if (col == 'indicator' && _options.cache[ind.id]) {
+            str = _options.cache[ind.id].render;
+            //console.log(ind, _options.cache[ind.id]);
+        } else {
+            str = ind[col];
+        }
         // TODO : use cache render (from Drupal)
         // if (ind[col+'SeeAlso']) {
         //     str = '<a href="'+ind[col+'SeeAlso']+'" target="_blank">' + ind[col] + '</a>';
@@ -114,6 +126,7 @@ var lbvisTable = (function (LBV, args) {
         // }
         return '<span class="' +  col + '">' + str + '</span>';
     };
+
     var _formatRow = function (ind) {
         var cols = _columns();
         var row = '<tr id=' + _options.target + '-' + ind['id'] + '">';

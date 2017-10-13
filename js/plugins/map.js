@@ -320,7 +320,7 @@ var lbvisMap = (function (MAP, LBV, args) {
 
     // Generic Vis. private method
     var _chartTitle = function  () {
-        var title = (_options.main ? _options.cache[_options.main].label : '');
+        var title = (_options.main ? _options.cache[_options.main].render : '');
         var subtitle = (_options.year ? _options.year : '');
         if (title || subtitle) {
             _data.chart.setTitle({text: title}, {text: subtitle});
