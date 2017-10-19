@@ -190,7 +190,7 @@ var lbvisPie = (function (LBV, args) {
                             cc.push({id: c.iso3, label: c.name});
                         }
                     });
-                    console.log(cc);
+                    //console.log(cc);
                     var countr = LBVIS.generateOptions(cc, _options.iso3);
                     $(_options.target + '-countries').html(countr);
                 }

@@ -18,7 +18,10 @@ var lbvisCharts = (function (LBV, args) {
         iso3:           null,
         year:           null,
         indicators:     [],
-        //obs:            'all',
+        // Indicators / Vis. state
+        main:           null,
+        selected:       [],
+        obs:            ['all'],
     };
     $.extend(_options, args);
 
@@ -150,6 +153,27 @@ var lbvisCharts = (function (LBV, args) {
         return _data.chart;
     };
 
+    var _updateSeries = function () {
+        _data.series.forEach(function(serie, id) {
+            if (_options.selected && _options.selected.indexOf(serie.sgid) < 0) {
+                _data.chart.series[id].hide();
+            } else {
+                var show = false;
+                if (_options.obs && _options.cache[serie.id].obs) {
+                    //console.log('OoOoo', ind.obs, _options.obs);
+                    // for each ind.obs
+                    if (_options.obs.indexOf('all') >= 0) show=true;
+                    if (_options.obs.indexOf(_options.cache[serie.id].obs[0]) >= 0) {
+                        //console.log('YES');
+                        show = true;
+                    }
+                }
+                if (show) _data.chart.series[id].show();
+                else _data.chart.series[id].hide();
+            }
+        });
+        console.log(_data.series);
+    };
 
     // Generic Vis. private method
     var _chartTitle = function  () {
@@ -160,17 +184,34 @@ var lbvisCharts = (function (LBV, args) {
     var _bindUI = function () {
         $(_options.target + '-form').delegate("input", "change", function(e) {
             //if (e.target.name == 'countries') _options.iso3 = e.target.value;
-            if (e.target.name == 'indicators') _options.main = e.target.value;
-            if (e.target.name == 'observations') _options.obs = e.target.value;
-            var sid = _options.main;
-            console.log('change to : ', sid, _options.obs);
-            _data.series.forEach(function(serie, id) {
-                if (serie.sgid == sid) {
-                    _data.chart.series[id].show();
+            if (e.target.name == 'indicators') {
+                _options.selected = [];
+                // if (!e.target.checked) {
+                // }
+                $('input[name="'+e.target.name+'"]').each(function(i, el) {
+                    if (el.checked) _options.selected.push(el.value);
+                    // if one is unchecked, remove top / global one from the selected list
+                    else {
+                        // find stuff
+                    }
+                });
+//                _options.main = e.target.value;
+            }
+            if (e.target.name == 'observations') {
+                _options.obs = [];
+                if (e.target.value == 'all') {
+                    if (e.target.checked) $.extend(_options.obs, Object.keys(_options.observations));
+                    $('input[name="'+e.target.name+'"]').attr('checked', e.target.checked);
                 } else {
-                    _data.chart.series[id].hide();
+                    $('input[name="'+e.target.name+'"][value="all"]').attr('checked', false);
                 }
-            });
+                $('input[name="'+e.target.name+'"]').each(function(i, el) {
+                    if (el.checked) _options.obs.push(el.value);
+                });
+            }
+            //var sid = _options.main;
+            console.log('change to : ', _options.obs, _options.selected);
+            _updateSeries();
             _chartTitle();
         });
 
@@ -178,12 +219,22 @@ var lbvisCharts = (function (LBV, args) {
             var e = $(_options.target + '-observations');
             //console.log(_options.main, _options.observations[_options.main]);//.main, _options.observations);//[_options.main]);
             Object.keys(_options.observations).forEach(function(k) {
-                //console.log(k, _options.observations[k]);
+            //    console.log(k, _options.observations[k]);
             });
         }
-
     };
-
+    // @TODO dev
+    var _findStuff = function (id) {
+        // Only for 2-level deep
+        _options.tree.each(function (t) {
+            if (_options.tree[t] !== Array) {
+                console.log(t);
+                _options.tree[t].each(function (s) {
+                    if (s == id) return t;
+                });
+            }
+        });
+    };
     return {
         debug: function () {
             console.log(_options, _data);
@@ -197,6 +248,7 @@ var lbvisCharts = (function (LBV, args) {
                     if (!_options.main) _options.main = Object.keys(_data.cache)[0];
                     HCseries(_options.main, _options.indicators);
                 }
+                if (_options.main) _options.selected.push(_options.main);
                 _drawChart();
                 _chartTitle();
                 _bindUI();
