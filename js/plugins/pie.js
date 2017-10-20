@@ -83,7 +83,7 @@ var lbvisPie = (function (LBV, args) {
                 // Force pie to render in 75% of the space
                 pie: {
                     colors: _options.colors,
-                    size: '75%',
+                    //size: '75%',
                     allowPointSelect: true,
                     cursor: 'pointer',
                 }
@@ -193,7 +193,7 @@ var lbvisPie = (function (LBV, args) {
                     });
                     //console.log(cc);
                     var countr = LBVIS.generateOptions(cc, _options.iso3);
-                    $(_options.target + '-countries').html(countr);
+                    $(_options.target + '-country').html(countr);
                 }
                 _drawChart();
                 _bindUI();
