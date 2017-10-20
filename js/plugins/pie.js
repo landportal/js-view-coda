@@ -81,9 +81,10 @@ var lbvisPie = (function (LBV, args) {
             },
             plotOptions: {
                 // Force pie to render in 75% of the space
+                series: { size: '75%' },
                 pie: {
                     colors: _options.colors,
-                    //size: '75%',
+                    size: '75%',
                     allowPointSelect: true,
                     cursor: 'pointer',
                 }
@@ -151,7 +152,7 @@ var lbvisPie = (function (LBV, args) {
 
     var _bindUI = function () {
         $(_options.target + '-form').delegate("select", "change", function(e) {
-            if (e.target.name == 'countries') _options.iso3 = e.target.value;
+            if (e.target.name == 'country') _options.iso3 = e.target.value;
             if (e.target.name == 'observations') _options.main = e.target.value;
             var sid = _options.iso3 + '-' + _options.main;
             _data.chart.series.forEach(function(serie, id) {
