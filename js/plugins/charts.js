@@ -14,7 +14,7 @@ var lbvisCharts = (function (LBV, args) {
     var _options = {
         target:         '#wrapper',
         ctype:          'line',         // Can be 'line' or 'column'
-        legend:         false,
+        legend:         true,
         iso3:           null,
         year:           null,
         indicators:     [],
@@ -143,7 +143,7 @@ var lbvisCharts = (function (LBV, args) {
                             name: _options.cache[lbid].label,
                             data: YearSerie(_data.cache[lbid]),
                             visible: (main == _options.main ? true : false),
-                            showInLegend: false,//(main == _options.main ? true : false),
+                            showInLegend: (main == _options.main ? true : false),
             colors: _options.colors,
                         });
                         //console.log(main, lbid);
@@ -192,7 +192,7 @@ var lbvisCharts = (function (LBV, args) {
                 name: _options.cache[lbid].label,//main + '-' + lbid,
                 data: data,
                 visible: (main == _options.main ? true : false),
-                showInLegend: false,//(main == _options.main ? true : false),
+                showInLegend: (main == _options.main ? true : false),
             };
             _data.series.push(serie);
         });
@@ -275,7 +275,7 @@ var lbvisCharts = (function (LBV, args) {
         } else {
             _data.indicators = LBVIS.cache('indicators');
         }
-        //console.log(_options, _data);
+        console.log(_options, _data);
         var opts = LBVIS.indicatorsSelect(_options.main);
         if (opts) {
             el.append(opts);
@@ -315,6 +315,7 @@ var lbvisCharts = (function (LBV, args) {
     };
 
     var _bindUI = function () {
+        $(_options.target + '-form .action').hide(true);
         if (_options.loadIndicators) {
             _setOptionsIndicators();
         }
@@ -322,21 +323,29 @@ var lbvisCharts = (function (LBV, args) {
             _setOptionsCountries();
         }
         // for PRindex
-        $(_options.target + '-form').delegate("input", "change", function(e) {
+        $(_options.target + '-form').delegate("select", "change", function(e) {
             //if (e.target.name == 'countries') _options.iso3 = e.target.value;
-            if (e.target.name == 'indicators') {
+            if (e.target.name == 'indicator') {
                 _options.selected = [];
                 // if (!e.target.checked) {
                 // }
-                $('input[name="'+e.target.name+'"]').each(function(i, el) {
-                    if (el.checked) _options.selected.push(el.value);
-                    // if one is unchecked, remove top / global one from the selected list
-                    else {
-                        // find stuff
-                    }
-                });
-//                _options.main = e.target.value;
+                // $('input[name="'+e.target.name+'"]').each(function(i, el) {
+                //     if (el.checked) _options.selected.push(e.target.value);
+                //     // if one is unchecked, remove top / global one from the selected list
+                //     else {
+                //         // find stuff
+                //     }
+                // });
+                if (_options.tree[e.target.value]) {
+                    _options.selected = Object.keys(_options.tree[e.target.value]);
+                }
+                else _options.selected.push(e.target.value);
             }
+            console.log('change to : ', _options.obs, _options.selected);
+            _updateSeries();
+            _chartTitle();
+        });
+        $(_options.target + '-form').delegate("input", "change", function(e) {
             if (e.target.name == 'observations') {
                 _options.obs = [];
                 if (e.target.value == 'all') {

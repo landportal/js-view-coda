@@ -164,6 +164,7 @@ var lbvisPie = (function (LBV, args) {
             });
             _chartTitle();
         });
+        $(_options.target + '-form .action').hide(true);
     };
         
     // Public interfaces
