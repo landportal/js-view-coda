@@ -140,10 +140,12 @@ var lbvisCharts = (function (LBV, args) {
                             stack: main,
                             //soid: _options.observations[lbid] ? _options.observations[lbid] : [],
                             id: lbid,//_options.cache[lbid].obs[0],
-                            name: _options.cache[lbid].label,
+                            name: _options.cache[main].label + ' - ' + _options.cache[lbid].label,
                             data: YearSerie(_data.cache[lbid]),
                             visible: (main == _options.main ? true : false),
                             showInLegend: (main == _options.main ? true : false),
+                            // visible: (_options.selected.indexOf(main) > -1 ? true : false),
+                            // showInLegend: (_options.selected.indexOf(main) > -1 ? true : false),
             colors: _options.colors,
                         });
                         //console.log(main, lbid);
@@ -227,6 +229,10 @@ var lbvisCharts = (function (LBV, args) {
             colors: _options.colors,
         };
         HCopts.plotOptions[_options.ctype] = {
+            pointWidth: 12,
+            pointRange: 1,
+            pointPadding: 0.1,
+            groupPadding: 0,
         // };
         // HCopts.plotOptions['series'] = {
             stacking: 'normal',
@@ -393,6 +399,13 @@ var lbvisCharts = (function (LBV, args) {
         draw: function () { _drawChart(); },
         init: function () {
             _loadData().done(function () {
+                if (_options.main) {
+                    if (_options.tree[_options.main]) {
+                        _options.selected = Object.keys(_options.tree[_options.main]);
+                    } else {
+                        _options.selected.push(_options.main);
+                    }
+                }
                 if (_options.tree) {
                     TreeSerie();
                 } else {
@@ -400,7 +413,6 @@ var lbvisCharts = (function (LBV, args) {
                     if (!_options.main) _options.main = Object.keys(_data.cache)[0];
                     HCseries(_options.main, _options.indicators);
                 }
-                if (_options.main) _options.selected.push(_options.main);
                 _drawChart();
                 _chartTitle();
                 _bindUI();
