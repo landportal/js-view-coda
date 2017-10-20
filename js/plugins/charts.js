@@ -18,10 +18,12 @@ var lbvisCharts = (function (LBV, args) {
         iso3:           null,
         year:           null,
         indicators:     [],
+        stack:          'observations', // observations or tree
         // Indicators / Vis. state
         main:           null,
         selected:       [],
         obs:            ['all'],
+        colors:         ['#CA652D', '#13585D', '#9D9542', '#143D5D', '#E34A3A'],
     };
     $.extend(_options, args);
 
@@ -29,6 +31,7 @@ var lbvisCharts = (function (LBV, args) {
         cache: {},
         series: [],
         years: [],
+        countries: [],
         categories: [],
         active: { 'indicators': [], 'observations': [] },
     };
@@ -92,29 +95,27 @@ var lbvisCharts = (function (LBV, args) {
 
     // Line series, by year
     var YearSerie = function (sdata) {
-        //var cYear = (_options.year ? _options.year : _data.years[0]);
         if (!_options.year) _options.year = _data.years[0];
         var data = [];
+        var countries = LBVIS.countries();
         $.each(sdata[_options.year], function (c, d) {
-            if (_data.categories.indexOf(d.country.value) == -1) {
-                _data.categories.push(d.country.value);
-            }
+            var cm = countries.find(function (lbc) { return (lbc.iso3 == d.country.value); });
+            _data.countries[d.country.value] = cm;
             data.push({
-                id: d.country.value,
-                name: d.country.value + '-' + d.indicator.value,
+                name: cm.name,
                 y: parseFloat(d.value.value),
             });
         });
         return data;
-    }
+    };
 
     var CountrySerie = function (sdata) {
         var data = [];
         //console.log('Cserie', sdata);
         $.each(sdata, function (year, cdata) {
-            if (_data.categories.indexOf(year) == -1) {
-                _data.categories.push(year);
-            }
+            // if (_data.categories.indexOf(year) == -1) {
+            //     _data.categories.push(year);
+            // }
             data.push({
                 id: _options.iso3 + '-' + _options.main, // + year,
                 x: parseFloat(year),
@@ -122,43 +123,80 @@ var lbvisCharts = (function (LBV, args) {
             });
         });
         return data;
-    }    
+    };
 
     var TreeSerie = function (tree=_options.tree) {
         $.each(tree, function (main, inds) {
             if (inds.constructor === Array) {
-                HCseries(main, inds);
+                if (_options.stack == 'observations') {// && _options.cache[main].obs) {
+                    //console.log('STACK', main, inds);
+                    // @TODO: if shown
+                    //_data.categories = inds;
+                    // var cdata = {};
+                    inds.forEach(function (lbid) {
+                        _data.series.push({
+                            type: _options.ctype,
+                            sgid: main,
+                            stack: main,
+                            //soid: _options.observations[lbid] ? _options.observations[lbid] : [],
+                            id: lbid,//_options.cache[lbid].obs[0],
+                            name: _options.cache[lbid].label,
+                            data: YearSerie(_data.cache[lbid]),
+                            visible: (main == _options.main ? true : false),
+                            showInLegend: false,//(main == _options.main ? true : false),
+            colors: _options.colors,
+                        });
+                        //console.log(main, lbid);
+                    }, main);
+                    _data.categories = _data.countries;
+                        //
+                    //     //if (!_data.series[main ]) {
+                    //     //_data.series[serie.id].data.push(
+                    //     var data = YearSerie(_data.cache[lbid]);
+                    //     data.forEach(function(d) {
+                    //         if (!cdata[d.id]) cdata[d.id] = [];
+                    //         cdata[d.id].push(d.y)
+                    //     });
+                    // }, cdata, main);
+                    // Object.keys(cdata).forEach(function (iso3) {
+                    //     if (!_data.series[sid]) {
+                    //         _data.series[sid] = 
+                    //     }
+                    // }, _data, main, cdata);
+                    //HCseries(main, inds);
+                } else {
+                    HCseries(main, inds);
+                }
             } else {
                 TreeSerie(inds);
             }
         });
-    }
+    };
 
     var HCseries = function (main, indicators=_options.indicators) {
         //var series = [];
 //        var cName = _options.cache[lbid].label;// + (_options.year ? ' - ' + _options.year : '');
         indicators.forEach(function (lbid) {
             var sdata = _data.cache[lbid];
+            var data = [];
+            if (_options.iso3) {
+                data = CountrySerie(sdata);
+            } else {
+                data = YearSerie(sdata);
+            }
             var serie = {
                 type: _options.ctype,
                 sgid: main,
                 //soid: _options.observations[lbid] ? _options.observations[lbid] : [],
                 id: lbid,
                 name: _options.cache[lbid].label,//main + '-' + lbid,
-                data: [],
+                data: data,
                 visible: (main == _options.main ? true : false),
                 showInLegend: false,//(main == _options.main ? true : false),
             };
-            if (_options.iso3) {
-                serie.data = CountrySerie(sdata);
-            } else {
-                serie.data = YearSerie(sdata);
-            }
             _data.series.push(serie);
         });
-        //console.log(main + ' serie', series, _options.main);
-        //_data.series.concat(series);
-   }
+    };
 
     var _drawChart = function () {
         var HCopts = {
@@ -180,13 +218,26 @@ var lbvisCharts = (function (LBV, args) {
             xAxis: {
                 categories: _data.categories,
             },
+            yAxis: {
+                min: 0,
+                max: 100,
+            },
             series: _data.series,
+            plotOptions: {},
+            colors: _options.colors,
+        };
+        HCopts.plotOptions[_options.ctype] = {
+        // };
+        // HCopts.plotOptions['series'] = {
+            stacking: 'normal',
         };
         _data.chart = new Highcharts.Chart(HCopts);
+        console.log('chart data', _data.chart, _data.series);
         return _data.chart;
     };
 
     var _updateSeries = function () {
+        console.log('update chart series', _data.series);
         _data.series.forEach(function(serie, id) {
             if (_options.selected && _options.selected.indexOf(serie.sgid) < 0) {
                 _data.chart.series[id].hide();
@@ -200,6 +251,8 @@ var lbvisCharts = (function (LBV, args) {
                         //console.log('YES');
                         show = true;
                     }
+                } else {
+                    show = true;
                 }
                 if (show) _data.chart.series[id].show();
                 else _data.chart.series[id].hide();
@@ -297,7 +350,7 @@ var lbvisCharts = (function (LBV, args) {
                 });
             }
             //var sid = _options.main;
-            //console.log('change to : ', _options.obs, _options.selected);
+            console.log('change to : ', _options.obs, _options.selected);
             _updateSeries();
             _chartTitle();
         });
@@ -310,21 +363,23 @@ var lbvisCharts = (function (LBV, args) {
         }
     };
     // @TODO dev
-    var _findStuff = function (id) {
-        // Only for 2-level deep
-        _options.tree.each(function (t) {
-            if (_options.tree[t] !== Array) {
-                console.log(t);
-                _options.tree[t].each(function (s) {
-                    if (s == id) return t;
-                });
-            }
-        });
-    };
+    // var _findStuff = function (id) {
+    //     // Only for 2-level deep
+    //     _options.tree.each(function (t) {
+    //         if (_options.tree[t] !== Array) {
+    //             console.log(t);
+    //             _options.tree[t].each(function (s) {
+    //                 if (s == id) return t;
+    //             });
+    //         }
+    //     });
+    // };
+
     return {
         debug: function () {
             console.log(_options, _data);
         },
+        draw: function () { _drawChart(); },
         init: function () {
             _loadData().done(function () {
                 if (_options.tree) {

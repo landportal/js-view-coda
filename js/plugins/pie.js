@@ -16,7 +16,7 @@ var lbvisPie = (function (LBV, args) {
         target:         '#wrapper-piechart',
         legend:         false,
         iso3:           '',
-        colors:         ['#8c6d31', '#e7ba52', '#b5cf6b', '#637939', '#9c9ede'],
+        colors:         ['#CA652D', '#13585D', '#9D9542', '#143D5D', '#E34A3A'],
         // Default FAO pie chart
         main:           'FAO-6601-5110',
         loadMain:       true,
@@ -82,6 +82,7 @@ var lbvisPie = (function (LBV, args) {
             plotOptions: {
                 // Force pie to render in 75% of the space
                 pie: {
+                    colors: _options.colors,
                     size: '75%',
                     allowPointSelect: true,
                     cursor: 'pointer',
