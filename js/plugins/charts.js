@@ -316,6 +316,8 @@ var lbvisCharts = (function (LBV, args) {
 
     var _bindUI = function () {
         $(_options.target + '-form .action').hide(true);
+        // tmp do in 1 line what is a nightmare in druf*^&pal
+        $(_options.target + '-form select[name="indicator"]').val(_options.main);
         if (_options.loadIndicators) {
             _setOptionsIndicators();
         }
