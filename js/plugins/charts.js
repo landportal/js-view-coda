@@ -33,6 +33,39 @@ var lbvisCharts = (function (LBV, args) {
         active: { 'indicators': [], 'observations': [] },
     };
 
+    /* Get DATA */
+    var _getCountries = function() {
+        var query_url = LBVIS.DATA.sparqlURL(LBVIS.DATA.queries.indicatorCountries(_options.main));
+        return $.getJSON(query_url, function (data) {
+            _data.countries = [];
+            data.results.bindings.forEach(function (item) {
+                //console.log('Countries', item);
+                _data.countries.push({iso3: item.iso3.value, name: item.name.value});
+            });
+        });
+    };
+    var _getYearsIndicator = function() { //?
+        $(_options.target + ' select.years').prop('disabled', true);
+        var query_url = LBVIS.DATA.sparqlURL(
+            LBVIS.DATA.queries.indicatorYears(_options.main));
+        return $.getJSON(query_url, function (data) {
+            var years = [];
+            _data.years = data.results.bindings.map(function (item) {
+                return parseInt(item.year.value);
+                //console.log('Indicators', item);
+            }).reverse();
+            // Reset 'from' if before min avail. year, 'to' if after max year
+            // OR if not available (null)
+            // Set years to min / max, see: http://aaroncrane.co.uk/2008/11/javascript_max_api/
+            if (!_data.from || _data.from < Math.min.apply(Math, _data.years)) {
+                _data.from = Math.min.apply(Math, _data.years);
+            }
+            if (!_data.to || _data.to > Math.max.apply(Math, _data.years)) {
+                _data.to = Math.max.apply(Math, _data.years);
+            }
+        });
+    };
+
     var _loadData = function () {
         var filters = { indicator: _options.indicators } //country: [_options.iso3], time: [_options.year] }
         if (_options.iso3) filters.country = [ _options.iso3 ];
@@ -172,16 +205,70 @@ var lbvisCharts = (function (LBV, args) {
                 else _data.chart.series[id].hide();
             }
         });
-        console.log(_data.series);
+        //console.log(_data.series);
     };
 
     // Generic Vis. private method
     var _chartTitle = function  () {
         //_options.iso3 + '-' + _options.main;
         _data.chart.setTitle({text: _options.cache[_options.main].render}, {text: _options.year});
-    }
+    };
+
+    var _setOptionsIndicators = function () {
+        var el = $(_options.target + '-form select[name="indicator"]');
+        el.html('<option value>Select an indicator...</option>');
+        if (_options.iso3) {
+            _data.indicators = LBVIS.cache('indicatorsByCountry')[_options.iso3];
+        } else {
+            _data.indicators = LBVIS.cache('indicators');
+        }
+        //console.log(_options, _data);
+        var opts = LBVIS.indicatorsSelect(_options.main);
+        if (opts) {
+            el.append(opts);
+            el.prop( "disabled", false );
+        }
+    };
+    var _setOptionsCountries = function () {
+        _getCountries().done (function () {
+            var el = $(_options.target + '-form select[name="country"]');
+            var str = '';
+            //console.log('For : ' + _options.indicator + ' - ' + _data.countries.length + ' countries');
+            _data.countries.forEach(function (item) {
+                str += '<option value="'+item.iso3+'">' + item.name + '</option>';
+            });
+            el.prop('disabled', (str ? false : true));
+            el.html('<option value>Select a country...</option>' + str);
+        });
+    };
+
+    var _setOptionsYears = function () {
+        var str = '';
+        var el = {
+            from: $(_options.target + '-form select[name="year[from]"]'),
+            to: $(_options.target + '-form select[name="year[to]"]')
+        }
+        _data.years.forEach(function (item) {
+            str += '<option value="'+item+'">' + item + '</option>';
+        });
+        el.from.prop('disabled', (str ? false : true));
+        el.from.html('<option value>From year...</option>' + str);
+        if (_data.from) el.from.val(_data.from);
+
+        el.to.prop('disabled', (str ? false : true));
+        el.to.html('<option data-localize="inputs.countries">To year...</option>' + str);
+        if (_data.to) el.to.val(_data.to);
+        return str;
+    };
 
     var _bindUI = function () {
+        if (_options.loadIndicators) {
+            _setOptionsIndicators();
+        }
+        if (_options.loadCountries) {
+            _setOptionsCountries();
+        }
+        // for PRindex
         $(_options.target + '-form').delegate("input", "change", function(e) {
             //if (e.target.name == 'countries') _options.iso3 = e.target.value;
             if (e.target.name == 'indicators') {
@@ -210,11 +297,10 @@ var lbvisCharts = (function (LBV, args) {
                 });
             }
             //var sid = _options.main;
-            console.log('change to : ', _options.obs, _options.selected);
+            //console.log('change to : ', _options.obs, _options.selected);
             _updateSeries();
             _chartTitle();
         });
-
         if (_options.observations) {
             var e = $(_options.target + '-observations');
             //console.log(_options.main, _options.observations[_options.main]);//.main, _options.observations);//[_options.main]);

@@ -155,35 +155,36 @@ var lbvisMap = (function (MAP, LBV, args) {
     //         });
     //     }
     // };
-    // var _setOptionsYears = function () {
-    //     var el = $(_options.target + ' select[name="year"]');
-    //     var str = '';
-    //     _data.years.forEach(function(year) {
-    //         str += '<option value="'+year+'"'
-    //             + (year == _data.year ? ' selected="selected"' : '')
-    //             + '>'+year+'</option>';
-    //     });
-    //     el.html('<option data-localize="inputs.syear">Select a year...</option>');
-    //     if(str.length) {
-    //         el.append(str);
-    //         el.prop( "disabled", false );
-    //     }
-    //     return str;
-    // };
-    // var _setOptionsIndicators = function () {
-    //     var el = $(_options.target + ' select[name="indicator"]');
-    //     el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
-    //     if (_options.iso3) {
-    //         _data.indicators = LBVIS.cache('indicatorsByCountry')[_options.iso3];
-    //     } else {
-    //         _data.indicators = LBVIS.cache('indicators');
-    //     }
-    //     var opts = LBVIS.indicatorsSelect(_options.indicator);
-    //     if (opts) {
-    //         el.append(opts);
-    //         el.prop( "disabled", false );
-    //     }
-    // };
+
+    var _setOptionsYears = function () {
+        var el = $(_options.target + '-form select[name="year"]');
+        var str = '';
+        _data.years.forEach(function(year) {
+            str += '<option value="'+year+'"'
+                + (year == _data.year ? ' selected="selected"' : '')
+                + '>'+year+'</option>';
+        });
+        el.html('<option value>Select a year...</option>');
+        if(str.length) {
+            el.append(str);
+            el.prop( "disabled", false );
+        }
+        return str;
+    };
+    var _setOptionsIndicators = function () {
+        var el = $(_options.target + '-form select[name="indicator"]');
+        el.html('<option value>Select an indicator...</option>');
+        if (_options.iso3) {
+            _data.indicators = LBVIS.cache('indicatorsByCountry')[_options.iso3];
+        } else {
+            _data.indicators = LBVIS.cache('indicators');
+        }
+        var opts = LBVIS.indicatorsSelect(_options.main);
+        if (opts) {
+            el.append(opts);
+            el.prop( "disabled", false );
+        }
+    };
 
     // function _mapUpdate() {
     //     // Update series with (new) data
@@ -321,6 +322,11 @@ var lbvisMap = (function (MAP, LBV, args) {
     // Generic Vis. private method
     var _chartTitle = function  () {
         var title = (_options.main ? _options.cache[_options.main].render : '');
+        if (_options.loadIndicators) {
+            // We should have a select menu that already show the name
+            var title = (_options.main ? _options.cache[_options.main].unit + '<br/>' + _options.cache[_options.main].desc
+                         : '');
+        }
         var subtitle = (_options.year ? _options.year : '');
         if (title || subtitle) {
             _data.chart.setTitle({text: title}, {text: subtitle});
@@ -376,13 +382,13 @@ var lbvisMap = (function (MAP, LBV, args) {
             //     //_data.map.colorAxis[0].update(_map.colorAxis);
             // }
 
-            // // Fills up Indicators select
-            // if (_options.showIndicators) {
-            //     // get indi
-            //     LBVIS.getIndicators(_options.iso3).done(function () {
-            //         _setOptionsIndicators();
-            //     });
-            // }
+            // Fills up Indicators select
+            if (_options.loadIndicators) {
+                // get indi
+                LBVIS.getIndicators(_options.iso3).done(function () {
+                    _setOptionsIndicators();
+                });
+            }
             // _bindUI();
             // // Get indicator details (meta + years)
             // if (_options.indicator) {

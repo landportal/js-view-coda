@@ -66,7 +66,9 @@ var lbvis = (function (args) {
                         (item[prop].datatype == 'http://www.w3.org/2001/XMLSchema#integer')
                             ? parseFloat(v) : v);
                 });
-                //console.log(stuff);
+                if (type == 'info') {
+                    console.log(stuff);
+                }
                 if (id) _cache[type][id].push(stuff);
                 else _cache[type].push(stuff);
             });

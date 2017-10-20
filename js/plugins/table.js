@@ -7,7 +7,8 @@ var lbvisTable = (function (LBV, args) {
         iso3:           null,
         indicators:     [],
         selected:       null,
-        year:           null
+        year:           null,
+        allowAdd:       null
     };
     $.extend(true, _options, args); // true = deep merge
 
@@ -15,7 +16,8 @@ var lbvisTable = (function (LBV, args) {
         defers: [],
         years: [],
         indicators: [],
-        indicatorValues: []
+        indicatorValues: [],
+        series: {},
     };
 
 
@@ -43,6 +45,8 @@ var lbvisTable = (function (LBV, args) {
                 var ind = {};
                 Object.keys(item).forEach(function (prop) { ind[prop] = item[prop].value; });
                 _data.indicatorValues.push(ind);
+                _data.series[ind.id] = ind;
+//                console.log(ind);
             });
         });
     };
@@ -58,17 +62,17 @@ var lbvisTable = (function (LBV, args) {
     };
 
     var _setOptionsYears = function () {
-        var str = '<option data-localize="inputs.years">Select year...</option>';
+        var str = '<option value>Select a year...</option>';
         _data.years.forEach(function (y) {
             var selected = (_options.year == y ? ' selected="selected"' : '');
 	    str += '<option value="' + y + '"' + selected + '>' + y + '</option>';
         });
-        $(_options.target + ' select[name=year]').html(str);
-	$(_options.target + ' select[name=year]').prop( "disabled", false );
+        $(_options.target + '-form select[name="year"]').html(str);
+	$(_options.target + '-form select[name="year"]').prop( "disabled", false );
     };
     var _setOptionsIndicators = function () {
-        var el = $(_options.target + ' select[name="indicator"]');
-        el.html('<option data-localize="inputs.sindicators">Select an indicator...</option>');
+        var el = $(_options.target + '-form select[name="indicator"]');
+        el.html('<option value>Select an indicator...</option>');
         if (_options.iso3) {
             _data.indicators = LBVIS.cache('indicatorsByCountry')[_options.iso3];
         } else {
@@ -85,8 +89,14 @@ var lbvisTable = (function (LBV, args) {
         var cols;
 	if (_options.iso3) {
 	    cols = ['indicator', 'year', 'value'];//, 'unit', 'dataset', 'source'];
+            if (_options.allowAdd) {
+                cols.push('Remove');
+            }
 	} else {
 	    cols = ['Indicator', 'First, Last years<br/>Coverage', 'Countries / Observations<br/>Missing values', 'Min/Max values']
+            if (_options.allowAdd) {
+                cols.push('Remove');
+            }
 	}
         return cols;
     }
@@ -141,8 +151,10 @@ var lbvisTable = (function (LBV, args) {
             }
             row += '<td>' + str + '</td>';
         });
-        // Add delete column 
-        row += '<td class="text-center"><a href="#" class="delete"><span class="glyphicon glyphicon-trash text-danger"></span></a></td></tr>';
+        if (_options.allowAdd) {
+            // Add delete column 
+            row += '<td class="delete"><a href="#"><span class="glyphicon glyphicon-trash text-danger"></span></a></td></tr>';
+        }
         return row;
     };
     var _draw = function () {
@@ -171,7 +183,7 @@ var lbvisTable = (function (LBV, args) {
     };
 
     var _bindUI = function () {
-        $(_options.target).delegate("select", "change", function(e) {
+        $(_options.target + '-form').delegate("select", "change", function(e) {
             if (e.target.name == 'indicator') {
                 _options.selected = e.target.value;
                 _getIndicatorYears();
@@ -182,16 +194,18 @@ var lbvisTable = (function (LBV, args) {
             }
         });
         // Add row
-        $(_options.target).delegate('form [name="add"]', "click", function(e) {
+        $(_options.target + '-form').delegate(' [name="add"]', "click", function(e) {
 	    e.preventDefault();
-            // here we could also just add a row and call tooltip again...
+            // TODO: add loading feedback
             _getIndicator(_options.selected, _options.year).done(function () {
                 //console.log('add', _options, _data);
-                _draw();
+                var tr = _formatRow(_data.series[_options.selected]);
+                $(_options.target + " table tbody").append(tr);
             });
         });
+
         // Delete row
-        $(_options.target).delegate("td a.delete","click", function(e) {
+        $(_options.target).delegate("td.delete a","click", function(e) {
 	    e.preventDefault();
 	    $(this).parents('tr').remove().fadeOut("fast");
         });
