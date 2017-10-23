@@ -17,6 +17,7 @@ var lbvisCharts = (function (LBV, args) {
         legend:         true,
         iso3:           null,
         year:           null,
+        tree:           null,
         indicators:     [],
         stack:          'observations', // observations or tree
         // Indicators / Vis. state
@@ -400,7 +401,7 @@ var lbvisCharts = (function (LBV, args) {
         init: function () {
             _loadData().done(function () {
                 if (_options.main) {
-                    if (_options.tree && _options.tree.indexOf(_options.main) > -1) {
+                    if (_options.tree && _options.tree[_options.main] > -1) {
                         _options.selected = Object.keys(_options.tree[_options.main]);
                     } else {
                         _options.selected.push(_options.main);
