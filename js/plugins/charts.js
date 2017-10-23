@@ -400,7 +400,7 @@ var lbvisCharts = (function (LBV, args) {
         init: function () {
             _loadData().done(function () {
                 if (_options.main) {
-                    if (_options.tree[_options.main]) {
+                    if (_options.tree && _options.tree.indexOf(_options.main) > -1) {
                         _options.selected = Object.keys(_options.tree[_options.main]);
                     } else {
                         _options.selected.push(_options.main);
