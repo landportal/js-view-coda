@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LB vis examples - JS View CODA</title>
+    <link rel="stylesheet" href="css/screen.css">
+    <link rel="stylesheet" href="css/print.css" media="print">
+  </head>
+  <body>
+
+    <section class="container-fluid">
+      <article id="map" class="row">
+        <header class="col-md-offset-2 col-md-8 text-center">
+          <h2 data-localize="global.mapping">Mapping</h2>
+        </header>
+        <nav class="text-center">
+          <form>
+            <div class="form-group col-xs-8 col-lg-offset-2 col-lg-5">
+              <select name="indicator" class="form-control" disabled="disabled"></select>
+            </div>
+            <div class="form-group col-xs-4 col-lg-3">
+              <select name="year" class="form-control" disabled="disabled"></select>
+            </div>
+          </form>
+        </nav>
+        <div class="col-xs-12">
+          <div class="map-fluid">
+            <div id="map-wrapper" class="map-fluid-wrapper"></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+
+        <section id="ranking" class="container-fluid">
+      <header class="row">
+        <div class="col-md-offset-2 col-md-8 text-center">
+          <h2 data-localize="global.indicators">Ranking</h2>
+        </div>
+      </header>
+
+      <nav class="row">
+        <form>
+          <div class="form-group col-xs-4 col-xs-push-3">
+            <select name="indicator" class="form-control">
+              <option data-localize="inputs.indicators">Select an indicator...</option>
+            </select>
+          </div>
+          <div class="form-group col-xs-2 col-xs-push-3">
+            <select name="year" class="form-control" disabled="disabled">
+              <option data-localize="inputs.years">Year...</option>
+            </select>
+          </div>
+        </form>
+      </nav>
+      <div class="row metadata">
+        <div class="col-md-offset-2 col-md-8 text-center h2 visible-print-block">
+          <a><span name="indicator"></span></a>
+          <span name="year" class="h3"></span>
+          </div>
+        <div class="col-md-offset-2 col-md-8 text-center h3">
+          <a><span name="dataset"></span></a> -
+          <a><span name="source"></span></a>
+        </div>
+        <div class="col-md-offset-2 col-md-8 text-center">
+          <p><span name="description"></span></p>
+        </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-10 col-xs-push-1 col-sm-8 col-sm-push-2 col-lg-6 col-lg-push-3">
+          <ul id="ranking-wrapper" class="ranking list-unstyled"></ul>
+        </div>
+      </div>
+
+    </section>
+
+    <script src="../js/vendor/jquery-1.11.2.min.js"></script>
+    <!-- <script src="../js/vendor/jquery.localize.min.js"></script> -->
+    <script src="../js/vendor/bootstrap.min.js"></script>
+    <script src="../js/vendor/highstock.js"></script>
+    <script src="../js/vendor/highmaps.js"></script>
+    <script src="../js/vendor/highcharts-more.js"></script>
+    <!-- <script src="../js/vendor/exporting.js"></script> -->
+    <script src="../js/lbvis/data.js"></script>
+    <script src="../js/lbvis.js"></script>
+    <script src="../js/map_data.js"></script>
+    <script src="../js/plugins/map.js"></script>
+    <script src="../js/plugins/ranking.js"></script>
+    <script type="text/javascript">
+      LBV = new lbvis();
+      var defaultParams = {
+      iso3: false, indicators: ["WB-SP.DYN.LE00.FE.IN"],
+      cache: {"WB-SP.DYN.LE00.FE.IN": { label: 'fake stuff' } }
+      };
+
+      RANKING = new lbvisRanking(LBV, defaultParams);
+      MAP = new lbvisMap(map_data, LBV, $.extend({
+        years: true,
+        legend: true,
+        subtitle: true,
+        title: true
+      }, defaultParams));
+      LBV.ready().done(function () {
+        RANKING.init();
+        MAP.init();
+      });
+    </script>
+    
+  </body>
+</html>

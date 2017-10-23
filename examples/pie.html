@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LB vis PIE example - JS View CODA</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/screen.css">
+    <style type="text/css">
+    </style>
+  </head>
+  <body>
+    <section id="compare" class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <div id="piechart2"></div>
+        </div>
+      </div>
+    </section>
+
+    <script src="../js/vendor/jquery-1.11.2.min.js"></script>
+    <script src="../js/vendor/bootstrap.min.js"></script>
+    <script src="../js/vendor/highstock.js"></script>
+    <script src="../js/vendor/highmaps.js"></script>
+    <script src="../js/vendor/highcharts-more.js"></script>
+    <!-- <script src="../js/vendor/modules/exporting.js"></script> -->
+    <!-- <script src="../js/vendor/jquery.localize.min.js"></script> -->
+    <script src="../js/lbvis/data.js"></script>
+    <script src="../js/lbvis.js"></script>
+    <script src="../js/lbvis/pie2.js"></script>
+    <script type="text/javascript">
+	  LBVDATA = new lbvisDATA({prefix: 'https://landportal.info/sparql?default-graph-uri=&query='});
+	  LBV = new lbvis({data: LBVDATA});
+      var defaultParams = {vis: LBV, iso3: 'GRC', year: '2017'};
+      // LB Charts
+	  indicator = "LA-PRI-IV.RU"
+	  indicators = _get_full_indicators(indicator)
+	  title = "PRINDEX - " + _get_indicator_title(indicator) // TO BE USED
+	  subtitle = _get_indicator_subtitle(indicator)
+      Pie = new lbvisPie2($.extend({target: '#piechart2', title: title, subtitle: subtitle, indicators: indicators}, defaultParams));
+
+      // Init Charts when LBV is ready (ie: indicators and countries are loaded)
+      LBV.ready().done(function () {
+        Pie.init();
+      });
+
+	  function _get_indicators_PRINDEX(indicator){
+		var list_indicators = [
+		['LA-PRI-I.T', 'LA-PRI-II.T', 'LA-PRI-III.T'],
+		['LA-PRI-I.OW', 'LA-PRI-II.OW', 'LA-PRI-III.OW'],
+	    ['LA-PRI-I.RE', 'LA-PRI-II.RE', 'LA-PRI-III.RE'],
+	    ['LA-PRI-IV.OW', 'LA-PRI-V.OW', 'LA-PRI-VI.OW'],
+	    ['LA-PRI-IV.RU', 'LA-PRI-V.RU', 'LA-PRI-VI.RU'],
+	    ['LA-PRI-IV.UR', 'LA-PRI-V.UR', 'LA-PRI-VI.UR']]
+		for (var i = 0; i < list_indicators.length; i++) {
+			if (-1 != $.inArray(indicator, list_indicators[i])){
+				return list_indicators[i];
+			}
+		}
+	  }
+	  	  
+	  function _get_full_indicators(indicator){
+		var result = []
+		var indicators = _get_indicators_PRINDEX(indicator)
+		for (var i = 0; i < indicators.length; i++) {
+			result.push({
+				"id": indicators[i],
+				"label": _get_PRINDEX_label(indicators[i]),
+				"color": _get_indicator_color(indicators[i]),
+			})
+		}
+		return result
+	  }
+
+	  function _get_indicator_title(indicator){
+		perception_tenure_securty = ['LA-PRI-I.T', 'LA-PRI-II.T', 'LA-PRI-III.T','LA-PRI-I.OW', 'LA-PRI-II.OW', 'LA-PRI-III.OW','LA-PRI-I.RE', 'LA-PRI-II.RE', 'LA-PRI-III.RE']
+	    property_documentation = ['LA-PRI-IV.OW', 'LA-PRI-V.OW', 'LA-PRI-VI.OW', 'LA-PRI-IV.RU', 'LA-PRI-V.RU', 'LA-PRI-VI.RU', 'LA-PRI-IV.UR', 'LA-PRI-V.UR', 'LA-PRI-VI.UR']
+		
+		if (-1 != $.inArray(indicator, perception_tenure_securty)){
+				return "Perceived tenure security"
+		}
+		if (-1 != $.inArray(indicator, property_documentation)){
+				return "Property documentation"
+		}
+	  }
+	  
+	  function _get_indicator_subtitle(indicator){
+		if (indicator.indexOf(".T") !== -1) {
+			return "Total"
+		}
+		if (indicator.indexOf(".OW") !== -1) {
+			return "Owners"
+		}
+		if (indicator.indexOf(".RE") !== -1) {
+			return "Renters"
+		}	  
+		if (indicator.indexOf(".UR") !== -1) {
+			return "Urban"
+		}
+		if (indicator.indexOf(".RU") !== -1) {
+			return "Rural"
+		}	  
+	  }
+
+	  function _get_PRINDEX_label(indicator){
+		if (indicator.indexOf("-I.") !== -1) {
+			return "Secure"
+		}
+		if (indicator.indexOf("-II.") !== -1) {
+			return "Somewhat insecure"
+		}
+		if (indicator.indexOf("-III.") !== -1) {
+			return "Insecure"
+		}
+		if (indicator.indexOf("-IV.") !== -1) {
+			return "Formal"
+		}
+		if (indicator.indexOf("-V.") !== -1) {
+			return "Informal"
+		}
+		if (indicator.indexOf("-VI.") !== -1) {
+			return "No documentation"
+		}
+	  }	  
+
+	  function _get_indicator_color(indicator){
+		green = ['LA-PRI-I.T', , ,'LA-PRI-I.OW','LA-PRI-I.RE', 'LA-PRI-IV.OW','LA-PRI-IV.RU', 'LA-PRI-IV.UR']
+	    yellow = ['LA-PRI-II.T', 'LA-PRI-II.OW', 'LA-PRI-II.RE', 'LA-PRI-V.OW', 'LA-PRI-V.RU', 'LA-PRI-V.UR']
+		red = ['LA-PRI-III.T', 'LA-PRI-III.OW', 'LA-PRI-III.RE', 'LA-PRI-VI.OW', 'LA-PRI-VI.RU', 'LA-PRI-VI.UR']
+		
+		if (-1 != $.inArray(indicator, green)){
+				return "#7ED321"
+		}
+		if (-1 != $.inArray(indicator, yellow)){
+				return "#F8E71C"
+		}
+		if (-1 != $.inArray(indicator, red)){
+				return "#F6112D"
+		}
+	  }
+	  
+    </script>
+  </body>
+</html>

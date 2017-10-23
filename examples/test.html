@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LB vis examples - JS View CODA</title>
+    <link rel="stylesheet" href="css/screen.css">
+    <link rel="stylesheet" href="css/print.css" media="print">
+  </head>
+  <body>
+
+    <section id="table-indicators" class="container-fluid">
+      <header class="row">
+        <div class="col-md-offset-2 col-md-8 text-center">
+          <h2 data-localize="global.indicators">Indicators table</h2>
+        </div>
+      </header>
+
+      <div class="row">
+        <div class="col-xs-12">
+          <table class="table">
+            <thead>
+              <tr>
+                <th data-localize="label.iname">Indicators</th>
+                <th data-localize="label.year">Year</th>
+                <th data-localize="label.val">Value</th>
+                <th data-localize="label.unit">Unit</th>
+                <th data-localize="label.dataset">Dataset</th>
+                <th data-localize="label.dataset">Source</th>
+                <th data-localize="label.remove">Remove</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <footer class="row">
+        <nav>
+        <form>
+          <div class="form-group col-xs-7 col-sm-6">
+            <select name="indicator" class="form-control">
+              <option data-localize="inputs.indicators">Select an indicator...</option>
+            </select>
+          </div>
+          <div class="form-group col-xs-5 col-sm-3">
+            <select name="year" class="form-control" disabled="disabled">
+              <option data-localize="inputs.years">Year...</option>
+            </select>
+          </div>
+          <div class="form-group col-xs-7 col-sm-3">
+            <input type="submit" name="add" value="Add" class="btn btn-primary" data-localize="inputs.addindicator"/>
+          </div>
+        </form>
+        </nav>
+      </footer>
+    </section>
+
+    <section class="container-fluid">
+      <div class="row">
+        <div class="col-xs-6">
+          <div id="spiderchart"></div>
+        </div>
+        <div class="col-xs-6">
+          <div id="piechart"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container-fluid">
+      <div class="row">
+        <!-- LGAF chart markup -->
+        <article id="lgaf" class="col-sm-12">
+          <header class="text-center">
+            <h2 data-localize="global.title.lgaf">Land Governance Assessment Framework (LGAF)</h2>
+          </header>
+          <nav class="row">
+            <form>
+              <div class="form-group col-xs-6 col-sm-2">
+                <select name="year" class="form-control" disabled="disabled">
+                  <option data-localize="inputs.subpanels">Year</option>
+                </select>
+              </div>
+              <div class="form-group col-xs-9 col-sm-5">
+                <select name="panel" class="form-control">
+                  <option data-localize="inputs.subpanels">Panel</option>
+                </select>
+              </div>
+              <div class="form-group col-xs-12 col-sm-5">
+                <select name="subpanel" class="form-control">
+                  <option data-localize="inputs.subpanels">Sub-panel</option>
+                </select>
+              </div>
+            </form>
+          </nav>
+          <div class="row">
+            <div class="col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8">
+              <ul id="lgaf-wrapper" class="list-unstyled">
+                <li>Please, select year and panels to show the info.</li>
+              </ul>
+            </div>
+          </div>
+          <footer class="row">
+            <div class="col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8 text-center">
+              <ul class="list-unstyled list-inline legend">
+                <li><span class="lgaf-value-a lgaf-value"></span> <span data-localize="label.vgp">Very Good Practice</span></li>
+                <li><span class="lgaf-value-b lgaf-value"></span> <span data-localize="label.gp">Good Practice</span></li>
+                <li><span class="lgaf-value-c lgaf-value"></span> <span data-localize="label.wp">Weak Practice</span></li>
+                <li><span class="lgaf-value-d lgaf-value"></span> <span data-localize="label.vwp">Very Weak Practice </span></li>
+                <li><span class="lgaf-value-na lgaf-value"></span> <span data-localize="label.ndata">Missing Value</span></li>
+              </ul>
+            </div>
+          </footer>
+        </article>
+      </div>
+    </section>
+
+    <section id="compare" class="container-fluid clearfix">
+      <header class="text-center row">
+        <h2>Comparison chart</h2>
+        <nav>
+          <form>
+            <div class="form-group col-xs-12 col-sm-3">
+              <select name="indicator" class="form-control">
+                <option data-localize="inputs.indicators">Select an indicator...</option>
+              </select>
+            </div>
+            <div class="form-group col-xs-6 col-sm-2">
+              <select name="year[from]" class="form-control" disabled="disabled">
+                <option data-localize="inputs.speriodfrom">From year ...</option>
+              </select>
+            </div>
+            <div class="form-group col-xs-6 col-sm-2">
+              <select name="year[to]" class="form-control" disabled="disabled">
+                <option data-localize="inputs.speriodto">To year ...</option>
+              </select>
+            </div>
+            <div class="form-group hidden-xs col-sm-1"> |
+            </div>
+            <div class="form-group col-xs-6 col-sm-3">
+              <select name="country" class="form-control" disabled="disabled">
+                <option data-localize="inputs.scountry">Select country ...</option>
+              </select>
+            </div>
+            <div class="form-group col-xs-2 col-sm-1">
+              <input type="submit" name="add" value="Add" class="btn btn-primary" data-localize="inputs.addtocompare"/>
+            </div>
+          </form>
+        </nav>
+      </header>
+      <div class="row">
+        <div class="col-xs-12 text-center" id="labels-compare">
+          <span class="hidden">Remove countries added</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div id="compare-chart"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="map" class="container-fluid">
+      <article class="row">
+        <header class="text-center">
+          <h2 data-localize="global.mapping">Mapping</h2>
+        </header>
+        <nav class="text-center">
+          <form>
+            <div class="form-group col-xs-8 col-lg-offset-2 col-lg-5">
+              <select name="indicator" class="form-control" disabled="disabled"></select>
+            </div>
+            <div class="form-group col-xs-4 col-lg-3">
+              <select name="year" class="form-control" disabled="disabled"></select>
+            </div>
+          </form>
+        </nav>
+        <div class="col-xs-12 text-center">
+          <div class="map-fluid">
+            <div id="map-wrapper" class="map-fluid-wrapper"></div>
+          </div>
+        </div>
+      </article>
+    </section>  
+
+    <script src="../js/vendor/jquery-1.11.2.min.js"></script>
+    <!-- <script src="../js/vendor/jquery.localize.min.js"></script> -->
+    <script src="../js/vendor/bootstrap.min.js"></script>
+    <script src="../js/vendor/highstock.js"></script>
+    <script src="../js/vendor/highmaps.js"></script>
+    <script src="../js/vendor/highcharts-more.js"></script>
+    <!-- <script src="../js/vendor/exporting.js"></script> -->
+    <script src="../js/lbvis/data.js"></script>
+    <script src="../js/lbvis.js"></script>
+    <script src="../js/map_data.js"></script>
+    <script src="../js/lbvis/map.js"></script>
+    <script src="../js/lbvis/linechart.js"></script>
+    <script src="../js/lbvis/spider.js"></script>
+    <script src="../js/lbvis/lgaf.js"></script>
+    <script src="../js/lbvis/pie.js"></script>
+    <script src="../js/lbvis/table.js"></script>
+    <script type="text/javascript">
+      LBV = new lbvis();
+      var defaultParams = {vis: LBV, iso3: 'BFA'};
+
+      // LB Charts
+      Compare = new lbvisLC(defaultParams);
+      VMap = new lbvisMap($.extend({
+        indicator: 'WB-SP.RUR.TOTL.ZS',
+        indicators: false,
+        legend: true,
+        title: true,
+        subtitle: true,
+      }, defaultParams));
+      Spider = new lbvisSpider($.extend({target: '#spiderchart'}, defaultParams));
+      Pie = new lbvisPie($.extend({target: '#piechart'}, defaultParams));
+      LGAF = new lbvisLGAF($.extend({target: '#lgaf'}, defaultParams));
+      Table = new lbvisTable($.extend({target: '#table-indicators', indicators: ["WB-SP.POP.TOTL", "WB-SP.RUR.TOTL.ZS"]}, defaultParams));
+
+      // Init Charts when LBV is ready (ie: indicators and countries are loaded)
+      LBV.ready().done(function () {
+        Compare.init();
+        VMap.init();
+        Spider.init();
+        Pie.init();
+        Table.init();
+        LGAF.init();
+      });
+    </script>
+  </body>
+</html>

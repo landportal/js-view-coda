@@ -1,6 +1,6 @@
 {
     "name": "js-view-coda",
-    "version": "0.1.1",
+    "version": "0.2.1",
     "scripts": {
         "install": "echo \"Install app (maybe build sass here?)\"",
         "test": "echo \"Warning: no tests\""
@@ -18,5 +18,15 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/landportal/js-view-coda.git"
+    },
+    "main": "js/lbvis.js",
+    "plugins": {
+        "map": "Map projection",
+        "charts": "Charts (dots, bars, lines...)",
+        "pie": "A pie",
+        "download": "Download",
+        "table": "An HTML table",
+        "spider": "Spider graph",
+        "ranking": "Ranking list"
     }
 }
