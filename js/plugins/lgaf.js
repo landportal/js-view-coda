@@ -167,6 +167,9 @@ BIND (REPLACE(STR(?uri), '" + LBVIS.DATA.lod.uri.indicator + "','') AS ?id) \
     }
     
     return {
+        debug: function () {
+            console.log(_options, _data);
+        },
         init: function () {
             // Load LGAF indicators
             _getLGAFstructure().done(function () {
