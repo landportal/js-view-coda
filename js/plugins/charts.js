@@ -130,7 +130,7 @@ var lbvisCharts = (function (LBV, args) {
         $.each(tree, function (main, inds) {
             if (inds.constructor === Array) {
                 if (_options.stack == 'observations') {// && _options.cache[main].obs) {
-                    //console.log('STACK', main, inds);
+                    console.log('no HC', main, inds);
                     // @TODO: if shown
                     //_data.categories = inds;
                     // var cdata = {};
@@ -140,33 +140,17 @@ var lbvisCharts = (function (LBV, args) {
                             sgid: main,
                             stack: main,
                             //soid: _options.observations[lbid] ? _options.observations[lbid] : [],
+                            //linkedTo: main,
                             id: lbid,//_options.cache[lbid].obs[0],
                             name: _options.cache[main].label + ' - ' + _options.cache[lbid].label,
                             data: YearSerie(_data.cache[lbid]),
                             visible: (main == _options.main ? true : false),
-                            showInLegend: (main == _options.main ? true : false),
-                            // visible: (_options.selected.indexOf(main) > -1 ? true : false),
-                            // showInLegend: (_options.selected.indexOf(main) > -1 ? true : false),
+                            //showInLegend: (main == _options.main ? true : false),
             colors: _options.colors,
                         });
                         //console.log(main, lbid);
                     }, main);
                     _data.categories = _data.countries;
-                        //
-                    //     //if (!_data.series[main ]) {
-                    //     //_data.series[serie.id].data.push(
-                    //     var data = YearSerie(_data.cache[lbid]);
-                    //     data.forEach(function(d) {
-                    //         if (!cdata[d.id]) cdata[d.id] = [];
-                    //         cdata[d.id].push(d.y)
-                    //     });
-                    // }, cdata, main);
-                    // Object.keys(cdata).forEach(function (iso3) {
-                    //     if (!_data.series[sid]) {
-                    //         _data.series[sid] = 
-                    //     }
-                    // }, _data, main, cdata);
-                    //HCseries(main, inds);
                 } else {
                     HCseries(main, inds);
                 }
@@ -177,8 +161,6 @@ var lbvisCharts = (function (LBV, args) {
     };
 
     var HCseries = function (main, indicators=_options.indicators) {
-        //var series = [];
-//        var cName = _options.cache[lbid].label;// + (_options.year ? ' - ' + _options.year : '');
         indicators.forEach(function (lbid) {
             var sdata = _data.cache[lbid];
             var data = [];
@@ -192,10 +174,11 @@ var lbvisCharts = (function (LBV, args) {
                 sgid: main,
                 //soid: _options.observations[lbid] ? _options.observations[lbid] : [],
                 id: lbid,
+                //linkedTo: 
                 name: _options.cache[lbid].label,//main + '-' + lbid,
                 data: data,
                 visible: (main == _options.main ? true : false),
-                showInLegend: (main == _options.main ? true : false),
+                //showInLegend: (main == _options.main ? true : false),
             };
             _data.series.push(serie);
         });
@@ -230,12 +213,6 @@ var lbvisCharts = (function (LBV, args) {
             colors: _options.colors,
         };
         HCopts.plotOptions[_options.ctype] = {
-            pointWidth: 12,
-            pointRange: 1,
-            pointPadding: 0.1,
-            groupPadding: 0,
-        // };
-        // HCopts.plotOptions['series'] = {
             stacking: 'normal',
         };
         _data.chart = new Highcharts.Chart(HCopts);
@@ -261,8 +238,12 @@ var lbvisCharts = (function (LBV, args) {
                 } else {
                     show = true;
                 }
-                if (show) _data.chart.series[id].show();
-                else _data.chart.series[id].hide();
+                if (show) {
+                    _data.chart.series[id].show();
+                }
+                else {
+                    _data.chart.series[id].hide();
+                }
             }
         });
         //console.log(_data.series);
@@ -289,6 +270,7 @@ var lbvisCharts = (function (LBV, args) {
             el.prop( "disabled", false );
         }
     };
+
     var _setOptionsCountries = function () {
         _getCountries().done (function () {
             var el = $(_options.target + '-form select[name="country"]');
@@ -314,7 +296,6 @@ var lbvisCharts = (function (LBV, args) {
         el.from.prop('disabled', (str ? false : true));
         el.from.html('<option value>From year...</option>' + str);
         if (_data.from) el.from.val(_data.from);
-
         el.to.prop('disabled', (str ? false : true));
         el.to.html('<option data-localize="inputs.countries">To year...</option>' + str);
         if (_data.to) el.to.val(_data.to);
@@ -336,15 +317,6 @@ var lbvisCharts = (function (LBV, args) {
             //if (e.target.name == 'countries') _options.iso3 = e.target.value;
             if (e.target.name == 'indicator') {
                 _options.selected = [];
-                // if (!e.target.checked) {
-                // }
-                // $('input[name="'+e.target.name+'"]').each(function(i, el) {
-                //     if (el.checked) _options.selected.push(e.target.value);
-                //     // if one is unchecked, remove top / global one from the selected list
-                //     else {
-                //         // find stuff
-                //     }
-                // });
                 if (_options.tree[e.target.value]) {
                     _options.selected = Object.keys(_options.tree[e.target.value]);
                 }
@@ -372,26 +344,15 @@ var lbvisCharts = (function (LBV, args) {
             _updateSeries();
             _chartTitle();
         });
-        if (_options.observations) {
-            var e = $(_options.target + '-observations');
-            //console.log(_options.main, _options.observations[_options.main]);//.main, _options.observations);//[_options.main]);
-            Object.keys(_options.observations).forEach(function(k) {
-            //    console.log(k, _options.observations[k]);
-            });
-        }
+        // if (_options.observations) {
+        //     var e = $(_options.target + '-observations');
+        //     console.log(_options.main, _options.observations[_options.main]);
+        //      .main, _options.observations);//[_options.main]);
+        //     Object.keys(_options.observations).forEach(function(k) {
+        //     //    console.log(k, _options.observations[k]);
+        //     });
+        // }
     };
-    // @TODO dev
-    // var _findStuff = function (id) {
-    //     // Only for 2-level deep
-    //     _options.tree.each(function (t) {
-    //         if (_options.tree[t] !== Array) {
-    //             console.log(t);
-    //             _options.tree[t].each(function (s) {
-    //                 if (s == id) return t;
-    //             });
-    //         }
-    //     });
-    // };
 
     return {
         debug: function () {
