@@ -321,12 +321,7 @@ var lbvisMap = (function (MAP, LBV, args) {
 
     // Generic Vis. private method
     var _chartTitle = function  () {
-        var title = (_options.main ? _options.cache[_options.main].render : '');
-        if (_options.loadIndicators) {
-            // We should have a select menu that already show the name
-            var title = (_options.main ? _options.cache[_options.main].unit + '<br/>' + _options.cache[_options.main].desc
-                         : '');
-        }
+        var title = (_options.main ? _options.cache[_options.main].render : 'wbabbwa');
         var subtitle = (_options.year ? _options.year : '');
         if (title || subtitle) {
             _data.chart.setTitle({text: title}, {text: subtitle});
