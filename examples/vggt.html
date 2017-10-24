@@ -93,16 +93,16 @@
     <!-- <script src="../js/vendor/highmaps.js"></script> -->
     <script src="../js/vendor/highcharts-more.js"></script>
     <!-- <script src="../js/vendor/exporting.js"></script> -->
-    <script src="../js/lbvis/data.js"></script>
+    <script src="../js/lbvis.data.js"></script>
     <script src="../js/lbvis.js"></script>
     <!-- <script src="../js/map_data.js"></script> -->
     <!-- <script src="../js/lbvis/map.js"></script> -->
-    <script src="../js/lbvis/vggt.js"></script>
+    <script src="../js/plugins/vggt.js"></script>
     <script type="text/javascript">
       LBV = new lbvis({prefix: 'http://landportal.info/sparql?default-graph-uri=&query='});
-      var defaultParams = {vis: LBV, iso3: 'COL'};
+      var defaultParams = {iso3: 'AFG'};
 
-      VIS = new lbvisVGGT(defaultParams);
+      VIS = new lbvisVGGT(LBV, defaultParams);
       LBV.ready().done(function () {
         VIS.init();
 
