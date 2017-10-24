@@ -207,6 +207,7 @@ var lbvisCharts = (function (LBV, args) {
             yAxis: {
                 min: 0,
                 max: 100,
+                title: { text: _options.cache[Object.keys(_options.tree)[0]].unit },
             },
             series: _data.series,
             plotOptions: {},
@@ -251,8 +252,13 @@ var lbvisCharts = (function (LBV, args) {
 
     // Generic Vis. private method
     var _chartTitle = function  () {
+        var title = _options.cache[_options.main].render;
+        var subtitle = _options.year;
+        if (_options.tree) { // @todo : use seleted indicator's parent
+            title = _options.cache[Object.keys(_options.tree)[0]].render;
+        }
         //_options.iso3 + '-' + _options.main;
-        _data.chart.setTitle({text: _options.cache[_options.main].render}, {text: _options.year});
+        _data.chart.setTitle({text: title}, {text: subtitle});
     };
 
     var _setOptionsIndicators = function () {
