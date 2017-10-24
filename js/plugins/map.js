@@ -210,7 +210,7 @@ var lbvisMap = (function (MAP, LBV, args) {
     // Returns HightChart map series
     var _mapSeries = function () {
         var series = [];
-        console.log(_data);
+        //console.log(_data);
         $.each(_data.cache, function (lbid, sdata) {
             //console.log(lbid + '('+_options.main+')', sdata);
             var serie = {
@@ -369,8 +369,8 @@ var lbvisMap = (function (MAP, LBV, args) {
                     _chartTitle();
                 });
             }
-            if (_options.debug)
-                console.log(_options, _data);
+            // if (_options.debug)
+            //     console.log(_options, _data);
             // 'Static serie'
             // if (_options.serie) {
             //     _data.map.series[0].remove();
