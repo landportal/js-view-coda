@@ -132,8 +132,18 @@ var lbvisPie = (function (LBV, args) {
 
     var _chartTitle = function  () {
         if (_options.hideTitle) return false;
-        _options.iso3 + '-' + _options.main;
-        _data.chart.setTitle({text: _options.cache[_options.main].render}, {text: _data.country[_options.iso3]});
+        //_options.iso3 + '-' + _options.main;
+        var title = _options.cache[_options.main].render;
+        var subtitle = _data.country[_options.iso3];
+        _data.chart.setTitle({
+            text: title,
+            useHTML: true,
+            align: 'center'
+        }, {
+            text: subtitle,
+            useHTML: true,
+            align: 'center'
+        });
     }
 
     var _bindUI = function () {
