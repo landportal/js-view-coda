@@ -198,17 +198,13 @@ var lbvisCharts = (function (LBV, args) {
             },
             chart: {
                 backgroundColor: 'transparent',//_options.colors.background,
-                //type: 'charts'
+                type: _options.ctype,
                 renderTo: $(_options.target)[0],
             },
             xAxis: {
                 categories: _data.categories,
             },
-            yAxis: {
-                min: 0,
-                max: 100,
-                title: { text: _options.cache[Object.keys(_options.tree)[0]].unit },
-            },
+            yAxis: _setAxis(),
             series: _data.series,
             plotOptions: {},
             colors: _options.colors,
@@ -309,7 +305,7 @@ var lbvisCharts = (function (LBV, args) {
     };
 
     var _bindUI = function () {
-        $(_options.target + '-form .action').hide(true);
+        //$(_options.target + '-form .action').hide(true);
         // tmp do in 1 line what is a nightmare in druf*^&pal
         $(_options.target + '-form select[name="indicator"]').val(_options.main);
         if (_options.loadIndicators) {
@@ -360,12 +356,27 @@ var lbvisCharts = (function (LBV, args) {
         // }
     };
 
+    var _setAxis = function() {
+        var opts = {};
+        if (_options.tree && _options.cache[Object.keys(_options.tree)[0]]) {
+            var ind = _options.cache[Object.keys(_options.tree)[0]];
+            if (ind.unit) {
+                opts.title = { text: ind.unit };
+                if (ind.unit == 'Percent') { // @todo : better unit match
+                    opts.min = 0;
+                    opts.max = 100;
+                }
+            }
+        }
+    };
+
     return {
         debug: function () {
             console.log(_options, _data);
         },
         draw: function () { _drawChart(); },
         init: function () {
+            if (!_options.main && _options.indicators) _options.main = _data.indicators[0];
             _loadData().done(function () {
                 if (_options.main) {
                     if (_options.tree && _options.tree[_options.main] > -1) {
@@ -378,7 +389,6 @@ var lbvisCharts = (function (LBV, args) {
                     TreeSerie();
                 } else {
                     // Pick first indicator with data
-                    if (!_options.main) _options.main = Object.keys(_data.cache)[0];
                     HCseries(_options.main, _options.indicators);
                 }
                 _drawChart();
