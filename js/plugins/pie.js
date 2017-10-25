@@ -112,7 +112,7 @@ var lbvisPie = (function (LBV, args) {
                 id: iso3 + '-' + main,
                 data: [],
                 visible: (main == _options.main && iso3 == _options.iso3 ? true : false),
-                showInLegend: (main == _options.main && iso3 == _options.iso3 ? true : false),
+                showInLegend: (_options.legend && main == _options.main && iso3 == _options.iso3 ? true : false),
             };
             indicators.forEach(function (lbid) {
                 //console.log('iso: '+ iso3, 'id: '+ lbid, _data.cache[iso3]);
