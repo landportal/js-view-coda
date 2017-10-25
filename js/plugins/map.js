@@ -186,7 +186,7 @@ var lbvisMap = (function (MAP, LBV, args) {
                     name: indicator.label + ' (' + year + ')',
                     data: [],
                     visible: (lbid == _options.main && year == _options.year ? true : false),
-                    showInLegend: (lbid == _options.main && year == _options.year ? true : false),
+                    showInLegend: (_options.legend && lbid == _options.main && year == _options.year ? true : false),
                 };
                 serie.data = Object.keys(data).map(function (iso3) {
                     return {
@@ -219,19 +219,19 @@ var lbvisMap = (function (MAP, LBV, args) {
      */
     var _mapOptions = function () {
         _data.chartOptions = {
+            credits:    { enabled: false },
             chart: {
                 //width: _options.map.width,
+                renderTo: $(_options.target)[0],
                 height: _options.map.height,
                 backgroundColor: _options.colors.background,
-                renderTo: $(_options.target)[0],
                 margin: [0, 0, 0, 0]
             },
-            credits:    { enabled: false },
-            title: false,
-            subtitle: false,
-//            colors:     ['#CA652D', '#13585D', '#9D9542', '#143D5D', '#E34A3A'],
+            title: { text: null },
+            subtitle: { text: null },
+            colors:     ['#CA652D', '#13585D', '#9D9542', '#143D5D', '#E34A3A'],
 //            colorAxis:  _chartAxis(),
-//            legend:     _chartLegend(),
+            legend:     _chartLegend(null),
             tooltip:    { enabled: (_options.map.tooltip ? true : false), valueDecimals: 2 },
             // Map-specific
             mapNavigation: {
@@ -252,7 +252,8 @@ var lbvisMap = (function (MAP, LBV, args) {
                         hover:  { color: _options.colors.hover },
                         select: { color: _options.colors.select }
                     },
-                    point: { events: _options.map.events }
+                    point: { events: _options.map.events },
+                    showInLegend: false,
                 }
             },
         };
@@ -277,7 +278,8 @@ var lbvisMap = (function (MAP, LBV, args) {
     };
 
     var _chartLegend = function (text) {
-        if (!_options.map.legend) return null;
+        if (!_options.map.legend || !text) return { enable: false };
+        //console.log('hellooe', text);
         var legend = {
             verticalAlign: 'bottom',
             floating: true,

@@ -147,7 +147,6 @@ var lbvisPie = (function (LBV, args) {
             };
         }
         if (title || subtitle) {
-            console.log('GOT ' + _options.iso3, title, subtitle);
             _data.chart.setTitle(title, subtitle);
         }
     }
