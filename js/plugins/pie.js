@@ -59,44 +59,32 @@ var lbvisPie = (function (LBV, args) {
 
     var _drawChart = function () {
         //console.log('Draw Pie', _data.series);
-        var title = (_options.cache[_options.main] ? _options.cache[_options.main].render : _options.main);
         var ChartPieOp = {
             chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
                 renderTo: $(_options.target)[0],
-                plotShadow: false,
+//                plotShadow: false,
                 type: 'pie',
                 backgroundColor: 'transparent'
             },
             credits: { enabled: false },
-            title: {
-                text: title,
-                useHTML: true,
-                align: 'center'
-            },
-            subtitle: {
-                useHTML: true,
-                align: 'center'
-            },
+            title: false,
             plotOptions: {
-                // Force pie to render in 75% of the space
-                series: { size: '75%' },
                 pie: {
                     colors: _options.colors,
-                    size: '75%',
                     allowPointSelect: true,
                     cursor: 'pointer',
                 }
             },
             series: _data.series
         };
-        if (_options.legend) {
-            ChartPieOp.legend = {
-                //itemWidth: 300,
-                labelFormat: '{name}',
-            };
-        }
+        // if (_options.legend) {
+        //     ChartPieOp.legend = {
+        //         //itemWidth: 300,
+        //         //labelFormat: '{name}: {value}',
+        //     };
+        // }
         $(_options.target + " .loading").addClass("hidden");
         _data.chart = new Highcharts.Chart(ChartPieOp);
         return _data.chart;
@@ -118,54 +106,46 @@ var lbvisPie = (function (LBV, args) {
         //var cIso3 = _options.iso3 ? _options.iso3 : _data.countries[0];
         //console.log(main, indicators);
         Object.keys(_data.cache).forEach(function(iso3) {
-            //console.log('serie ', main, iso3);
             var serie = {
                 type: 'pie',
-                name: iso3 + '-' + main, // _options.cache[main].label + ' - ' + 
+                name: (_options.cache[main] ? _options.cache[main].label : main),
+                id: iso3 + '-' + main,
                 data: [],
-                //showInLegend: true,
                 visible: (main == _options.main && iso3 == _options.iso3 ? true : false),
+                showInLegend: (main == _options.main && iso3 == _options.iso3 ? true : false),
             };
             indicators.forEach(function (lbid) {
-                //Object.keys(_data.cache[iso3]).forEach(function (lbid) {
                 //console.log('iso: '+ iso3, 'id: '+ lbid, _data.cache[iso3]);
                 if (_data.cache[iso3][lbid]) {
                     var dt = _data.cache[iso3][lbid];
                     serie.data.push({
                         //id: lbid,
-                        name: _options.cache[lbid].label,
-                        //desc: _options.cache[lbid].desc,
-                        //color: _options.colors[i],
-                        //cc: d.country.value,
+                        name: (_options.cache[lbid] ? _options.cache[lbid].label : main),
                         y: dt.value.value ? parseFloat(dt.value.value) : 0,
-                        //console.log(i + ' ' + lbid, d);
                     });
                 }
             });
+            //console.log('got ', serie);//main, iso3);
             _data.series.push(serie);
         });
     };
+
     var _chartTitle = function  () {
+        if (_options.hideTitle) return false;
         _options.iso3 + '-' + _options.main;
         _data.chart.setTitle({text: _options.cache[_options.main].render}, {text: _data.country[_options.iso3]});
     }
 
     var _bindUI = function () {
+        $(_options.target + '-form .action').hide(true);
         $(_options.target + '-form').delegate("select", "change", function(e) {
+            _data.chart.get(_options.iso3 + '-' + _options.main).hide();
             if (e.target.name == 'country') _options.iso3 = e.target.value;
-            if (e.target.name == 'observations') _options.main = e.target.value;
-            var sid = _options.iso3 + '-' + _options.main;
-            _data.chart.series.forEach(function(serie, id) {
-                if (serie.name == sid) {
-                    //console.log('show #' + id, serie.name);
-                    serie.show();
-                } else {
-                    serie.hide();
-                }
-            });
+            if (e.target.name == 'indicator') _options.main = e.target.value;
+            //console.log('show: ' + _options.iso3 + '-' + _options.main);
+            _data.chart.get(_options.iso3 + '-' + _options.main).show();
             _chartTitle();
         });
-        $(_options.target + '-form .action').hide(true);
     };
         
     // Public interfaces

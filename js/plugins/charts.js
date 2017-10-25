@@ -94,7 +94,6 @@ var lbvisCharts = (function (LBV, args) {
         });
     };
 
-    // Line series, by year
     var YearSerie = function (sdata) {
         if (!_options.year) _options.year = _data.years[0];
         var data = [];
@@ -103,6 +102,7 @@ var lbvisCharts = (function (LBV, args) {
             var cm = countries.find(function (lbc) { return (lbc.iso3 == d.country.value); });
             _data.countries[d.country.value] = cm;
             data.push({
+                id: d.country.value,
                 name: cm.name,
                 y: parseFloat(d.value.value),
             });
@@ -112,14 +112,10 @@ var lbvisCharts = (function (LBV, args) {
 
     var CountrySerie = function (sdata) {
         var data = [];
-        //console.log('Cserie', sdata);
         $.each(sdata, function (year, cdata) {
-            // if (_data.categories.indexOf(year) == -1) {
-            //     _data.categories.push(year);
-            // }
             data.push({
                 id: _options.iso3 + '-' + _options.main, // + year,
-                x: parseFloat(year),
+                x: parseInt(year),
                 y: parseFloat(cdata[_options.iso3].value.value),
             });
         });
@@ -130,10 +126,6 @@ var lbvisCharts = (function (LBV, args) {
         $.each(tree, function (main, inds) {
             if (inds.constructor === Array) {
                 if (_options.stack == 'observations') {// && _options.cache[main].obs) {
-                    console.log('no HC', main, inds);
-                    // @TODO: if shown
-                    //_data.categories = inds;
-                    // var cdata = {};
                     inds.forEach(function (lbid) {
                         _data.series.push({
                             type: _options.ctype,
@@ -142,11 +134,11 @@ var lbvisCharts = (function (LBV, args) {
                             //soid: _options.observations[lbid] ? _options.observations[lbid] : [],
                             //linkedTo: main,
                             id: lbid,//_options.cache[lbid].obs[0],
-                            name: _options.cache[main].label + ' - ' + _options.cache[lbid].label,
+                            name: _options.cache[lbid].label + ' - ' + _options.cache[main].label,
                             data: YearSerie(_data.cache[lbid]),
                             visible: (main == _options.main ? true : false),
-                            //showInLegend: (main == _options.main ? true : false),
-            colors: _options.colors,
+                            showInLegend: (main == _options.main ? true : false),
+                            colors: _options.colors,
                         });
                         //console.log(main, lbid);
                     }, main);
@@ -187,22 +179,14 @@ var lbvisCharts = (function (LBV, args) {
     var _drawChart = function () {
         var HCopts = {
             credits: { enabled: false },
-            title: {
-                text: (_options.main ? _options.cache[_options.main].render : ''),
-                useHTML: true,
-                align: 'center'
-            },
-            subtitle: {
-                useHTML: true,
-                align: 'center'
-            },
             chart: {
                 backgroundColor: 'transparent',//_options.colors.background,
                 type: _options.ctype,
                 renderTo: $(_options.target)[0],
             },
+            title: false,
             xAxis: {
-                categories: _data.categories,
+                categories: Object.values(_data.categories).map(function (x) { return x.name; }),
             },
             yAxis: _setAxis(),
             series: _data.series,
@@ -213,12 +197,12 @@ var lbvisCharts = (function (LBV, args) {
             stacking: 'normal',
         };
         _data.chart = new Highcharts.Chart(HCopts);
-        console.log('chart data', _data.chart, _data.series);
+        //console.log('chart data', _data.chart, _data.series);
         return _data.chart;
     };
 
     var _updateSeries = function () {
-        console.log('update chart series', _data.series);
+        //console.log('update chart series', _data.series);
         _data.series.forEach(function(serie, id) {
             if (_options.selected && _options.selected.indexOf(serie.sgid) < 0) {
                 _data.chart.series[id].hide();
@@ -248,13 +232,22 @@ var lbvisCharts = (function (LBV, args) {
 
     // Generic Vis. private method
     var _chartTitle = function  () {
-        var title = _options.cache[_options.main].render;
-        var subtitle = _options.year;
+        if (_options.hideTitle) return false;
+        var title = _options.cache[_options.main].render || '-';
+        var subtitle = _options.year || '-';
         if (_options.tree) { // @todo : use seleted indicator's parent
             title = _options.cache[Object.keys(_options.tree)[0]].render;
         }
-        //_options.iso3 + '-' + _options.main;
-        _data.chart.setTitle({text: title}, {text: subtitle});
+        if (title || subtitle)
+        _data.chart.setTitle({
+            text: title,
+            useHTML: true,
+            align: 'center'
+        }, {
+            text: subtitle,
+            useHTML: true,
+            align: 'center'
+        });
     };
 
     var _setOptionsIndicators = function () {
@@ -305,7 +298,7 @@ var lbvisCharts = (function (LBV, args) {
     };
 
     var _bindUI = function () {
-        //$(_options.target + '-form .action').hide(true);
+        $(_options.target + '-form .action').hide(true);
         // tmp do in 1 line what is a nightmare in druf*^&pal
         $(_options.target + '-form select[name="indicator"]').val(_options.main);
         if (_options.loadIndicators) {
@@ -324,7 +317,7 @@ var lbvisCharts = (function (LBV, args) {
                 }
                 else _options.selected.push(e.target.value);
             }
-            console.log('change to : ', _options.obs, _options.selected);
+            //console.log('change to : ', _options.obs, _options.selected);
             _updateSeries();
             _chartTitle();
         });
@@ -362,12 +355,13 @@ var lbvisCharts = (function (LBV, args) {
             var ind = _options.cache[Object.keys(_options.tree)[0]];
             if (ind.unit) {
                 opts.title = { text: ind.unit };
-                if (ind.unit == 'Percent') { // @todo : better unit match
+                if (ind.unit.match(/^[Pp]ercent/)) { // @todo : better unit match
                     opts.min = 0;
                     opts.max = 100;
                 }
             }
         }
+        return opts;
     };
 
     return {
