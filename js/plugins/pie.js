@@ -60,16 +60,16 @@ var lbvisPie = (function (LBV, args) {
     var _drawChart = function () {
         //console.log('Draw Pie', _data.series);
         var ChartPieOp = {
+            credits: { enabled: false },
             chart: {
+                renderTo: $(_options.target)[0],
+                type: 'pie',
+                backgroundColor: 'transparent',
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
-                renderTo: $(_options.target)[0],
-//                plotShadow: false,
-                type: 'pie',
-                backgroundColor: 'transparent'
             },
-            credits: { enabled: false },
-            title: false,
+            title: { text: null },
+            subtitle: { text: null },
             plotOptions: {
                 pie: {
                     colors: _options.colors,
@@ -104,7 +104,7 @@ var lbvisPie = (function (LBV, args) {
     
     var HCseries = function(main, indicators) {
         //var cIso3 = _options.iso3 ? _options.iso3 : _data.countries[0];
-        //console.log(main, indicators);
+        console.log(main, indicators);
         Object.keys(_data.cache).forEach(function(iso3) {
             var serie = {
                 type: 'pie',
@@ -132,18 +132,24 @@ var lbvisPie = (function (LBV, args) {
 
     var _chartTitle = function  () {
         if (_options.hideTitle) return false;
-        //_options.iso3 + '-' + _options.main;
-        var title = _options.cache[_options.main].render;
-        var subtitle = _data.country[_options.iso3];
-        _data.chart.setTitle({
-            text: title,
-            useHTML: true,
-            align: 'center'
-        }, {
-            text: subtitle,
-            useHTML: true,
-            align: 'center'
-        });
+        var title = { text: null };
+        var subtitle = { text: null };
+        if (_options.main && _options.cache[_options.main]) {
+            title = {
+                text: _options.cache[_options.main].render,
+                useHTML: true, align: 'center'
+            };
+        }
+        if (_options.iso3) {
+            subtitle = {
+                text: _data.countriesLabel[_options.iso3],
+                useHTML: true, align: 'center'
+            };
+        }
+        if (title || subtitle) {
+            console.log('GOT ' + _options.iso3, title, subtitle);
+            _data.chart.setTitle(title, subtitle);
+        }
     }
 
     var _bindUI = function () {
@@ -168,6 +174,9 @@ var lbvisPie = (function (LBV, args) {
             // LBVIS.getIndicatorInfo(_options.main).done(function () {
             //     _data.indicator = LBVIS.cache('info')[_options.main][0];
             // });
+
+            _data.countriesLabel = {};
+            LBVIS.countries().forEach(function (c) { _data.countriesLabel[c.iso3] = c.name; });
 
             _loadData().done(function () {
                 if (_options.tree) {

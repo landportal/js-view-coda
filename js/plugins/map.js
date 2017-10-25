@@ -272,7 +272,7 @@ var lbvisMap = (function (MAP, LBV, args) {
         var title = (_options.main && _options.cache[_options.main] ? _options.cache[_options.main].render : _options.main);
         var subtitle = (_options.year ? _options.year : '');
         if (title || subtitle) {
-            _data.chart.setTitle({text: title, useHTML: true}, {text: subtitle, useHTML: true});
+            _data.chart.setTitle({text: title, align: 'center', useHTML: true}, {text: subtitle, align: 'center', useHTML: true});
         }
     };
 

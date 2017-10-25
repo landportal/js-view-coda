@@ -180,11 +180,12 @@ var lbvisCharts = (function (LBV, args) {
         var HCopts = {
             credits: { enabled: false },
             chart: {
-                backgroundColor: 'transparent',//_options.colors.background,
-                type: _options.ctype,
                 renderTo: $(_options.target)[0],
+                type: _options.ctype,
+                backgroundColor: 'transparent',//_options.colors.background,
             },
-            title: false,
+            title: { text: null },
+            subtitle: { text: null },
             xAxis: {
                 categories: Object.values(_data.categories).map(function (x) { return x.name; }),
             },
@@ -233,21 +234,27 @@ var lbvisCharts = (function (LBV, args) {
     // Generic Vis. private method
     var _chartTitle = function  () {
         if (_options.hideTitle) return false;
-        var title = _options.cache[_options.main].render || '-';
-        var subtitle = _options.year || '-';
-        if (_options.tree) { // @todo : use seleted indicator's parent
-            title = _options.cache[Object.keys(_options.tree)[0]].render;
+        var title = null;
+        var subtitle = null;
+        if (_options.main && _options.cache[_options.main]) {
+            title = {
+                text: _options.cache[_options.main].render,
+                useHTML: true, align: 'center'
+            };
         }
-        if (title || subtitle)
-        _data.chart.setTitle({
-            text: title,
-            useHTML: true,
-            align: 'center'
-        }, {
-            text: subtitle,
-            useHTML: true,
-            align: 'center'
-        });
+        if (_options.year) {
+            subtitle = {
+                text: _options.year,
+                useHTML: true, align: 'center'
+            };
+        }
+        // if (_options.tree) { // @todo : use seleted indicator's parent
+        //     title = _options.cache[Object.keys(_options.tree)[0]].render;
+        // }
+        if (title || subtitle) {
+            //console.log('GOT', title, subtitle);
+            _data.chart.setTitle(title, subtitle);
+        }
     };
 
     var _setOptionsIndicators = function () {
@@ -258,7 +265,6 @@ var lbvisCharts = (function (LBV, args) {
         } else {
             _data.indicators = LBVIS.cache('indicators');
         }
-        console.log(_options, _data);
         var opts = LBVIS.indicatorsSelect(_options.main);
         if (opts) {
             el.append(opts);
@@ -350,8 +356,9 @@ var lbvisCharts = (function (LBV, args) {
     };
 
     var _setAxis = function() {
-        var opts = {};
+        var opts = null;
         if (_options.tree && _options.cache[Object.keys(_options.tree)[0]]) {
+            opts = {};
             var ind = _options.cache[Object.keys(_options.tree)[0]];
             if (ind.unit) {
                 opts.title = { text: ind.unit };
