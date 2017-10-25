@@ -22,15 +22,21 @@ Installation
 Requirements
 ------------
 
+Highcharts (recent)
+
+npm install [-g] highcharts
+
+(should end up in /usr/local/lib/node_modules/highcharts/)
+
 JS libs:
  - jquery
    - jquery.localize (optional)
  - highcharts
-   - highstock (still true?)
    - highmaps
    - highcharts-more (still true? / optional?)
+   - highstock (still true?)
    - exporting (optional)
- - bootstrap (optional)
+ - bootstrap (optional, for stylin')
 
 
 Source
