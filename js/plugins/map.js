@@ -89,101 +89,52 @@ var lbvisMap = (function (MAP, LBV, args) {
         });
     };
 
+    // ASYNC
     var _loadIndicator = function (lbid) {
-        var ind = {
-            id: lbid,
-            label: lbid,
+        if (_options.cache[lbid]) return $.Defered;
+        return LBVIS.getIndicatorInfo(lbid).done(function() {
+            _options.cache[lbid] = LBVIS.cache('info')[lbid][0];
+        });;
+    };
+
+    var _mapSerie = function (indicator, year, data) {
+        var serie = {
+            id: indicator.id + '-' + year,
+            colorIndex: 0,
+            name: indicator.label + ' (' + year + ')',
+            data: [],
+            // visible: (lbid == _options.main && year == _options.year ? true : false),
+            // showInLegend: (_options.legend && lbid == _options.main && year == _options.year ? true : false),
         };
-        if (_options.cache[lbid]) {
-            return _options.cache[lbid];
-        } else {
-            ind = LBVIS.getIndicatorInfo(lbid);
-        }
-        console.log(lbid + ' info', ind);
-        return ind;
-    };
-
-    /*
-     * UI related
-     */
-    var _bindUI = function () {
-        // Country Indicators select
-        if (_options.loadIndicators) {
-            //$(_options.target + ' select[name="indicator"]').parent().removeClass("hidden");
-            $(_options.target + '-form').delegate('select[name="indicator"]', "change", function(e) {
-                e.preventDefault();
-                if (e.target.value) {
-                    _options.main = e.target.value;
-                    //console.log(e.target.value + ' loaded', e);
-                    _loadData([e.target.value]).done(function () {
-                        console.log(e.target.value + ' loaded', _data.cache[e.target.value]);
-                        _options.year  = null;
-                        _mapSeries();
-                        _mapDraw();//_data.series);
-                        _chartTitle();
-                        _setOptionsYears();
-//                        _chartTitle();
-                    });
-                }
-            });
-        }
-    };
-
-    var _setOptionsYears = function () {
-        var el = $(_options.target + '-form select[name="year"]');
-        var str = '';
-        _data.years[_options.main].forEach(function(year) {
-            str += '<option value="'+year+'"'
-                + (year == _data.year ? ' selected="selected"' : '')
-                + '>'+year+'</option>';
+        serie.data = Object.keys(data).map(function (iso3) {
+            return {
+                id: data[iso3].country.value,
+                value: parseFloat(data[iso3].value.value),
+            };
         });
-        el.html('<option value>Select a year...</option>');
-        if(str.length) {
-            el.append(str);
-            el.prop( "disabled", false );
-        }
-        return str;
-    };
-
-    var _setOptionsIndicators = function () {
-        var el = $(_options.target + '-form select[name="indicator"]');
-        el.html('<option value>Select an indicator...</option>');
-        if (_options.iso3) {
-            _data.indicators = LBVIS.cache('indicatorsByCountry')[_options.iso3];
-        } else {
-            _data.indicators = LBVIS.cache('indicators');
-        }
-        var opts = LBVIS.indicatorsSelect(_options.main);
-        if (opts) {
-            el.append(opts);
-            el.prop( "disabled", false );
-        }
+        return serie;
     };
 
     // Re-process all series (cached in _data.cache)
     // returns HightChart map series
     var _mapSeries = function () {
+        if (!_options.year) {
+            _options.year = Math.max.apply(Math, _data.years[_options.main]);
+        }
         _data.series = [];
         var visibleSerie = null;
+        // should be _data.indicators (not cache)?
         $.each(_data.cache, function (lbid, dataset) {
-            var indicator = _loadIndicator(lbid);
+            var indicator = LBV.cache('indicators').filter(function (i) { return i.id == lbid; })[0];
             $.each(dataset, function (year, data) {
-                var serie = {
-                    id: lbid + '-' + year,
-                    colorIndex: 0,
-                    name: indicator.label + ' (' + year + ')',
-                    data: [],
-                    visible: (lbid == _options.main && year == _options.year ? true : false),
-                    showInLegend: (_options.legend && lbid == _options.main && year == _options.year ? true : false),
-                };
-                serie.data = Object.keys(data).map(function (iso3) {
-                    return {
-                        id: data[iso3].country.value,
-                        value: parseFloat(data[iso3].value.value),
-                    };
-                });
-                if (lbid == _options.main && year == _options.year) visibleSerie = serie;
-                _data.series.push(serie);
+                var serie = _mapSerie(indicator, year, data);
+                // If serie is visible
+                if (lbid == _options.main && year == _options.year) {
+                    serie.visible = true;
+                    if (_options.legend) serie.showInLegend = true;
+                    visibleSerie = serie;
+                    _data.series.push(serie);
+                }
             });
         });
         return visibleSerie; // _data.series || [];
@@ -192,7 +143,7 @@ var lbvisMap = (function (MAP, LBV, args) {
 
 
     /*
-     * Drawing
+     * Drawing & Highchart
      */
     var _mapOptions = function () {
         var chartOptions = {
@@ -236,9 +187,12 @@ var lbvisMap = (function (MAP, LBV, args) {
     };
 
     var _mapDraw = function(series=_data.series) {
+        // if (_data.chart) { // Redraw?
+        //     console.log('Map already drawn', _data.chart);
+        // }
         var chartOptions = _mapOptions();
         chartOptions.series = series;
-        chartOptions.colorAxis = _chartAxis(series[0]);
+        if (_options.legend) chartOptions.colorAxis = _chartAxis(series[0]);
         _data.chart = new Highcharts.mapChart(chartOptions);
         return _data.chart;
     };
@@ -261,17 +215,84 @@ var lbvisMap = (function (MAP, LBV, args) {
         return legend;
     };
 
-    var _chartAxis = function (serie) {
-        // pick selected DS
-        var data = serie.data.map(function (i) { return i.value; });
+    var _chartAxis = function (serie=null) {
         var axis = {
-            min: Math.min.apply(Math, data),//.map(function (d) { return d.value; })),
-            max: Math.max.apply(Math, data),
-            type: 'logarithmic',
             maxColor: _options.colors.max,
             minColor: _options.colors.min
         };
+        if (serie) {
+            // pick selected DS
+            var data = serie.data.map(function (i) { return i.value; });
+            axis.min = Math.min.apply(Math, data);
+            axis.max = Math.max.apply(Math, data);
+            //if (axis.min == 0) axis.min = 1;
+            if (axis.min > 0) {
+                axis.type = 'logarithmic';
+            }
+        }
         return axis;
+    };
+
+
+
+    /*
+     * UI related
+     */
+    var _bindUI = function () {
+        // Country Indicators select
+        if (_options.loadIndicators) {
+            //$(_options.target + ' select[name="indicator"]').parent().removeClass("hidden");
+            $(_options.target + '-form').delegate('select[name="indicator"]', "change", function(e) {
+                e.preventDefault();
+                if (e.target.value) {
+                    _options.main = e.target.value;
+                    //console.log(e.target.value + ' loaded', e);
+                    _loadData([e.target.value]).done(function () {
+                        //console.log(e.target.value + ' loaded', _data.cache[e.target.value]);
+                        _options.year = Math.max.apply(Math, _data.years[_options.main]);
+                        _setOptionsYears();
+                        _loadIndicator(_options.main).done(function () {
+                            _chartTitle();
+                        });
+                        var s = _mapSeries();
+                        _data.chart.colorAxis = _chartAxis(s);
+                        _mapDraw();//_data.series);
+//                        _chartTitle();
+                    });
+                }
+            });
+        }
+    };
+
+    var _setOptionsYears = function () {
+        var el = $(_options.target + '-form select[name="year"]');
+        var str = '';
+        _data.years[_options.main].forEach(function(year) {
+            str += '<option value="'+year+'"'
+                + (year == _data.year ? ' selected="selected"' : '')
+                + '>'+year+'</option>';
+        });
+        el.html('<option value>Select a year...</option>');
+        if(str.length) {
+            el.append(str);
+            el.prop( "disabled", false );
+        }
+        return str;
+    };
+
+    var _setOptionsIndicators = function () {
+        var el = $(_options.target + '-form select[name="indicator"]');
+        el.html('<option value>Select an indicator...</option>');
+        if (_options.iso3) {
+            _data.indicators = LBVIS.cache('indicatorsByCountry')[_options.iso3];
+        } else {
+            _data.indicators = LBVIS.cache('indicators');
+        }
+        var opts = LBVIS.indicatorsSelect(_options.main);
+        if (opts) {
+            el.append(opts);
+            el.prop( "disabled", false );
+        }
     };
 
 
@@ -297,20 +318,22 @@ var lbvisMap = (function (MAP, LBV, args) {
                 _loadData().done(function () {
                     //console.log('Map init', _options, _data);
                     // If 'year' is not set, pick latest one
-                    if (!_options.year) {
-                        _options.year = Math.max.apply(Math, _data.years[_options.main]);
-                    }
                     var visible = _mapSeries();
                     _mapDraw();
-                    //_chartAxis(_data.cache[_options.main][_options.year]);
+                    //_data.chart.colorAxis = _chartAxis(visible);//_data.cache
                     _chartTitle();
                     _setOptionsYears();
+                    //console.log('show ' + _options.main + '-' +_options.year, visible);
                 });
                 // _getIndicatorDetails().done(function () {
                 //     _chartTitle();
                 // });
             }
 
+            if (_options.iso3 && _data.chart) {
+                //console.log(_data.chart);
+                _data.chart.get(_options.iso3).select();
+            }
             // If we have an init zoom option + iso3, zoom on that country
             if (_options.map.zoom) {
                 _data.chart.get(_options.iso3).zoomTo();
