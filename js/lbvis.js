@@ -1,21 +1,24 @@
 /*
- * Land Portal visualizations for the Land Book
+ * JS View CODA Library
  *
- * The original prototype of those visualizations was produced by Simbiosys.
- * This is a first rewrite as a JS app rather than dirty script.
+ * A visualization library for the Land Portal Land Book / LOD
+ *
+ * MIT License
+ * Copyright (c) 2016 - Land Portal Foundation - http://www.landportal.info
+ * Copyright (c) 2016-2017 - Jules Clement <jules@ker.bz>
  *
  * Author: Jules Clement <jules@ker.bz>
  *
- * lbvis - main Object
+ * Main object
  *
  * Prototype:
  *   new lbvis({arguments});
  *
  * Arguments:
- *      iso3    - MANDATORY - country iso 3 letters code
+
  * Example:
 
-var VIS = new lbvis({iso3: 'VNM'});
+var VIS = new lbvis();
 VIS.init();
 
  */
@@ -23,30 +26,61 @@ VIS.init();
 'use strict';
 
 var lbvis = (function (args) {
-    args = args || {};
+    //args = args || {};
     var _options = {
-        //iso3: args.iso3 || null,
-        loadIndicators: args.loadIndicators || true
+        iso3: null,
+        loadIndicators: true    // Wait for indicators list to preload
     };
+    $.extend(_options, args);
+
+    // jQuery deferred objects
     var _defers = {
         info: {},
         indicatorsByCountry: {},
         countriesByIndicator: {},
         years: {}
-    }; // jQuery deferred
+    };
     // Internal cache
     var _cache = {
         'indicators': [],
-        'datasets':  [],
+        'datasets':   [],
         'countries':  [],
         'indicatorsByCountry': {},
         'countriesByIndicator': {},
-        'info':  {},    // store by indicator id
-        'years': {},    // store by indicator id
-        'period': {}    // store by indicator id
+        'info':         {},    // store by indicator id
+        'years':        {},    // store by indicator id
+        'period':       {},    // store by indicator id
+        'data': {},
     };
     // Data lib
     var _DATA = args.data || new lbvisDATA(args);
+
+    // New Method (> 1.2.x)
+    var _loadData = function (indicators, iso3=null, year=null) {
+        var filters = { indicator: indicators };
+        if (iso3) filters.country = [ iso3 ];
+        if (year) filters.time = [ year ];
+        var qvalues = _DATA.obsValues(
+            ['indicator', 'country', 'time', 'value'], // computex data obs
+            filters
+        );
+        //console.log('G', qvalues);
+        return $.getJSON(_DATA.sparqlURL(qvalues), function (data) {
+            data.results.bindings.forEach(function (d, i) {
+                var lbid = d.indicator.value;
+                var time = d.time.value;
+                var iso3 = d.country.value;
+//                if (_data.years.indexOf(time) === -1) _data.years.push(time);
+                if (!_cache.data[lbid]) _cache.data[lbid] = {};
+                if (!_cache.data[lbid][time]) _cache.data[lbid][time] = {};
+                //if (!_cache.data[lbid][time][iso3]) _cache.data[lbid][time][iso3] = {};
+                _cache.data[lbid][time][iso3] = d;
+            });
+            //console.log('GOTCHA', data.results.bindings);
+        });
+    };
+
+
 
     // Get JSON data from a SPARQL query
     //  - store jQuery deferred in _defer by type
@@ -80,7 +114,7 @@ var lbvis = (function (args) {
         }
         return deferred;
     };
-    
+
     // Get all datasets
     var _getDatasets = function () {
         if (_defers['datasets']) {
@@ -109,6 +143,7 @@ var lbvis = (function (args) {
         }
         return _getSPARQL(q, def, iso3);
     };
+
     // Get an indicator metadata
     var _getIndicatorInfo = function (id) {
         if (_defers.info[id]) {
@@ -152,31 +187,6 @@ var lbvis = (function (args) {
         );
     };
 
-    // MUST be called after _indicatorInfo completed!
-    var _setMetadata = function (target, id) {
-        var indicator = _cache['info'][id][0];
-        $(target).each(function (n) {
-            var name = $(this).attr('name');
-            switch (name) {
-            case 'indicator':
-                name = 'label';
-            case 'dataset':
-            case 'source':
-                $(this).html(indicator[name]);
-                var p = $(this).parent();
-                if (p[0].nodeName == 'A') p.attr('href', indicator[name + 'SeeAlso']);
-                break;
-            case 'unit':
-            case 'year':
-            case 'description':
-                $(this).html(indicator[name]);
-                break;
-            // default:
-            //     console.log(this);
-            }
-        });
-    };
-
     var _init = function () {
         _getCountries();
         _getIndicators();
@@ -187,12 +197,15 @@ var lbvis = (function (args) {
 
     // Public methods
     return {
+        info: { version: '1.2.0' },
         DATA: _DATA,
         defers: function (type) { return (type ? _defers[type] : _defers); },
         cache: function (type) { return (type ? _cache[type] : _cache); },
         debug: function () { console.log(_options,  _cache, _defers); },
         countries: function () { return _cache['countries']; },
         indicators: function () { return _cache['indicators']; },
+
+        loadData: _loadData,
 
         setMetadata: function (target, id) { return _setMetadata(target, id); },
         getIndicatorInfo: function (indicator) { return _getIndicatorInfo(indicator); },
@@ -237,6 +250,7 @@ var lbvis = (function (args) {
             });
             return options;
         },
+
         // Correct rounding to 2 decimal after floating point (RTFM http://floating-point-gui.de/
         // or http://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html (if you crave more details)
         round: function (num, precision) {
@@ -248,6 +262,6 @@ var lbvis = (function (args) {
         // http://stackoverflow.com/questions/4059147/check-if-a-variable-is-a-string (read through it)
         isString: function (s) {
             return Object.prototype.toString.call(s) == '[object String]';
-        }
+        },
     };
 });
