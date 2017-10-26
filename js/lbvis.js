@@ -150,7 +150,9 @@ var lbvis = (function (args) {
             return _defers.info[id];
         }
         var q = _DATA.queries.indicatorInfo(id);
-        return _getSPARQL(q, 'info', id);
+        return _getSPARQL(q, 'info', id).done(function () {
+            _cache.info[id][0].render = _cache.info[id][0].label;
+        });
     };
     // Return valid years for an indicator
     var _getIndicatorCountries = function (id) {
