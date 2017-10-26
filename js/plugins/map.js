@@ -10,6 +10,7 @@
  * Author: Jules Clement <jules@ker.bz>
  *
  * Plugin: Map
+ *
  */
 
 'use strict';
@@ -118,8 +119,13 @@ var lbvisMap = (function (MAP, LBV, args) {
     // Re-process all series (cached in _data.cache)
     // returns HightChart map series
     var _mapSeries = function () {
-        if (!_options.year) {
+        if (!_options.year && _options.main) {
             _options.year = Math.max.apply(Math, _data.years[_options.main]);
+        }
+        if (Object.keys(_data.cache).length == 0) {
+            console.log('no series');
+            _data.series = null;
+            return null;
         }
         _data.series = [];
         var visibleSerie = null;
@@ -158,7 +164,7 @@ var lbvisMap = (function (MAP, LBV, args) {
             title: { text: null },
             subtitle: { text: null },
             legend:     _chartLegend(null),
-            tooltip:    { enabled: (_options.map.tooltip ? true : false), valueDecimals: 2 },
+            colors: [ _options.colors.min, _options.colors.max ],
             // Map-specific
             mapNavigation: {
                 enabled: _options.map.nav,
@@ -167,7 +173,10 @@ var lbvisMap = (function (MAP, LBV, args) {
                 enableTouchZoom: false,
                 buttonOptions: { align: 'right' }
             },
+            tooltip: { enabled: (_options.map.tooltip ? true : false) },
             plotOptions: {
+                // series: {
+                // },
                 map: {
                     mapData: JSONMAP,
                     joinBy: 'id',
@@ -179,6 +188,11 @@ var lbvisMap = (function (MAP, LBV, args) {
                         select: { color: _options.colors.select }
                     },
                     point: { events: _options.map.events },
+                    // tooltip:    {
+                    //     enabled: (_options.map.tooltip ? true : false),
+                    //     formatter: (LBVIS.isString(_options.map.tooltip) ? _options.map.tooltip : undefined),
+                    //     valueDecimals: 2
+                    // },
                     showInLegend: false,
                 }
             },
@@ -322,7 +336,7 @@ var lbvisMap = (function (MAP, LBV, args) {
                     _mapDraw();
                     //_data.chart.colorAxis = _chartAxis(visible);//_data.cache
                     _chartTitle();
-                    _setOptionsYears();
+                    if (_options.loadYears) _setOptionsYears();
                     //console.log('show ' + _options.main + '-' +_options.year, visible);
                 });
                 // _getIndicatorDetails().done(function () {
