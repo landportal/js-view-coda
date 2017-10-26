@@ -1,34 +1,19 @@
+/*
+ * JS View CODA Library
+ *
+ * A visualization library for the Land Portal Land Book / LOD
+ *
+ * MIT License
+ * Copyright (c) 2016 - Land Portal Foundation - http://www.landportal.info
+ * Copyright (c) 2016-2017 - Jules Clement <jules@ker.bz>
+ *
+ * Author: Jules Clement <jules@ker.bz>
+ *
+ * Plugin: Map
+ */
+
 'use strict';
 
-/**
- * JS View CODA - map module
- *
-
-Examples
-========
-
-Click
------
-To enable click action on a country, pass an 'events' hash to options:
-events: {
-  click: function () {
-    console.log('click on', this);
-    window.location.href = '/book/countries/'+this.id;
-  }
-}
-(See: http://api.highcharts.com/highmaps#plotOptions.map.events)
-
-Tooltip
--------
-To show and control the (mouseover) tooltip on countries, pass a callback function 'tooltip' to options.
-
-tooltip: function () {
-  return this.point.name;
-}
-
-(See: http://api.highcharts.com/highmaps#plotOptions.map.tooltip.pointFormatter)
-
- */
 var lbvisMap = (function (MAP, LBV, args) {
     var JSONMAP = MAP; // Geo-JSON map with countries obj 'id' as iso3
     var LBVIS = LBV;
@@ -46,8 +31,8 @@ var lbvisMap = (function (MAP, LBV, args) {
             hover: '#F5A623',
             select: '#F5A623',
             borders: '#FFFFFF',
-            min: '#45551A',
-            max: '#D9ED7E',
+            min: '#D9ED7E',
+            max: '#45551A',
             na: '#BBD6D8'
         },
         // Map options
@@ -134,8 +119,10 @@ var lbvisMap = (function (MAP, LBV, args) {
                         console.log(e.target.value + ' loaded', _data.cache[e.target.value]);
                         _options.year  = null;
                         _mapSeries();
-                        _mapDraw(_data.series);
+                        _mapDraw();//_data.series);
                         _chartTitle();
+                        _setOptionsYears();
+//                        _chartTitle();
                     });
                 }
             });
@@ -183,6 +170,7 @@ var lbvisMap = (function (MAP, LBV, args) {
             $.each(dataset, function (year, data) {
                 var serie = {
                     id: lbid + '-' + year,
+                    colorIndex: 0,
                     name: indicator.label + ' (' + year + ')',
                     data: [],
                     visible: (lbid == _options.main && year == _options.year ? true : false),
@@ -195,22 +183,11 @@ var lbvisMap = (function (MAP, LBV, args) {
                     };
                 });
                 if (lbid == _options.main && year == _options.year) visibleSerie = serie;
-                //console.log(serie);
-                //_data.seriesAxis.push(_chartAxis(serie));
-                serie.colorAxis = _chartAxis(serie);
                 _data.series.push(serie);
             });
         });
         return visibleSerie; // _data.series || [];
     };
-
-    // FILTER
-    //         if (_data.year && _data.chart[0].year) {
-    //             dataset = _data.chart.filter(function (i) { return i.year == _data.year; });
-    // FAKE DATASET
-    // if (!_options.data && !_options.indicator && _options.map.selectable) {
-    //     _data.DATASET = _data.mapData.map(function (c) { return {id: c.id, value: 0}; });
-    // }
 
 
 
@@ -218,7 +195,7 @@ var lbvisMap = (function (MAP, LBV, args) {
      * Drawing
      */
     var _mapOptions = function () {
-        _data.chartOptions = {
+        var chartOptions = {
             credits:    { enabled: false },
             chart: {
                 //width: _options.map.width,
@@ -229,8 +206,6 @@ var lbvisMap = (function (MAP, LBV, args) {
             },
             title: { text: null },
             subtitle: { text: null },
-            colors:     ['#CA652D', '#13585D', '#9D9542', '#143D5D', '#E34A3A'],
-//            colorAxis:  _chartAxis(),
             legend:     _chartLegend(null),
             tooltip:    { enabled: (_options.map.tooltip ? true : false), valueDecimals: 2 },
             // Map-specific
@@ -257,15 +232,14 @@ var lbvisMap = (function (MAP, LBV, args) {
                 }
             },
         };
-        return _data.chartOptions;
+        return chartOptions;
     };
 
     var _mapDraw = function(series=_data.series) {
-        _mapOptions();
-        _data.chartOptions.series = series;
-        //_data.chartOptions.colorAxis = _data.seriesAxis;
-        //_chartAxis(_data.cache[_options.main][_options.year]);
-        _data.chart = new Highcharts.mapChart(_data.chartOptions);
+        var chartOptions = _mapOptions();
+        chartOptions.series = series;
+        chartOptions.colorAxis = _chartAxis(series[0]);
+        _data.chart = new Highcharts.mapChart(chartOptions);
         return _data.chart;
     };
 
@@ -279,7 +253,6 @@ var lbvisMap = (function (MAP, LBV, args) {
 
     var _chartLegend = function (text) {
         if (!_options.map.legend || !text) return { enable: false };
-        //console.log('hellooe', text);
         var legend = {
             verticalAlign: 'bottom',
             floating: true,
@@ -290,7 +263,6 @@ var lbvisMap = (function (MAP, LBV, args) {
 
     var _chartAxis = function (serie) {
         // pick selected DS
-        //var ds = _data.series.match(function (d) { return d.id == dsid; });
         var data = serie.data.map(function (i) { return i.value; });
         var axis = {
             min: Math.min.apply(Math, data),//.map(function (d) { return d.value; })),
@@ -299,10 +271,6 @@ var lbvisMap = (function (MAP, LBV, args) {
             maxColor: _options.colors.max,
             minColor: _options.colors.min
         };
-        //         _map.colorAxis.min = Math.min.apply(Math, d);
-        //         _map.colorAxis.max = Math.max.apply(Math, d);
-        //_data.chart.colorAxis[0].update(_map.colorAxis);
-        //console.log('CAxis for ', axis);//, serie, data);
         return axis;
     };
 
