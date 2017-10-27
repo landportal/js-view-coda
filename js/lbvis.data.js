@@ -40,6 +40,17 @@ FROM <http://data.landportal.info> \
     /**************************************
      * Generic / basic queries
      */
+    var _datasets = function () {
+        return query.prefix + " \
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#> \
+SELECT DISTINCT ?id ?label \
+" + query.from + " \
+WHERE { \
+?dataset a qb:DataSet ; \
+  skos:notation ?id ; \
+  rdfs:label ?label . \
+} ORDER BY ?label";
+    };
     var _countries = function () {
         return query.prefix + " \
 SELECT ?iso3 ?name \
@@ -50,51 +61,65 @@ WHERE { \
 BIND (REPLACE(STR(?uri), '" + lod.uri.country + "','') AS ?iso3) \
 } ORDER BY ?name";
     };
+
+
     var _indicators = function () {
         return query.prefix + " \
-SELECT ?id ?label ?dataset \
+SELECT ?id ?label ?dataset ?unit ?description ?indicatorSeeAlso \
 " + query.from + " \
 WHERE { \
 ?uri a cex:Indicator ; \
   skos:notation ?id ; \
   rdfs:label ?label ; \
-  dct:source ?datasetURL . \
+  dct:description ?description ; \
+  sdmx-attribute:unitMeasure ?unit ; \
+  dct:source ?datasetURL ; \
+  rdfs:seeAlso ?indicatorSeeAlso .\
 ?datasetURL skos:notation ?dataset . \
 } ORDER BY ?label";
     };
-    var _datasets = function () {
+
+    var _countryIndicators = function(iso3) {
         return query.prefix + " \
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#> \
-SELECT DISTINCT ?id ?label \
+SELECT ?id ?label ?dataset ?unit ?description ?indicatorSeeAlso \
 " + query.from + " \
 WHERE { \
-?dataset a qb:DataSet ; \
-     skos:notation ?id ; \
-     rdfs:label ?label . \
-} ORDER BY ?label";
+?obs cex:ref-indicator ?uri ; \
+  cex:ref-area <" + lod.uri.country + iso3 +"> ; \
+  cex:value ?value . \
+?uri a cex:Indicator ; \
+  skos:notation ?id ; \
+  rdfs:label ?label ; \
+  dct:description ?description ; \
+  sdmx-attribute:unitMeasure ?unit ; \
+  dct:source ?datasetURL ; \
+  rdfs:seeAlso ?indicatorSeeAlso .\
+?datasetURL skos:notation ?dataset . \
+} ORDER BY ?label LIMIT 1";
     };
+//BIND (REPLACE(STR(?uri), '" + lod.uri.indicator + "','') AS ?id) \
 
     /**************************************
      * Indicators-based queries
      */
-    var _indicatorInfo = function (indicator) {
-        return query.prefix + " \
-SELECT ?id ?uri ?label ?description ?unit ?indicatorSeeAlso ?datasetURL ?dataset ?datasetSeeAlso ?sourceURL ?source ?sourceSeeAlso \
-" + query.from + " \
-WHERE { \
-?uri rdfs:label ?label ; \
-        dct:description ?description ; \
-        sdmx-attribute:unitMeasure ?unit ; \
-        dct:source ?datasetURL ; \
-		rdfs:seeAlso ?indicatorSeeAlso .\
-?datasetURL rdfs:label ?dataset ; \
-        dct:publisher ?sourceURL ; \
-		rdfs:seeAlso ?datasetSeeAlso . \
-?sourceURL rdfs:label ?source . \
-BIND( ?sourceURL AS ?sourceSeeAlso ) \
-VALUES (?uri ?id) { (<" + lod.uri.indicator + indicator + "> '" + indicator + "') } \
-}";
-    };
+//     var _indicatorInfo = function (indicator) {
+//         return query.prefix + " \
+// SELECT ?id ?uri ?label ?description ?unit ?indicatorSeeAlso ?datasetURL ?dataset ?datasetSeeAlso ?sourceURL ?source ?sourceSeeAlso \
+// " + query.from + " \
+// WHERE { \
+// ?uri rdfs:label ?label ; \
+//         dct:description ?description ; \
+//         sdmx-attribute:unitMeasure ?unit ; \
+//         dct:source ?datasetURL ; \
+// 		rdfs:seeAlso ?indicatorSeeAlso .\
+// ?datasetURL rdfs:label ?dataset ; \
+//         dct:publisher ?sourceURL ; \
+// 		rdfs:seeAlso ?datasetSeeAlso . \
+// ?sourceURL rdfs:label ?source . \
+// BIND( ?sourceURL AS ?sourceSeeAlso ) \
+// VALUES (?uri ?id) { (<" + lod.uri.indicator + indicator + "> '" + indicator + "') } \
+// }";
+//     };
 
     // Available years for a given indicator, optionally filter by country
     var _indicatorYears = function (indicator, iso3) {
@@ -235,18 +260,19 @@ BIND (REPLACE(STR(?countryURL),'" + lod.uri.country + "','') AS ?iso3) \
     /**************************************
      * Countries-based queries
      */
-    var _countryIndicators = function(iso3) {
-        return query.prefix + " \
-SELECT DISTINCT ?id ?label \
-" + query.from + " \
-WHERE { \
-?obs cex:ref-indicator ?uri ; \
-cex:ref-area <" + lod.uri.country + iso3 +"> ; \
-cex:value ?value . \
-?uri rdfs:label ?label . \
-BIND (REPLACE(STR(?uri), '" + lod.uri.indicator + "','') AS ?id) \
-} ORDER BY ?label";
-    };
+
+//     var _countryIndicators = function(iso3) {
+//         return query.prefix + " \
+// SELECT DISTINCT ?id ?label \
+// " + query.from + " \
+// WHERE { \
+// ?obs cex:ref-indicator ?uri ; \
+// cex:ref-area <" + lod.uri.country + iso3 +"> ; \
+// cex:value ?value . \
+// ?uri rdfs:label ?label . \
+// BIND (REPLACE(STR(?uri), '" + lod.uri.indicator + "','') AS ?id) \
+// } ORDER BY ?label";
+//     };
 
     var _countryIndicatorValues = function (iso3, indicator, year) {
         var filters = [ "?country", "?indicatorURI", "?id" ],
@@ -292,7 +318,7 @@ VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
             countryIndicators: function (iso3) { return _countryIndicators(iso3); },
             countryIndicatorValues: function (iso3, indicator, year) { return _countryIndicatorValues(iso3, indicator, year); },
             // Indicator queries
-            indicatorInfo: function (id) { return _indicatorInfo(id); },
+            //indicatorInfo: function (id) { return _indicatorInfo(id); },
             indicatorYears: function (indicator, iso3) { return _indicatorYears(indicator, iso3); },
             indicatorValues: function(indicator, years) { return _indicatorValues(indicator, years); },
             indicatorDetails: function(indicator) { return _indicatorDetails(indicator); },
