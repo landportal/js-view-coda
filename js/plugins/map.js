@@ -57,7 +57,7 @@ var lbvisMap = (function (MAP, LBV, args) {
         chartOptions: {},
         cache: {},              // by indicators / year / iso3
         years: {},              // by indicators
-        series: [],
+        series: {},
         seriesAxis: [],
     };
 
@@ -92,7 +92,7 @@ var lbvisMap = (function (MAP, LBV, args) {
 
     // ASYNC
     var _loadIndicator = function (lbid) {
-        if (_options.cache[lbid]) return $.Defered;
+        //if (_options.cache[lbid]) return $.Defered.d;
         return LBVIS.getIndicatorInfo(lbid).done(function() {
             _options.cache[lbid] = LBVIS.cache('info')[lbid][0];
         });;
@@ -104,6 +104,7 @@ var lbvisMap = (function (MAP, LBV, args) {
             colorIndex: 0,
             name: indicator.label + ' (' + year + ')',
             data: [],
+            // selected: (lbid == _options.main && year == _options.year ? true : false),
             // visible: (lbid == _options.main && year == _options.year ? true : false),
             // showInLegend: (_options.legend && lbid == _options.main && year == _options.year ? true : false),
         };
@@ -124,11 +125,11 @@ var lbvisMap = (function (MAP, LBV, args) {
         }
         if (Object.keys(_data.cache).length == 0) {
             console.log('no series');
-            _data.series = null;
+            //_data.series = null;
             return null;
         }
-        _data.series = [];
-        var visibleSerie = null;
+        _data.series = []; // only keep 1 serie (for now)
+        //var visibleSerie = null;
         // should be _data.indicators (not cache)?
         $.each(_data.cache, function (lbid, dataset) {
             var indicator = LBV.cache('indicators').filter(function (i) { return i.id == lbid; })[0];
@@ -136,14 +137,14 @@ var lbvisMap = (function (MAP, LBV, args) {
                 var serie = _mapSerie(indicator, year, data);
                 // If serie is visible
                 if (lbid == _options.main && year == _options.year) {
-                    serie.visible = true;
+                    // serie.visible = true;
+                    // serie.selected = true;
                     if (_options.legend) serie.showInLegend = true;
-                    visibleSerie = serie;
-                    _data.series.push(serie);
+                    _data.series[serie.id] = serie;
                 }
             });
         });
-        return visibleSerie; // _data.series || [];
+        return _data.series;
     };
 
 
@@ -200,13 +201,14 @@ var lbvisMap = (function (MAP, LBV, args) {
         return chartOptions;
     };
 
-    var _mapDraw = function(series=_data.series) {
+    var _mapDraw = function(series=null) {
         // if (_data.chart) { // Redraw?
         //     console.log('Map already drawn', _data.chart);
         // }
         var chartOptions = _mapOptions();
-        chartOptions.series = series;
-        if (_options.legend) chartOptions.colorAxis = _chartAxis(series[0]);
+        chartOptions.series = series || Object.values(_data.series);
+        // first draw // make a colorAxis
+        if (_options.legend) chartOptions.colorAxis = _chartAxis(chartOptions.series[0]);
         _data.chart = new Highcharts.mapChart(chartOptions);
         return _data.chart;
     };
@@ -256,23 +258,33 @@ var lbvisMap = (function (MAP, LBV, args) {
         // Country Indicators select
         if (_options.loadIndicators) {
             //$(_options.target + ' select[name="indicator"]').parent().removeClass("hidden");
-            $(_options.target + '-form').delegate('select[name="indicator"]', "change", function(e) {
+            $(_options.target + '-form').delegate('select', "change", function(e) {
                 e.preventDefault();
-                if (e.target.value) {
-                    _options.main = e.target.value;
-                    //console.log(e.target.value + ' loaded', e);
-                    _loadData([e.target.value]).done(function () {
-                        //console.log(e.target.value + ' loaded', _data.cache[e.target.value]);
-                        _options.year = Math.max.apply(Math, _data.years[_options.main]);
-                        _setOptionsYears();
-                        _loadIndicator(_options.main).done(function () {
-                            _chartTitle();
+                if (e.target.name == 'year' && e.target.value) {
+                    _options.year = e.target.value;
+                    _mapSeries();
+                    // _data.chart.getSelectedSeries();
+                    // _data.chart.addSeries(s);
+                    //console.log('new: ', _data.serie);
+                    _mapDraw();
+                }
+                if (e.target.name == 'indicator') {
+                    if (e.target.value) {
+                        _options.main = e.target.value;
+                        //console.log(e.target.value + ' loaded', e);
+                        _loadData([e.target.value]).done(function () {
+                            //console.log(e.target.value + ' loaded', _data.cache[e.target.value]);
+                            _options.year = Math.max.apply(Math, _data.years[_options.main]);
+                            _setOptionsYears();
+                            _loadIndicator(_options.main).done(function () {
+                                _chartTitle();
+                            });
+                            _mapSeries();
+//                            _data.chart.colorAxis = _chartAxis(s);
+                            _mapDraw();//_data.series);
+                            //                        _chartTitle();
                         });
-                        var s = _mapSeries();
-                        _data.chart.colorAxis = _chartAxis(s);
-                        _mapDraw();//_data.series);
-//                        _chartTitle();
-                    });
+                    }
                 }
             });
         }
@@ -332,7 +344,7 @@ var lbvisMap = (function (MAP, LBV, args) {
                 _loadData().done(function () {
                     //console.log('Map init', _options, _data);
                     // If 'year' is not set, pick latest one
-                    var visible = _mapSeries();
+                    _mapSeries();
                     _mapDraw();
                     //_data.chart.colorAxis = _chartAxis(visible);//_data.cache
                     _chartTitle();
