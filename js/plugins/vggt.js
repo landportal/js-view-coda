@@ -141,25 +141,21 @@ WHERE { \
                 .subpanels.filter(function(s) { return s.id == _options.subpanel; })[0];
         //console.log('got values ', subpanel);
         // fill up some shit
-        return LBVIS.getIndicatorInfo(subpanel.id).done(function () {
-            _data.indicator = LBVIS.cache('info')[_options.subpanel][0];
-            var indi = _data.series.filter(function (s) {
-                return s.id == _options.subpanel;// && s.year == _options.year;
-            });
-            if (!indi.length) {
-                indi.push({value: 'na'});
-            }
-            // Display panels
-            var panelVal = '<span class="value-'+indi[0].value.toLocaleLowerCase()+'"></span>'
-                    + '<a href="' + _data.indicator.indicatorSeeAlso + '">' + _data.indicator.label + '</a>'
-                    + ' <span class="glyphicon glyphicon-info-sign"'
-                    + ' data-toggle="tooltip" data-placement="top"'
-                    + ' title="' + _data.indicator.description.replace(/"/g, "'") +
-                    '"></span>';
-            $(_options.targetGraph + ' .panelVal').html(panelVal);
-            if (indi[0].comment)
-                $(_options.targetGraph + ' .panelInfo').html(indi[0].comment);
+        //return LBVIS.getIndicator(subpanel.id).done(function () {
+        var indi = _data.series.filter(function (s) {
+            return s.id == _options.subpanel;// && s.year == _options.year;
         });
+        if (!indi.length) {
+            indi.push({value: 'na'});
+        }
+
+        // Display panels
+        _data.indicator = LBVIS.cache('indicators').find(i => i.id == subpanel.id);
+        var panelVal = '<span class="value-'+indi[0].value.toLocaleLowerCase()+'"></span>'
+            + _data.indicator.render;
+        $(_options.targetGraph + ' .panelVal').html(panelVal);
+        if (indi[0].comment)
+            $(_options.targetGraph + ' .panelInfo').html(indi[0].comment);
         //$(_options.targetGraph).html('hello VGGT');
     }
     

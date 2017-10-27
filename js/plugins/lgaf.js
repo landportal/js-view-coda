@@ -117,19 +117,14 @@ BIND (REPLACE(STR(?uri), '" + LBVIS.DATA.lod.uri.indicator + "','') AS ?id) \
             $(_options.targetGraph).empty();
             //console.log('LGAF got values ', _options, _data, subpanel);
             subpanel.indicators.forEach(function (indicator) {
-                LBVIS.getIndicatorInfo(indicator.id).done(function () {
-                    var details = LBVIS.cache('info')[indicator.id][0];
-                    // Display panels
-                    var row = _lgafValueSpan(indicator)
-                        + '<a href="' + details.indicatorSeeAlso + '">' + details.label + '</a>'
-                        + ' <span class="glyphicon glyphicon-info-sign"'
-                        + ' data-toggle="tooltip" data-placement="top"'
-                        + ' title="' + details.description.replace(/"/g, "'") +
-                        '"></span>';
-                    $(_options.targetGraph).append('<li>' + row + '</li>');
-                    $(_options.target + " .loading").addClass("hidden");
-                    $(_options.target + " .empty").addClass("hidden");
-                });
+                //LBVIS.getIndicator(indicator.id).done(function () {
+                var details = LBVIS.cache('indicators').find(i => i.id == indicator.id);
+                // Display panels
+                var row = _lgafValueSpan(indicator)
+                    + details.render;
+                $(_options.targetGraph).append('<li>' + row + '</li>');
+                $(_options.target + " .loading").addClass("hidden");
+                $(_options.target + " .empty").addClass("hidden");
             });
             //$(_options.target + " .loading").addClass("hidden");
             //$(_options.targetGraph).html(row);
