@@ -1,14 +1,20 @@
 /*
- * LB vis. Pie chart
+ * JS View CODA Library
  *
- NOTE from (original) dev.
-
- Lot of hardcoded stuff to remove
- Make this truely dynamic. Need to fix the query
-
+ * A visualization library for the Land Portal Land Book / LOD
+ *
+ * MIT License
+ * Copyright (c) 2016 - Land Portal Foundation - http://www.landportal.info
+ * Copyright (c) 2016-2017 - Jules Clement <jules@ker.bz>
+ *
+ * Author: Jules Clement <jules@ker.bz>
+ *
+ * Plugin: Pie chart
+ *
  */
 
 'use strict';
+
 var lbvisPie = (function (LBV, args) {
     var LBVIS = LBV; // Main lbvis object
 
@@ -34,19 +40,25 @@ var lbvisPie = (function (LBV, args) {
         //indicators: args.cache  || {}   // Indicators metadata cache
     };
 
+
+
+    /*
+     * Data & Series
+     */
     var _loadData = function () {
-        var chart = _options.indicators;
         // If we don't load main indicator data, remove it from the serie
+        var filters = { indicator: _options.indicators };
         if (!_options.loadMain) {
-            chart.splice(chart.indexOf(_options.main), 1);
+            filters.indicators.splice(filters.indicators.indexOf(_options.main), 1);
         }
+        if (_options.iso3 && !_options.loadCountries) filters.country = [ _options.iso3 ];
+        if (_options.year) filters.time = [ _options.year ];
+
         var qvalues = LBVIS.DATA.obsValues(
-            ['indicator', 'country', 'time', 'value'], // 'year'
-            { indicator: chart } //country: [_options.iso3], time: [_options.year] }
+            ['indicator', 'country', 'time', 'value'],
+            filters
         );
-        //console.log('G', qvalues);
         return $.getJSON(LBVIS.DATA.sparqlURL(qvalues), function (data) {
-            //_data.series = ['yoyo'];
             data.results.bindings.forEach(function (d, i) {
                 var lbid = d.indicator.value;
                 if (!_data.cache[d.country.value]) _data.cache[d.country.value] = {};
@@ -57,37 +69,18 @@ var lbvisPie = (function (LBV, args) {
         });
     };
 
-    var _drawChart = function () {
-        //console.log('Draw Pie', _data.series);
-        var ChartPieOp = {
-            credits: { enabled: false },
-            chart: {
-                renderTo: $(_options.target)[0],
-                type: 'pie',
-                backgroundColor: 'transparent',
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-            },
-            title: { text: null },
-            subtitle: { text: null },
-            plotOptions: {
-                pie: {
-                    colors: _options.colors,
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                }
-            },
-            series: _data.series
+    var _loadIndicator = function (lbid) {
+        var ind = {
+            id: lbid,
+            label: lbid,
         };
-        // if (_options.legend) {
-        //     ChartPieOp.legend = {
-        //         //itemWidth: 300,
-        //         //labelFormat: '{name}: {value}',
-        //     };
-        // }
-        $(_options.target + " .loading").addClass("hidden");
-        _data.chart = new Highcharts.Chart(ChartPieOp);
-        return _data.chart;
+        if (_options.cache[lbid]) {
+            return _options.cache[lbid];
+        } else {
+            ind = LBVIS.getIndicatorInfo(lbid);
+        }
+        console.log(lbid + ' info', ind);
+        return ind;
     };
 
     var TreeSerie = function (tree=_options.tree) {
@@ -103,8 +96,10 @@ var lbvisPie = (function (LBV, args) {
     }
     
     var HCseries = function(main, indicators) {
+        if (_options.mainDelta) {
+            indicators.splice(indicators.indexOf(_options.main), 1);
+        }
         //var cIso3 = _options.iso3 ? _options.iso3 : _data.countries[0];
-        console.log(main, indicators);
         Object.keys(_data.cache).forEach(function(iso3) {
             var serie = {
                 type: 'pie',
@@ -114,20 +109,55 @@ var lbvisPie = (function (LBV, args) {
                 visible: (main == _options.main && iso3 == _options.iso3 ? true : false),
                 showInLegend: (_options.legend && main == _options.main && iso3 == _options.iso3 ? true : false),
             };
-            indicators.forEach(function (lbid) {
-                //console.log('iso: '+ iso3, 'id: '+ lbid, _data.cache[iso3]);
-                if (_data.cache[iso3][lbid]) {
-                    var dt = _data.cache[iso3][lbid];
-                    serie.data.push({
-                        //id: lbid,
-                        name: (_options.cache[lbid] ? _options.cache[lbid].label : main),
-                        y: dt.value.value ? parseFloat(dt.value.value) : 0,
-                    });
-                }
+            serie.data = indicators.map(function(lbid) {
+                //console.log(lbid + ' // ' + iso3, _data.cache[iso3][lbid].value);
+                return {
+                    id: lbid,
+                    name: (_options.cache[lbid] ? _options.cache[lbid].label : lbid),
+                    y: parseFloat(_data.cache[iso3][lbid].value.value),
+                };
             });
-            //console.log('got ', serie);//main, iso3);
+            if (_options.mainDelta) {
+                var miss = indicators.map(function(lbid) { return parseFloat(_data.cache[iso3][lbid].value.value); });
+                var other = parseFloat(_data.cache[iso3][_options.main].value.value)
+                    - miss.reduce(function(a, b) { return a + b; }, 0);
+                serie.data.push({
+                    id: other,
+                    name: 'Other',
+                    y: parseFloat(other.toFixed(2))
+                });
+            }
             _data.series.push(serie);
         });
+    };
+
+
+
+    /*
+     * Drawing & UI
+     */
+    var _drawChart = function () {
+        var ChartPieOp = {
+            credits: { enabled: false },
+            chart: {
+                renderTo: $(_options.target)[0],
+                type: 'pie',
+                backgroundColor: 'transparent',
+            },
+            colors: _options.colors,
+            title: { text: null },
+            subtitle: { text: null },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                }
+            },
+            series: _data.series
+        };
+        $(_options.target + " .loading").addClass("hidden");
+        _data.chart = new Highcharts.Chart(ChartPieOp);
+        return _data.chart;
     };
 
     var _chartTitle = function  () {
@@ -145,6 +175,11 @@ var lbvisPie = (function (LBV, args) {
                 text: _data.countriesLabel[_options.iso3],
                 useHTML: true, align: 'center'
             };
+            if (_options.mainDelta) {
+                var v = _data.cache[_options.iso3][_options.main];
+                var i = _options.cache[_options.main];
+                subtitle.text += ': ' + v.value.value + ' (' + i.unit + ')';
+            }
         }
         if (title || subtitle) {
             _data.chart.setTitle(title, subtitle);
