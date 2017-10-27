@@ -80,7 +80,42 @@ var lbvis = (function (args) {
         });
     };
 
+    // Get available indicators, can filter by country
+    var _getIndicators = function (iso3=_options.iso3) {
+        var def = 'indicators';
+        var q = _DATA.queries.indicators;
+        if (iso3) {
+            def = 'indicatorsByCountry';
+            if (_defers[def][iso3]) return _defers[def][iso3];
+            q = _DATA.queries.countryIndicators(iso3);
+        } else if (_defers[def]) {
+            return _defers[def];
+        }
+        return _getSPARQL(q, def, iso3).done(function () {
+            console.log(def, _cache[def]);
+            if (iso3) {
+                _cache[def][iso3] = _cache[def][iso3].map(x => _formatIndicatorLabel(x));
+            } else {
+                _cache[def] = _cache[def].map(x => _formatIndicatorLabel(x));
+            }
+        }, def);
+    };
 
+    // Get all countries
+    var _getCountries = function (id=null) {
+        if (id) {
+            if (_defers.countriesByIndicator[id]) {
+                return _defers.countriesByIndicator[id];
+            }
+            var q = _DATA.queries.indicatorCountries(id);
+            return _getSPARQL(q, 'countriesByIndicator', id);
+        }
+        if (_defers['countries']) {
+            return _defers['countries'];
+        }
+        var q = _DATA.queries.countries;
+        return _getSPARQL(q, 'countries');
+    };
 
     // Get JSON data from a SPARQL query
     //  - store jQuery deferred in _defer by type
@@ -122,27 +157,6 @@ var lbvis = (function (args) {
         }
         return _getSPARQL(_DATA.queries.datasets, 'datasets');
     };
-    // Get all countries
-    var _getCountries = function () {
-        if (_defers['countries']) {
-            return _defers['countries'];
-        }
-        var q = _DATA.queries.countries;
-        return _getSPARQL(q, 'countries');
-    };
-    // Get all available indicators
-    var _getIndicators = function (iso3) {
-        var def = 'indicators';
-        var q = _DATA.queries.indicators;
-        if (iso3) {
-            def = 'indicatorsByCountry';
-            if (_defers[def][iso3]) return _defers[def][iso3];
-            q = _DATA.queries.countryIndicators(iso3);
-        } else if (_defers[def]) {
-            return _defers[def];
-        }
-        return _getSPARQL(q, def, iso3);
-    };
 
     // Get an indicator metadata
     var _getIndicatorInfo = function (id) {
@@ -151,17 +165,17 @@ var lbvis = (function (args) {
         }
         var q = _DATA.queries.indicatorInfo(id);
         return _getSPARQL(q, 'info', id).done(function () {
-            _cache.info[id][0].render = _cache.info[id][0].label;
+            _cache.info[id][0] =  _formatIndicatorLabel(_cache.info[id][0]);
         });
     };
-    // Return valid years for an indicator
-    var _getIndicatorCountries = function (id) {
-        if (_defers.countriesByIndicator[id]) {
-            return _defers.countriesByIndicator[id];
-        }
-        var q = _DATA.queries.indicatorCountries(id);
-        return _getSPARQL(q, 'countriesByIndicator', id);
-    }
+
+    var _formatIndicatorLabel = function (indicator) {
+        indicator.render = '<span><a href="' + indicator.indicatorSeeAlso.replace(/.*\/\/landportal.info/, '') + '">' + indicator.label + '</a></span>'
+                + ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="'
+                + indicator.description.replace(/"/g, "'") + '"></span>';
+        return indicator;
+    };
+
     // Return valid years for an indicator
     var _getIndicatorYears = function (id) {
         if (_defers.years[id]) {
@@ -189,6 +203,26 @@ var lbvis = (function (args) {
         );
     };
 
+    var _generateSelect = function (data, groupby=null, group=null) {
+        var options = '';
+        if (group) {
+            options = group.map(function (g) {
+                return '<optgroup label="' + g.label  + '">'
+                    + data.filter(i => i[groupby] == g.id).map(function (d) {
+                        return '<option value="' + d.id + '">' + d.label + '</option>'
+                    }).join("\n")
+                    + "</optgroup>\n";
+            });
+        } else {
+            options = data.map(function (d) {
+                var v = (d.constructor == Object ? d.id : d);
+                var l = (d.constructor == Object ? d.label : d);
+                return '<option value="' + v + '">' + l + '</option>';
+            }).join("\n");
+        }
+        return options;
+    };
+
     var _init = function () {
         _getCountries();
         _getIndicators();
@@ -204,17 +238,22 @@ var lbvis = (function (args) {
         defers: function (type) { return (type ? _defers[type] : _defers); },
         cache: function (type) { return (type ? _cache[type] : _cache); },
         debug: function () { console.log(_options,  _cache, _defers); },
+        // maybe map those my 'id' / code
         countries: function () { return _cache['countries']; },
         indicators: function () { return _cache['indicators']; },
+        datasets: function () { return _cache['datasets']; },
 
+        // Data / query
         loadData: _loadData,
-
+        getIndicators: _getIndicators,
+        getCountries: _getCountries,
+        // oldz
+        getIndicatorCountries: _getCountries, //function (indicator) { return _getIndicatorCountries(indicator); },
+        // for ranking?
         setMetadata: function (target, id) { return _setMetadata(target, id); },
-        getIndicatorInfo: function (indicator) { return _getIndicatorInfo(indicator); },
+        //getIndicatorInfo: function (indicator) { return _getIndicatorInfo(indicator); },
         getIndicatorYears: function (indicator) { return _getIndicatorYears(indicator); },
-        getIndicatorCountries: function (indicator) { return _getIndicatorCountries(indicator); },
         getIndicatorDetails: function (indicator, iso3) { return _getIndicatorDetails(indicator, iso3); },
-        getIndicators: function (indicator) { return _getIndicators(indicator); },
 
         ready: function () {
             if (_options.loadIndicators) {
@@ -223,34 +262,12 @@ var lbvis = (function (args) {
             return _defers['countries'];
         },
 
+        // UI helpers
+        generateSelect: _generateSelect,
+        // To be replaced by generateSelect
         indicatorsSelect: function (selected) {
-            var options = '';
-            _cache['datasets'].forEach(function (ds) {
-                options += '<optgroup label="'+ds.label+'">';
-                _cache['indicators'].filter(function (ind) {
-                    if (ind.dataset == ds.id) {
-                        options += '<option value="'+ind.id+'"'
-                            + (ind.id === selected ? ' selected="selected"' : '')
-                            + '>' + ind.label + '</option>';
-                    }
-                });
-                options += '</optgroup>';
-            });
-            return options;
-        },
-
-        // Helpers
-        generateOptions: function (data, selected, group) {
-            var options = '';
-            data.forEach(function (item) {
-                var id = (typeof item === 'object' ? item.id : item);
-                var label = (typeof item === 'object' ? item.label : item);
-                //console.log(item, id, label);
-                options += '<option value="'+id+'"'
-                    + (id === selected ? ' selected="selected"' : '')
-                    + '>' + label + '</option>';
-            });
-            return options;
+            console.warn('REPLACE me by generateSelect(DATA, GROUPBY, GROUP)');
+            return _generateSelect(_cache['indicators'], 'dataset', _cache['datasets']);
         },
 
         // Correct rounding to 2 decimal after floating point (RTFM http://floating-point-gui.de/
