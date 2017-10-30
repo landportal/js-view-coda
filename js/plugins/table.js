@@ -62,24 +62,25 @@ var lbvisTable = (function (LBV, args) {
     };
 
     var _setOptionsYears = function () {
-        var str = '<option value>Select a year...</option>';
-        _data.years.forEach(function (y) {
-            var selected = (_options.year == y ? ' selected="selected"' : '');
-	    str += '<option value="' + y + '"' + selected + '>' + y + '</option>';
-        });
-        $(_options.target + '-form select[name="year"]').html(str);
-	$(_options.target + '-form select[name="year"]').prop( "disabled", false );
+        var opts = LBVIS.generateSelect(_data.years);
+        if (opts) {
+            var el = $(_options.target + '-form select[name="year"]');
+            el.find('option:gt(0)').remove();
+            el.append(opts);
+            el.prop( "disabled", false );
+        }
     };
+
     var _setOptionsIndicators = function () {
-        var el = $(_options.target + '-form select[name="indicator"]');
-        el.html('<option value>Select an indicator...</option>');
         if (_options.iso3) {
             _data.indicators = LBVIS.cache('indicatorsByCountry')[_options.iso3];
         } else {
             _data.indicators = LBVIS.cache('indicators');
         }
-        var opts = LBVIS.indicatorsSelect(_options.indicator);
+        var opts = LBVIS.generateSelect(_data.indicators, 'dataset', LBVIS.cache('datasets'));
         if (opts) {
+            var el = $(_options.target + '-form select[name="indicator"]');
+            el.find('option:gt(0)').remove();
             el.append(opts);
             el.prop( "disabled", false );
         }
@@ -119,9 +120,13 @@ var lbvisTable = (function (LBV, args) {
             return col;
         }
         var str = '';
-        if (col == 'indicator' && _options.cache[ind.id]) {
-            str = _options.cache[ind.id].render;
-            //console.log(ind, _options.cache[ind.id]);
+        if (col == 'indicator') {
+            if (_options.cache[ind.id]) {
+                str = _options.cache[ind.id].render;
+            } else {
+                str = LBVIS.cache('indicators').find(i => i.id == ind.id).render;//[col];
+            }
+            //console.log(ind, _options.cache[ind.id], LBVIS.cache('indicators').find(i => i.id == ind.id));
         } else {
             str = ind[col];
         }
