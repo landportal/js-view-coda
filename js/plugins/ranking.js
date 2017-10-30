@@ -4,131 +4,89 @@ var lbvisRanking = (function (LBV, args) {
     var LBVIS = LBV;
     var _options = {
         target:         '#ranking',
-        indicator:      'WB-SP.POP.TOTL',
+        indicators:     [ 'WB-SP.POP.TOTL' ],
         expand:         5,
         expandThreshold: 20,
+        //year:           null,
     };
     $.extend(true, _options, args); // true = deep merge
 
     var _data = {
-        values: []
+        years: [],
+        cache: {},
+        values: [] // contains displayed values
     };
 
-    // TODO: this is for all indicators, if a theme is provided, filter them
+    var _loadData = function (indicators) {
+        return LBVIS.loadData(indicators).done(function () {
+            _data.cache = LBVIS.cache('data');
+            _data.years = Object.keys(_data.cache[_options.main])
+            _data.years.sort(function (a, b) { return b - a; });
+            _setOptionsYears();
+            _options.year = Object.keys(_data.cache[_options.main])[0];
+            //console.log('GOT', _data.cache, _data.years);
+        });
+    };
+
     var _setOptionsIndicators = function () {
-        var el = $(_options.target + '-form select[name="indicator"]');
-        el.html('<option>Select an indicator...</option>');
-        //var opts = LBVIS.generateOptions(LBVIS.cache('indicators'), _options.indicator);
-        var opts = LBVIS.indicatorsSelect(_options.indicator);
+        var opts = LBVIS.generateSelect(LBVIS.cache('indicators'), 'dataset', LBVIS.cache('datasets'));
         if (opts) {
+        var el = $(_options.target + '-form select[name="indicator"]');
+            el.find('option:gt(0)').remove();
             el.append(opts);
             el.prop( "disabled", false );
         }
     };
     var _setOptionsYears = function () {
-        var str = '<option>Year...</option>';
-        _data.years.forEach(function (y) {
-            var selected = (_options.year == y ? ' selected="selected"' : '');
-            str += '<option value="' + y + '"' + selected + '>' + y + '</option>';
-        });
-        $(_options.target + '-form select[name=year]').html(str);
-        $(_options.target + '-form select[name=year]').prop( "disabled", false );
+        var opts = LBVIS.generateSelect(_data.years);
+        if (opts) {
+            var el = $(_options.target + '-form select[name="year"]');
+            el.find('option:gt(0)').remove();
+            el.append(opts);
+            el.prop( "disabled", false );
+        }
     };
 
     var _bindUI = function () {
         _setOptionsIndicators();
         $(_options.target + '-form').delegate("select", "change", function(e) {
             if (e.target.name == 'indicator') {
-                _options.indicator = e.target.value;
-                _getIndicatorDetails().done(function () {
-                    _getIndicator().done(function () {
-                        _draw();
-                    });
+                _options.main = e.target.value;
+                _loadData([_options.main]).done(function () {
+                    _draw();
                 });
             }
             if (e.target.name == 'year') {
                 _options.year = e.target.value;
-                _getIndicator().done(function () { _draw(); });
+                _draw();
             }
         });
     };
-
-
-
     
-    var _setMetadata = function () {
-        $('.metadata span').each(function (n) {
-            var name = $(this).attr('name');
-            switch (name) {
-            case 'indicator':
-                name = 'label';
-            case 'dataset':
-            case 'source':
-                $(this).html(_data.indicator[name]);
-                var p = $(this).parent();
-                if (p[0].nodeName == 'A') p.attr('href', _data.indicator[name + 'SeeAlso']);
-                break;
-            case 'unit':
-            case 'year':
-            case 'description':
-                $(this).html(_data.indicator[name]);
-                break;
-            default:
-                console.log(this);
-            }
-            //console.log('done '+name, $(this));
-        });
-    };
-
-    var _getIndicator = function () {
-        var query = LBVIS.DATA.queries.indicatorValues(
-            _options.indicator, _options.year
-        );
-        _data.values = [];
-        //console.log('get indicator', _options, query);
-        return $.getJSON(LBVIS.DATA.sparqlURL(query), function (data) {
-            // set year in info
-            $('.metadata [name="year"]').html('('+_options.year+')');
-            data.results.bindings.forEach(function (item) {
-                var ind = {};
-                Object.keys(item).forEach(function (prop) { ind[prop] = item[prop].value; });
-                _data.values.push(ind);
-            });
-        });
-    };
-
-    var _getIndicatorDetails = function () {
-        return LBVIS.getIndicatorDetails(_options.indicators[0]).done(function () {
-            _data.indicator = LBVIS.cache('info')[_options.indicators[0]][0];
-            _data.years = LBVIS.cache('years')[_options.indicators[0]];
-            _options.year = _data.years.sort().reverse()[0];//Math.max.apply(Math, _data.years);
-            _setMetadata();
-//            _setOptionsYears();
-        });
-    };
-
     var _formatRow = function (ind, pos, length) {
-        var country = LBV.countries().find(function (v) { return v.iso3 == ind.iso3; });
+        var country = LBV.countries().find(function (v) { return v.iso3 == ind.country.value; });
         var flag = '<span class="rank">' + (pos + 1) + '</span>',
-            rank = '<span class="flag-icon flag-' + ind.iso3 + '"/>';
+            rank = '<span class="flag-icon flag-' + ind.country.value + '"/>';
         //console.log('Row : ', ind, country);
         var rowClass = (_data.values.length > _options.expandThreshold && pos >= _options.expand && pos + _options.expand < length ? ' class="hidden"' : '');
-        return '<li'+rowClass+'><div class="col-xs-8">' + flag + rank + (country ? country.name : ind.iso3) + '</div>'
+        return '<li'+rowClass+'><div class="col-xs-8">' + flag + rank + (country ? country.name : ind.country.value) + '</div>'
             + '<div class="value col-xs-4 text-right"'
-            + (parseFloat(ind.value) && ind.value.indexOf('.') > -1 ? ' title="'+ind.value+'"' : '') + '>'
-            + (parseFloat(ind.value) ? LBVIS.round(ind.value, 2) : ind.value)
+            + (parseFloat(ind.value.value) && ind.value.value.indexOf('.') > -1 ? ' title="'+ind.value.value+'"' : '') + '>'
+            + (parseFloat(ind.value.value) ? LBVIS.round(ind.value.value, 2) : ind.value.value)
             + '</div></li>';
     };
     var _expandRow = function () {
         return '<li class="hidden-print text-center expand"><a name="show">Expand</a><a name="hide" class="hidden">Hide</a></li>';
     };
-    var _draw = function () {
-        var max = Math.max.apply(Math, _data.values.map(function (v) { return v.value; }));
-        var html = '<li><div class="col-xs-4"><h4>Country / Rank</h4></div>'
-                 + '<div class="col-xs-8 text-right"><br/>Value in: '+_data.indicator.unit+'</div></li>';
-        // Quickly test data values to see if numeric (should be provided by indicator.hascodedvalue property?)
-        // If NaN, reverse array
-        if (_data.values.length && !parseFloat(_data.values[0].value)) _data.values = _data.values.reverse();
+
+    var _formatList = function () {
+        var main = LBVIS.indicators().find(i => i.id == _options.main);
+        // List header
+        var html = '<li><div class="col-xs-9"><h4>' + main.render + '</h4><p>Country / Rank</p></div>'
+                 + '<div class="col-xs-3 text-right"><h4>'+ _options.year + '</h4><i>in ' + main.unit + '</i></div></li>';
+        // Quickly test data values (first one) to see if it's numeric, NaN, reverse array
+        if (!parseFloat(_data.values[0].value.value)) _data.values = _data.values.reverse();
+        // Fill up rows
         _data.values.forEach(function (ind, pos) {
             if (pos == _options.expand && _data.values.length > _options.expandThreshold) html += _expandRow();
             html += _formatRow(ind, pos, _data.values.length);
@@ -137,7 +95,6 @@ var lbvisRanking = (function (LBV, args) {
 	$(_options.target + ' [data-toggle="tooltip"]').tooltip();
         $(_options.target + ' .expand a').on('click', function(e) {
             e.preventDefault();
-            //console.log('click expand', e);
             $(e.target.parentElement.children).toggleClass('hidden');
             if (e.target.name == 'show') {
                 $(_options.target + ' li').removeClass('hidden');
@@ -147,16 +104,28 @@ var lbvisRanking = (function (LBV, args) {
         });
     };
 
+    var _draw = function () {
+        _data.values = Object.values(_data.cache[_options.main][_options.year]);
+        _data.values.sort(function (a, b) { // sort descending
+            return parseFloat(b.value.value) - parseFloat(a.value.value);
+        });
+        if (!_data.values) {
+            console.warn('OWWW!');
+            return false;
+        }
+        _formatList();
+    };
+
     return {
         debug: function () {
             console.log(_options, _data);
         },
         init: function () {
             if (_options.indicators) {
-                _getIndicatorDetails().done(function () {
-                    _getIndicator().done(function () {
-                        _draw();
-                    });
+                if (!_options.main) _options.main = _options.indicators[0];
+                _loadData(_options.indicators).done(function () {
+                    if (!_options.year) _options.year = Object.keys(_data.cache[_options.main])[0];
+                    _draw();
                 });
             }
             _bindUI();
