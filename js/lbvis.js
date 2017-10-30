@@ -70,10 +70,8 @@ var lbvis = (function (args) {
                 var lbid = d.indicator.value;
                 var time = d.time.value;
                 var iso3 = d.country.value;
-//                if (_data.years.indexOf(time) === -1) _data.years.push(time);
                 if (!_cache.data[lbid]) _cache.data[lbid] = {};
                 if (!_cache.data[lbid][time]) _cache.data[lbid][time] = {};
-                //if (!_cache.data[lbid][time][iso3]) _cache.data[lbid][time][iso3] = {};
                 _cache.data[lbid][time][iso3] = d;
             });
             //console.log('GOTCHA', data.results.bindings);
@@ -92,29 +90,39 @@ var lbvis = (function (args) {
             return _defers[def];
         }
         return _getSPARQL(q, def, iso3).done(function () {
-            console.log(def, _cache[def]);
+            //console.log('reprocess', def, iso3, _cache);
             if (iso3) {
                 _cache[def][iso3] = _cache[def][iso3].map(x => _formatIndicatorLabel(x));
             } else {
                 _cache[def] = _cache[def].map(x => _formatIndicatorLabel(x));
             }
-        }, def);
+        });
     };
 
     // Get all countries
-    var _getCountries = function (id=null) {
-        if (id) {
-            if (_defers.countriesByIndicator[id]) {
-                return _defers.countriesByIndicator[id];
+    // lbid is a LB indicators id
+    //   it narrow down the list of countries to those with data for this indicator
+    var _getCountries = function (lbid=null) {
+        if (lbid) {
+            if (_defers.countriesByIndicator[lbid]) {
+                return _defers.countriesByIndicator[lbid];
             }
-            var q = _DATA.queries.indicatorCountries(id);
-            return _getSPARQL(q, 'countriesByIndicator', id);
+            var q = _DATA.queries.indicatorCountries(lbid);
+            return _getSPARQL(q, 'countriesByIndicator', lbid);
         }
         if (_defers['countries']) {
             return _defers['countries'];
         }
         var q = _DATA.queries.countries;
         return _getSPARQL(q, 'countries');
+    };
+
+    // Get all datasets
+    var _getDatasets = function () {
+        if (_defers['datasets']) {
+            return _defers['datasets'];
+        }
+        return _getSPARQL(_DATA.queries.datasets, 'datasets');
     };
 
     // Get JSON data from a SPARQL query
@@ -150,57 +158,16 @@ var lbvis = (function (args) {
         return deferred;
     };
 
-    // Get all datasets
-    var _getDatasets = function () {
-        if (_defers['datasets']) {
-            return _defers['datasets'];
-        }
-        return _getSPARQL(_DATA.queries.datasets, 'datasets');
-    };
 
-    // Get an indicator metadata
-    var _getIndicatorInfo = function (id) {
-        if (_defers.info[id]) {
-            return _defers.info[id];
-        }
-        var q = _DATA.queries.indicatorInfo(id);
-        return _getSPARQL(q, 'info', id).done(function () {
-            _cache.info[id][0] =  _formatIndicatorLabel(_cache.info[id][0]);
-        });
-    };
 
+    //
+    //
+    //
     var _formatIndicatorLabel = function (indicator) {
-        indicator.render = '<span><a href="' + indicator.indicatorSeeAlso.replace(/.*\/\/landportal.info/, '') + '">' + indicator.label + '</a></span>'
-                + ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="'
-                + indicator.description.replace(/"/g, "'") + '"></span>';
+        indicator.render = '<span><a href="' + indicator.indicatorSeeAlso.replace(/.*\/\/landportal.info/, '') + '">' + indicator.label + '</a>'
+            + ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="'
+            + indicator.description.replace(/"/g, "'") + '"></span></span>';
         return indicator;
-    };
-
-    // Return valid years for an indicator
-    var _getIndicatorYears = function (id) {
-        if (_defers.years[id]) {
-            return _defers.years[id];
-        }
-        var q = _DATA.queries.indicatorYears(id);
-        //console.log('get years for', id, q);
-        return _getSPARQL(q, 'years', id).done(function () {
-            // Re-process cache for years
-            var years = _cache['years'][id];
-            _cache['years'][id] = [];
-            _cache['period'][id] = [];
-            $.each(years, function (key, value) {
-                _cache['years'][id].push(value.year);
-                _cache['period'][id].push(value.period);
-            });
-        });
-    };
-    // getIndicator info + years
-    // iso3 (FUTURE), narrow down the years for a given country
-    var _getIndicatorDetails = function (id, iso3) {
-        return $.when(
-            _getIndicatorInfo(id),
-            _getIndicatorYears(id)
-        );
     };
 
     var _generateSelect = function (data, groupby=null, group=null) {
@@ -247,13 +214,6 @@ var lbvis = (function (args) {
         loadData: _loadData,
         getIndicators: _getIndicators,
         getCountries: _getCountries,
-        // oldz
-        getIndicatorCountries: _getCountries, //function (indicator) { return _getIndicatorCountries(indicator); },
-        // for ranking?
-        setMetadata: function (target, id) { return _setMetadata(target, id); },
-        //getIndicatorInfo: function (indicator) { return _getIndicatorInfo(indicator); },
-        getIndicatorYears: function (indicator) { return _getIndicatorYears(indicator); },
-        getIndicatorDetails: function (indicator, iso3) { return _getIndicatorDetails(indicator, iso3); },
 
         ready: function () {
             if (_options.loadIndicators) {
@@ -264,12 +224,36 @@ var lbvis = (function (args) {
 
         // UI helpers
         generateSelect: _generateSelect,
-        // To be replaced by generateSelect
-        indicatorsSelect: function (selected) {
-            console.warn('REPLACE me by generateSelect(DATA, GROUPBY, GROUP)');
-            return _generateSelect(_cache['indicators'], 'dataset', _cache['datasets']);
+        // HighCharts helpers
+        chartOptions: function(options, chart) {
+            return $.extend(true, {
+                credits: { enabled: false },
+                chart: {
+                    renderTo: $(options.target)[0],
+                    backgroundColor: 'transparent',
+                },
+                exporting: false,
+                colors: options.colors,
+                title: { text: null },
+                subtitle: { text: null },
+            }, chart);
+        },
+        // Update chart title
+        setTitle: function (chart, title=null, subtitle=null, useHTML=true) {
+            if (!chart) return false;
+            title = {text: (title ? title : null)};
+            subtitle = {text: (subtitle ? subtitle : null)};
+            if (useHTML) {
+                if (title.text) title.useHTML = true;
+                if (subtitle.text) subtitle.useHTML = true;
+            }
+            if (title.text || subtitle.text) {
+                //console.log('set', title, subtitle);
+                chart.setTitle(title, subtitle);
+            }
         },
 
+        // JS basics...
         // Correct rounding to 2 decimal after floating point (RTFM http://floating-point-gui.de/
         // or http://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html (if you crave more details)
         round: function (num, precision) {

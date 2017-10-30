@@ -81,7 +81,7 @@ WHERE { \
 
     var _countryIndicators = function(iso3) {
         return query.prefix + " \
-SELECT ?id ?label ?dataset ?unit ?description ?indicatorSeeAlso \
+SELECT DISTINCT ?id ?label ?dataset ?unit ?description ?indicatorSeeAlso \
 " + query.from + " \
 WHERE { \
 ?obs cex:ref-indicator ?uri ; \
@@ -95,7 +95,7 @@ WHERE { \
   dct:source ?datasetURL ; \
   rdfs:seeAlso ?indicatorSeeAlso .\
 ?datasetURL skos:notation ?dataset . \
-} ORDER BY ?label LIMIT 1";
+} ORDER BY ?label";
     };
 //BIND (REPLACE(STR(?uri), '" + lod.uri.indicator + "','') AS ?id) \
 
@@ -374,7 +374,7 @@ VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
                 + " WHERE { ?obs " + obs.join('; ') + " . "
                 + " " + values.join(' ')
                 + " " + bind.join(' ')
-                + " }";
+                + " } ORDER BY ?time";
             // DEBUG
             //console.log(q);
             return query.prefix + q; // sparqlURL(query);
