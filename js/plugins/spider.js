@@ -91,27 +91,32 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
             for(var i=0; i<chart_series_labels.length; i++){
                 var serie_name;
                 switch (chart_series_labels[i]){
-	        case "sigiTo100":	serie_name = "SIGI";
+	        case "sigiTo100":
+	            serie_name = "SIGI";
 		    if(data.results.bindings[0][chart_series_labels[2]]!=undefined){
 		        serie_name = serie_name	+ " ("+data.results.bindings[0][chart_series_labels[2]].value+")";
 		    }
 		    break;
-	        case "giniTo100": 	serie_name = "GINI Index";
+	        case "giniTo100":
+ 	            serie_name = "GINI Index";
 		    if(data.results.bindings[0][chart_series_labels[5]]!=undefined){
 		        serie_name = serie_name	+ " ("+data.results.bindings[0][chart_series_labels[5]].value+")";
 		    }
 		    break;
-	        case "hdiTo100": 	serie_name = "HDI";
+	        case "hdiTo100":
+ 	            serie_name = "HDI";
 		    if(data.results.bindings[0][chart_series_labels[8]]!=undefined){
 		        serie_name = serie_name	+ " ("+data.results.bindings[0][chart_series_labels[8]].value+")";
 		    }
 		    break;
-	        case "ghiTo100": 	serie_name = "GHI";
+	        case "ghiTo100":
+ 	            serie_name = "GHI";
 		    if(data.results.bindings[0][chart_series_labels[11]]!=undefined){
 		        serie_name = serie_name	+ " ("+data.results.bindings[0][chart_series_labels[11]].value+")";
 		    }
 		    break;
-	        default:			serie_name = "notused";
+	        default:
+		    serie_name = "notused";
 		    break;
 	        }
 
@@ -137,20 +142,14 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
         });
     };
     var drawSpider = function () {
-        var CharSpiderOp = {
+        var CharSpiderOp = LBVIS.chartOptions(_options, {
             chart: {
                 polar: true,
                 type: 'line',
-                renderTo: $(_options.target)[0],
-                backgroundColor: 'transparent'
             },
-            credits: { enabled:false },
-            title: {
-                text: _options.title
-            },
+            title: { text: _options.title },
             subtitle: {
-                text: LBVIS.countries().filter(
-                    function (c) { return c.iso3 === _options.iso3; })[0].name
+                text: LBVIS.countries().filter(c => c.iso3 == _options.iso3)[0].name
             },
             pane: {
                 size: '80%'
@@ -174,7 +173,8 @@ BIND ((xsd:float(100) - (?ghi))  AS ?ghiTo100) . \
                 data: chart_series,
                 pointPlacement: 'on'
             }]
-        };
+        });
+        delete CharSpiderOp.colors;
         return new Highcharts.Chart(CharSpiderOp);
     };
 
