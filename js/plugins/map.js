@@ -160,7 +160,7 @@ var lbvisMap = (function (MAP, LBV, args) {
                     showInLegend: false,
                 }
             },
-            colorAxis: (!_options.map.zoom ? {} : null),
+            colorAxis: (_options.map.legend ? {} : null),
         });
         return chartOptions;
     };
