@@ -57,7 +57,7 @@ var lbvisMap = (function (MAP, LBV, args) {
         chartOptions: {},
         cache: {},              // by indicators / year / iso3
         years: {},              // by indicators
-        series: {},
+        series: [],
         seriesAxis: [],
     };
 
@@ -66,54 +66,29 @@ var lbvisMap = (function (MAP, LBV, args) {
     /*
      * Data
      */
-    var _loadData = function (inds=_options.indicators) {
-        var qvalues = LBVIS.DATA.obsValues(
-            ['indicator', 'country', 'time', 'value'], // 'year'
-            { indicator: inds } //country: [_options.iso3], time: [_options.year] }
-        );
-        return $.getJSON(LBVIS.DATA.sparqlURL(qvalues), function (data) {
-            data.results.bindings.forEach(function (d, i) {
-                var lbid = d.indicator.value;
-                var time = d.time.value;
-                var iso3 = d.country.value;
-                if (!_data.cache[lbid]) _data.cache[lbid] = {};
-                if (!_data.cache[lbid][time]) _data.cache[lbid][time] = {};
-                if (!_data.cache[lbid][time][iso3]) _data.cache[lbid][time][iso3] = {};
-                _data.cache[lbid][time][iso3] = d; //parseFloat(d.value.value);
-            });
-            // (re)Compute available years per serie
-            // @TODO: should be based on inds?
+    var _loadData = function (indicators) {
+        return LBVIS.loadData(indicators).done(function () {
+            _data.cache = LBVIS.cache('data');
             $.each(_data.cache, function (lbid, data) {
-                _data.years[lbid] = Object.keys(data).map(function (d) { return parseInt(d); });
+                _data.years[lbid] = Object.keys(data);//.map(function (d) { return d; });
+                _data.years[lbid].sort(function (a, b) { return b - a });
             });
-            //console.log('GOTCHA', data.results.bindings);
+            //console.log('GOTCHA', indicators, _data.cache, _data.years);
         });
-    };
-
-    // ASYNC
-    var _loadIndicator = function (lbid) {
-        //if (_options.cache[lbid]) return $.Defered.d;
-        return LBVIS.getIndicatorInfo(lbid).done(function() {
-            _options.cache[lbid] = LBVIS.cache('info')[lbid][0];
-        });;
     };
 
     var _mapSerie = function (indicator, year, data) {
         var serie = {
-            id: indicator.id + '-' + year,
-            colorIndex: 0,
-            name: indicator.label + ' (' + year + ')',
-            data: [],
-            // selected: (lbid == _options.main && year == _options.year ? true : false),
-            // visible: (lbid == _options.main && year == _options.year ? true : false),
-            // showInLegend: (_options.legend && lbid == _options.main && year == _options.year ? true : false),
+            id: indicator.id, // + '-' + year,
+            name: indicator.label, // + ' (' + year + ')',
+            data: Object.keys(data).map(function (iso3) {
+                return {
+                    colorIndex: 0,
+                    id: data[iso3].country.value,
+                    value: parseFloat(data[iso3].value.value),
+                };
+            }),
         };
-        serie.data = Object.keys(data).map(function (iso3) {
-            return {
-                id: data[iso3].country.value,
-                value: parseFloat(data[iso3].value.value),
-            };
-        });
         return serie;
     };
 
@@ -121,15 +96,13 @@ var lbvisMap = (function (MAP, LBV, args) {
     // returns HightChart map series
     var _mapSeries = function () {
         if (!_options.year && _options.main) {
-            _options.year = Math.max.apply(Math, _data.years[_options.main]);
+            _options.year = _data.years[_options.main][0];
         }
         if (Object.keys(_data.cache).length == 0) {
-            console.log('no series');
-            //_data.series = null;
+            console.warn('No series in cache');
             return null;
         }
         _data.series = []; // only keep 1 serie (for now)
-        //var visibleSerie = null;
         // should be _data.indicators (not cache)?
         $.each(_data.cache, function (lbid, dataset) {
             var indicator = LBV.cache('indicators').filter(function (i) { return i.id == lbid; })[0];
@@ -139,11 +112,12 @@ var lbvisMap = (function (MAP, LBV, args) {
                 if (lbid == _options.main && year == _options.year) {
                     // serie.visible = true;
                     // serie.selected = true;
-                    if (_options.legend) serie.showInLegend = true;
-                    _data.series[serie.id] = serie;
+                    if (_options.map.legend) serie.showInLegend = true;
+                    _data.series.push(serie);
                 }
             });
         });
+        //console.log('Series', _data.series);
         return _data.series;
     };
 
@@ -153,18 +127,14 @@ var lbvisMap = (function (MAP, LBV, args) {
      * Drawing & Highchart
      */
     var _mapOptions = function () {
-        var chartOptions = {
-            credits:    { enabled: false },
+        var chartOptions = LBVIS.chartOptions(_options, {
             chart: {
                 //width: _options.map.width,
-                renderTo: $(_options.target)[0],
                 height: _options.map.height,
                 backgroundColor: _options.colors.background,
                 margin: [0, 0, 0, 0]
             },
-            title: { text: null },
-            subtitle: { text: null },
-            legend:     _chartLegend(null),
+            legend: _chartLegend(null),
             colors: [ _options.colors.min, _options.colors.max ],
             // Map-specific
             mapNavigation: {
@@ -172,12 +142,10 @@ var lbvisMap = (function (MAP, LBV, args) {
                 enableMouseWheelZoom: false,
                 enableDoubleClickZoom: true,
                 enableTouchZoom: false,
-                buttonOptions: { align: 'right' }
+                buttonOptions: { align: 'right' },
             },
             tooltip: { enabled: (_options.map.tooltip ? true : false) },
             plotOptions: {
-                // series: {
-                // },
                 map: {
                     mapData: JSONMAP,
                     joinBy: 'id',
@@ -189,36 +157,42 @@ var lbvisMap = (function (MAP, LBV, args) {
                         select: { color: _options.colors.select }
                     },
                     point: { events: _options.map.events },
-                    // tooltip:    {
-                    //     enabled: (_options.map.tooltip ? true : false),
-                    //     formatter: (LBVIS.isString(_options.map.tooltip) ? _options.map.tooltip : undefined),
-                    //     valueDecimals: 2
-                    // },
                     showInLegend: false,
                 }
             },
-        };
+            colorAxis: (!_options.map.zoom ? {} : null),
+        });
         return chartOptions;
     };
 
     var _mapDraw = function(series=null) {
-        // if (_data.chart) { // Redraw?
-        //     console.log('Map already drawn', _data.chart);
-        // }
         var chartOptions = _mapOptions();
-        chartOptions.series = series || Object.values(_data.series);
-        // first draw // make a colorAxis
-        if (_options.legend) chartOptions.colorAxis = _chartAxis(chartOptions.series[0]);
+        if (series) {
+            chartOptions.series = series;
+            if (_options.map.legend) chartOptions.colorAxis = _chartAxis(chartOptions.series[0]);
+        }
         _data.chart = new Highcharts.mapChart(chartOptions);
+        _data.chart.hideLoading();
+
+        if (series) {
+            if (_options.iso3) {
+                _data.chart.get(_options.iso3).select();
+            }
+            // If we have an init zoom option + iso3, zoom on that country
+            if (_options.map.zoom) {
+                _data.chart.get(_options.iso3).zoomTo();
+                _data.chart.mapZoom(_options.map.zoom);
+            }
+        }
         return _data.chart;
     };
 
     var _chartTitle = function  () {
-        var title = (_options.main && _options.cache[_options.main] ? _options.cache[_options.main].render : _options.main);
-        var subtitle = (_options.year ? _options.year : '');
-        if (title || subtitle) {
-            _data.chart.setTitle({text: title, align: 'center', useHTML: true}, {text: subtitle, align: 'center', useHTML: true});
-        }
+        if (_options.hideTitle) return false;
+        var ind = LBVIS.indicators().find(i => i.id == _options.main);
+        var title = (ind ? ind.render : _options.main);
+        var subtitle = (_options.year ? _options.year : null);
+        LBVIS.setTitle(_data.chart, title, subtitle);
     };
 
     var _chartLegend = function (text) {
@@ -237,11 +211,9 @@ var lbvisMap = (function (MAP, LBV, args) {
             minColor: _options.colors.min
         };
         if (serie) {
-            // pick selected DS
             var data = serie.data.map(function (i) { return i.value; });
             axis.min = Math.min.apply(Math, data);
             axis.max = Math.max.apply(Math, data);
-            //if (axis.min == 0) axis.min = 1;
             if (axis.min > 0) {
                 axis.type = 'logarithmic';
             }
@@ -249,73 +221,71 @@ var lbvisMap = (function (MAP, LBV, args) {
         return axis;
     };
 
+    var _mapUpdate = function () {
+        _data.chart.showLoading();
+        _mapSeries();
+        //console.log('  show', _data.series[0]);
+        _data.chart.series.forEach(function (cs) {
+            //console.log('  hc', cs.options.id);
+            cs.remove();
+        });
+        _data.chart.colorAxis[0].update(_chartAxis(_data.series[0]));
+        _data.chart.addSeries(_data.series[0]);
+        _chartTitle();
+        _data.chart.hideLoading();
+            if (_options.iso3) {
+                _data.chart.get(_options.iso3).select();
+            }
+    };
 
 
     /*
      * UI related
      */
     var _bindUI = function () {
-        // Country Indicators select
+        // Indicators + year selection
         if (_options.loadIndicators) {
-            //$(_options.target + ' select[name="indicator"]').parent().removeClass("hidden");
             $(_options.target + '-form').delegate('select', "change", function(e) {
                 e.preventDefault();
                 if (e.target.name == 'year' && e.target.value) {
                     _options.year = e.target.value;
-                    _mapSeries();
-                    // _data.chart.getSelectedSeries();
-                    // _data.chart.addSeries(s);
-                    //console.log('new: ', _data.serie);
-                    _mapDraw();
+                    _mapUpdate();
+                    $(e.target).val('').change();
                 }
-                if (e.target.name == 'indicator') {
-                    if (e.target.value) {
-                        _options.main = e.target.value;
-                        //console.log(e.target.value + ' loaded', e);
-                        _loadData([e.target.value]).done(function () {
-                            //console.log(e.target.value + ' loaded', _data.cache[e.target.value]);
-                            _options.year = Math.max.apply(Math, _data.years[_options.main]);
-                            _setOptionsYears();
-                            _loadIndicator(_options.main).done(function () {
-                                _chartTitle();
-                            });
-                            _mapSeries();
-//                            _data.chart.colorAxis = _chartAxis(s);
-                            _mapDraw();//_data.series);
-                            //                        _chartTitle();
-                        });
-                    }
+                if (e.target.name == 'indicator' && e.target.value) {
+                    _options.main = e.target.value;
+                    _options.year = null;
+                    _loadData([e.target.value]).done(function () {
+                        _mapUpdate();
+                        _setOptionsYears();
+                        $(e.target).val('').change();
+                    });
                 }
+                //console.log(e);
             });
         }
     };
 
     var _setOptionsYears = function () {
-        var el = $(_options.target + '-form select[name="year"]');
-        var str = '';
-        _data.years[_options.main].forEach(function(year) {
-            str += '<option value="'+year+'"'
-                + (year == _data.year ? ' selected="selected"' : '')
-                + '>'+year+'</option>';
-        });
-        el.html('<option value>Select a year...</option>');
-        if(str.length) {
-            el.append(str);
+        var opts = LBVIS.generateSelect(_data.years[_options.main]);
+        if(opts) {
+            var el = $(_options.target + '-form select[name="year"]');
+            el.find('option:gt(0)').remove();
+            el.append(opts);
             el.prop( "disabled", false );
         }
-        return str;
     };
 
     var _setOptionsIndicators = function () {
-        var el = $(_options.target + '-form select[name="indicator"]');
-        el.html('<option value>Select an indicator...</option>');
         if (_options.iso3) {
             _data.indicators = LBVIS.cache('indicatorsByCountry')[_options.iso3];
         } else {
             _data.indicators = LBVIS.cache('indicators');
         }
-        var opts = LBVIS.indicatorsSelect(_options.main);
+        var opts = LBVIS.generateSelect(_data.indicators, 'dataset', LBVIS.cache('datasets'));
         if (opts) {
+            var el = $(_options.target + '-form select[name="indicator"]');
+            el.find('option:gt(0)').remove();
             el.append(opts);
             el.prop( "disabled", false );
         }
@@ -328,7 +298,6 @@ var lbvisMap = (function (MAP, LBV, args) {
      */
     return {
         debug: function () {
-            console.log(_options, _data);
             return {options: _options, data: _data};
         },
         //draw: _mapDraw,
@@ -337,35 +306,26 @@ var lbvisMap = (function (MAP, LBV, args) {
             if (_options.series) {
                 _mapDraw(_options.series);
             } else {
+                _mapDraw();
                 // If there is no 'main' indicator set, pick the first one from the list
                 if (!_options.main && _options.indicators) _options.main = _options.indicators[0];
-
                 // Fetch data
-                _loadData().done(function () {
+                _loadData(_options.indicators).done(function () {
                     //console.log('Map init', _options, _data);
-                    // If 'year' is not set, pick latest one
-                    _mapSeries();
-                    _mapDraw();
-                    //_data.chart.colorAxis = _chartAxis(visible);//_data.cache
-                    _chartTitle();
+                    _mapUpdate();
+                    //_chartTitle();
                     if (_options.loadYears) _setOptionsYears();
                     //console.log('show ' + _options.main + '-' +_options.year, visible);
                 });
-                // _getIndicatorDetails().done(function () {
-                //     _chartTitle();
-                // });
             }
-
-            if (_options.iso3 && _data.chart) {
-                //console.log(_data.chart);
-                _data.chart.get(_options.iso3).select();
-            }
-            // If we have an init zoom option + iso3, zoom on that country
-            if (_options.map.zoom) {
-                _data.chart.get(_options.iso3).zoomTo();
-                _data.chart.mapZoom(_options.map.zoom);
-            }
-
+            // if (_options.iso3 && _data.chart) {
+            //     _data.chart.get(_options.iso3).select();
+            // }
+            // // If we have an init zoom option + iso3, zoom on that country
+            // if (_options.map.zoom) {
+            //     _data.chart.get(_options.iso3).zoomTo();
+            //     _data.chart.mapZoom(_options.map.zoom);
+            // }
             // Fills up the Indicators select menu
             if (_options.loadIndicators) {
                 // Only with indicators that have data for this country...
