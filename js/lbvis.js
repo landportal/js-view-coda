@@ -57,6 +57,10 @@ var lbvis = (function (args) {
 
     // New Method (> 1.2.x)
     var _loadData = function (indicators, iso3=null, year=null) {
+        if (!indicators) {
+            console.warn('No data to load');
+            return null;
+        }
         var filters = { indicator: indicators };
         if (iso3) filters.country = [ iso3 ];
         if (year) filters.time = [ year ];
@@ -248,7 +252,7 @@ var lbvis = (function (args) {
                 if (subtitle.text) subtitle.useHTML = true;
             }
             if (title.text || subtitle.text) {
-                //console.log('set', title, subtitle);
+                //console.log('setTitle', title, subtitle);
                 chart.setTitle(title, subtitle);
             }
         },
