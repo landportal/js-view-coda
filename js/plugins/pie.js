@@ -77,7 +77,7 @@ var lbvisPie = (function (LBV, args) {
         if (_options.cache[lbid]) {
             return _options.cache[lbid];
         } else {
-            ind = LBVIS.getIndicatorInfo(lbid);
+            ind = LBVIS.indicators().find(i => i.id == lbid);
         }
         console.log(lbid + ' info', ind);
         return ind;
@@ -99,7 +99,6 @@ var lbvisPie = (function (LBV, args) {
         if (_options.mainDelta) {
             indicators.splice(indicators.indexOf(_options.main), 1);
         }
-        //var cIso3 = _options.iso3 ? _options.iso3 : _data.countries[0];
         Object.keys(_data.cache).forEach(function(iso3) {
             var serie = {
                 type: 'pie',
@@ -109,53 +108,55 @@ var lbvisPie = (function (LBV, args) {
                 visible: (main == _options.main && iso3 == _options.iso3 ? true : false),
                 showInLegend: (_options.legend && main == _options.main && iso3 == _options.iso3 ? true : false),
             };
-            serie.data = indicators.map(function(lbid) {
-                //console.log(lbid + ' // ' + iso3, _data.cache[iso3][lbid].value);
+            serie.data = indicators.filter(lbid => _data.cache[iso3][lbid]).map(function(lbid) {
                 return {
                     id: lbid,
                     name: (_options.cache[lbid] ? _options.cache[lbid].label : lbid),
                     y: parseFloat(_data.cache[iso3][lbid].value.value),
                 };
             });
+            console.log(serie.data);
+            // New that we have all data loaded, let's compute the overall diff
             if (_options.mainDelta) {
-                var miss = indicators.map(function(lbid) { return parseFloat(_data.cache[iso3][lbid].value.value); });
-                var other = parseFloat(_data.cache[iso3][_options.main].value.value)
-                    - miss.reduce(function(a, b) { return a + b; }, 0);
-                serie.data.push({
-                    id: other,
-                    name: 'Other',
-                    y: parseFloat(other.toFixed(2))
-                });
+                serie.data.push(_pieMainDelta(_data.cache[iso3][_options.main].value.value, serie.data));
             }
             _data.series.push(serie);
         });
     };
 
-
+    var _pieMainDelta = function (main, data) {
+        var miss = data.map(function(d) { return d.y; });
+        var other = parseFloat(main) - miss.reduce(function(a, b) { return a + b; }, 0);
+        return {
+            id: other,
+            name: 'Other',
+            y: LBVIS.round(other, 2),
+        };
+    };
 
     /*
      * Drawing & UI
      */
     var _drawChart = function () {
-        var ChartPieOp = {
-            credits: { enabled: false },
-            chart: {
-                renderTo: $(_options.target)[0],
-                type: 'pie',
-                backgroundColor: 'transparent',
-            },
-            colors: _options.colors,
-            title: { text: null },
-            subtitle: { text: null },
+        var ChartPieOp = LBVIS.chartOptions(_options, {
             plotOptions: {
                 pie: {
                     allowPointSelect: true,
                     cursor: 'pointer',
+                    size: '80%',
+                    //minSize: '10',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    },
+                    tooltip: {
+                        headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
+                        pointFormat: '<span style="color:{point.color}">\u25CF</span> {point.name}: <b>{point.y}</b><br/>',
+                    }
                 }
             },
             series: _data.series
-        };
-        $(_options.target + " .loading").addClass("hidden");
+        });
         _data.chart = new Highcharts.Chart(ChartPieOp);
         return _data.chart;
     };
@@ -204,11 +205,6 @@ var lbvisPie = (function (LBV, args) {
             console.log(_options, _data);
         },
         init: function () {
-            // Get main indicator info, then load Pie data. It may not exists?
-            // LBVIS.getIndicatorInfo(_options.main).done(function () {
-            //     _data.indicator = LBVIS.cache('info')[_options.main][0];
-            // });
-
             _data.countriesLabel = {};
             LBVIS.countries().forEach(function (c) { _data.countriesLabel[c.iso3] = c.name; });
 
@@ -219,16 +215,13 @@ var lbvisPie = (function (LBV, args) {
                     HCseries(_options.main, _options.indicators);
                 }
                 if (_options.loadCountries) {
-                    var cc = [];
-                    LBVIS.cache('countries').forEach(function (c) {
-                        if (_data.countries.indexOf(c.iso3) >= 0) {
-                            _data.country[c.iso3] = c.name;
-                            cc.push({id: c.iso3, label: c.name});
-                        }
-                    });
-                    //console.log(cc);
-                    var countr = LBVIS.generateOptions(cc, _options.iso3);
-                    $(_options.target + '-country').html(countr);
+                    var countries = LBVIS.cache('countries').filter(function (c) {
+                        return _data.countries.indexOf(c.iso3) > -1;
+                    }).map(function (c) { return {id: c.iso3, label: c.name} });
+                    var opts = LBVIS.generateSelect(countries);
+                    var select = $(_options.target + '-country');
+                    select.html(opts);
+                    select.val(_options.iso3);
                 }
                 _drawChart();
                 _bindUI();
