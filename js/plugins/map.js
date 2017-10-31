@@ -42,7 +42,7 @@ var lbvisMap = (function (MAP, LBV, args) {
             height:     500,  // print hack, for wkhtmltopdf
             cursor:     null,
             events:     {},
-            legend:     false,
+            legend:     true,
             nav:        false,
             selectable: false,
             tooltip:    true,
@@ -229,13 +229,14 @@ var lbvisMap = (function (MAP, LBV, args) {
             //console.log('  hc', cs.options.id);
             cs.remove();
         });
-        _data.chart.colorAxis[0].update(_chartAxis(_data.series[0]));
+        if (_options.map.legend) _data.chart.colorAxis[0].update(_chartAxis(_data.series[0]));
         _data.chart.addSeries(_data.series[0]);
         _chartTitle();
+        // Should be in the serie builder?
+        if (_options.iso3) {
+            _data.chart.get(_options.iso3).select();
+        }
         _data.chart.hideLoading();
-            if (_options.iso3) {
-                _data.chart.get(_options.iso3).select();
-            }
     };
 
 
