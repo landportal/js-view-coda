@@ -79,7 +79,7 @@ var lbvisPie = (function (LBV, args) {
         } else {
             ind = LBVIS.indicators().find(i => i.id == lbid);
         }
-        console.log(lbid + ' info', ind);
+        //console.log(lbid + ' info', ind);
         return ind;
     };
 
@@ -115,7 +115,7 @@ var lbvisPie = (function (LBV, args) {
                     y: parseFloat(_data.cache[iso3][lbid].value.value),
                 };
             });
-            console.log(serie.data);
+            //console.log(serie.data);
             // New that we have all data loaded, let's compute the overall diff
             if (_options.mainDelta) {
                 serie.data.push(_pieMainDelta(_data.cache[iso3][_options.main].value.value, serie.data));
@@ -202,7 +202,7 @@ var lbvisPie = (function (LBV, args) {
     // Public interfaces
     return {
         debug: function () {
-            console.log(_options, _data);
+            return {options: _options, data: _data};
         },
         init: function () {
             _data.countriesLabel = {};
