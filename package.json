@@ -1,6 +1,6 @@
 {
     "name": "js-view-coda",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "scripts": {
         "install": "echo \"Install app (maybe build sass here?)\"",
         "test": "echo \"Warning: no tests\""
