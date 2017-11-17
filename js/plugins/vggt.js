@@ -38,7 +38,7 @@ var lbvisVGGT = (function (LBV, args) {
             //for (var law in data) {
             data.forEach(function (country) {
                 if (country.iso3 == _options.iso3)
-                    _data.laws = country.data;
+                    _data.laws = country.laws;
             });
             //}
             //_data.years = Object.keys(_data.panels);
@@ -189,7 +189,15 @@ WHERE { \
         init: function () {
             // Load indicators
             _getLaws().done(function () {
-                $(_options.targetGraph + ' .countryInfo').html(_data.laws).linkify();
+                $(_options.targetGraph + ' .countryInfo').empty()
+				var law_list = $('<ul/>').appendTo(_options.targetGraph + ' .countryInfo')
+				$.each(_data.laws, function( index, law ) {
+					if ("link" in law) {
+						law_list.append('<li><a href="'+law['link']+'">'+law['title']+'</a></li>');
+					} else {
+						law_list.append('<li>'+law['title']+'</li>');
+					}
+				});
             });
             
             _getStruct();//.done(function () {
