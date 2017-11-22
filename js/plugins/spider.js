@@ -19,11 +19,11 @@ var lbvisSpider = (function (LBV, args) {
         var lod = LBVIS.DATA.lod;
         return query.prefix + " \
 SELECT  ?sigi ?sigiTo100 ?sigiYear ?gini ?giniTo100 ?giniYear ?hdi ?hdiTo100 ?hdiYear ?ghi ?ghiTo100 ?ghiYear \
-" + query.from + " \
+FROM <" + query.graphs.data + "> \
 WHERE { \
 OPTIONAL{ \
 SELECT ?sigi (year(?dateTime) as ?sigiYear) \
-" + query.from + " \
+FROM <" + query.graphs.data + "> \
 WHERE { \
 ?obs cex:ref-area <" + lod.uri.country + iso3 + "> ; \
      cex:ref-indicator <http://data.landportal.info/indicator/OECD-SIGI-0> ; \
@@ -36,7 +36,7 @@ WHERE { \
 } \
 OPTIONAL{ \
 SELECT ?hdi (year(?dateTime) as ?hdiYear) \
-" + query.from + " \
+FROM <" + query.graphs.data + "> \
 WHERE { \
 ?obs cex:ref-area <" + lod.uri.country + iso3 + "> ; \
      cex:ref-indicator <http://data.landportal.info/indicator/UNDP-HDI-INDEX> ; \
@@ -49,7 +49,7 @@ WHERE { \
 } \
 OPTIONAL{ \
 SELECT ?gini (year(?dateTime) as ?giniYear) \
-" + query.from + " \
+FROM <" + query.graphs.data + "> \
 WHERE { \
 ?obs cex:ref-area <" + lod.uri.country + iso3 + "> ; \
      cex:ref-indicator <http://data.landportal.info/indicator/WB-SI.POV.GINI> ; \
@@ -62,7 +62,7 @@ WHERE { \
 } \
 OPTIONAL{ \
 SELECT ?ghi (year(?dateTime) as ?ghiYear) \
-" + query.from + " \
+FROM <" + query.graphs.data + "> \
 WHERE { \
 ?obs cex:ref-area <" + lod.uri.country + iso3 + "> ; \
      cex:ref-indicator <http://data.landportal.info/indicator/IFPRI-GHI> ; \

@@ -33,7 +33,7 @@ var lbvisLGAF = (function (LBV, args) {
 
         return LBVIS.DATA.query.prefix + " \
 SELECT ?id (STR(?value) AS ?value) \
-" + LBVIS.DATA.query.from + " \
+FROM <" + LBVIS.DATA.query.graphs.data + "> \
 WHERE { \
 ?obs cex:ref-area <" + LBVIS.DATA.lod.uri.country + iso3 + "> ; \
 qb:dataSet <http://data.landportal.info/dataset/WB-LGAF" + year + "> ; \
