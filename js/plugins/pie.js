@@ -223,7 +223,7 @@ var lbvisPie = (function (LBV, args) {
                 // Fill up pie cache
                 // @TODO: check, may have collision?
                 var tmp = LBVIS.cache('data');
-                console.log(tmp);
+                //console.log(tmp);
                 _options.indicators.forEach(function (lbid) {
                     var idata = _latestYear(tmp[lbid]);
                     if (!_data.cache[idata.country]) _data.cache[idata.country] = {};

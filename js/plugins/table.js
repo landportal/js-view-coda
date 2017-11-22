@@ -50,8 +50,7 @@ var lbvisTable = (function (LBV, args) {
     var _updateRow = function (id, data, cols) {
         var el = $(_options.target + ' tr[lbid="' + id + '"]');
         el.find('td:gt(0)').remove();
-
-        console.log(id, data);
+        //console.log(id, data);
         var str = '';//'<td class="empty">-</td><td class="empty">-</td>';
         cols.forEach(function (c) {
             str += '<td>' + data[c] + '</td>';
