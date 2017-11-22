@@ -75,9 +75,11 @@ var lbvis = (function (args) {
                 var time = d.time.value;
                 var iso3 = d.country.value;
                 if (!_cache.data[lbid]) _cache.data[lbid] = {};
+                // only if year / time filter
                 if (!_cache.data[lbid][time]) _cache.data[lbid][time] = {};
                 var stuff = _marshallJSON(d);
                 _cache.data[lbid][time][iso3] = stuff;
+    //          _data.cache[d.country][lbid] = d; //parseFloat(d.value);
             });
             //console.log('GOTCHA', data.results.bindings);
         });

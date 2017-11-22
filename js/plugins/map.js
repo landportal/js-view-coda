@@ -84,8 +84,8 @@ var lbvisMap = (function (MAP, LBV, args) {
             data: Object.keys(data).map(function (iso3) {
                 return {
                     colorIndex: 0,
-                    id: data[iso3].country.value,
-                    value: parseFloat(data[iso3].value.value),
+                    id: data[iso3].country,
+                    value: parseFloat(data[iso3].value),
                 };
             }),
         };

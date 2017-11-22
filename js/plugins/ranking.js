@@ -64,15 +64,15 @@ var lbvisRanking = (function (LBV, args) {
     };
     
     var _formatRow = function (ind, pos, length) {
-        var country = LBV.countries().find(function (v) { return v.iso3 == ind.country.value; });
+        var country = LBV.countries().find(function (v) { return v.iso3 == ind.country; });
         var flag = '<span class="rank">' + (pos + 1) + '</span>',
-            rank = '<span class="flag-icon flag-' + ind.country.value + '"/>';
+            rank = '<span class="flag-icon flag-' + ind.country + '"/>';
         //console.log('Row : ', ind, country);
         var rowClass = (_data.values.length > _options.expandThreshold && pos >= _options.expand && pos + _options.expand < length ? ' class="hidden"' : '');
-        return '<li'+rowClass+'><div class="col-xs-8">' + flag + rank + (country ? country.name : ind.country.value) + '</div>'
+        return '<li'+rowClass+'><div class="col-xs-8">' + flag + rank + (country ? country.name : ind.country) + '</div>'
             + '<div class="value col-xs-4 text-right"'
-            + (parseFloat(ind.value.value) && ind.value.value.indexOf('.') > -1 ? ' title="'+ind.value.value+'"' : '') + '>'
-            + (parseFloat(ind.value.value) ? LBVIS.round(ind.value.value, 2) : ind.value.value)
+            + (parseFloat(ind.value) && ind.value.indexOf('.') > -1 ? ' title="'+ind.value.value+'"' : '') + '>'
+            + (parseFloat(ind.value) ? LBVIS.round(ind.value, 2) : ind.value.value)
             + '</div></li>';
     };
     var _expandRow = function () {
@@ -85,7 +85,7 @@ var lbvisRanking = (function (LBV, args) {
         var html = '<li><div class="col-xs-9"><h4>' + main.render + '</h4><p>Country / Rank</p></div>'
                  + '<div class="col-xs-3 text-right"><h4>'+ _options.year + '</h4><i>in ' + main.unit + '</i></div></li>';
         // Quickly test data values (first one) to see if it's numeric, NaN, reverse array
-        if (!parseFloat(_data.values[0].value.value)) _data.values = _data.values.reverse();
+        if (!parseFloat(_data.values[0].value)) _data.values = _data.values.reverse();
         // Fill up rows
         _data.values.forEach(function (ind, pos) {
             if (pos == _options.expand && _data.values.length > _options.expandThreshold) html += _expandRow();
@@ -107,7 +107,7 @@ var lbvisRanking = (function (LBV, args) {
     var _draw = function () {
         _data.values = Object.values(_data.cache[_options.main][_options.year]);
         _data.values.sort(function (a, b) { // sort descending
-            return parseFloat(b.value.value) - parseFloat(a.value.value);
+            return parseFloat(b.value) - parseFloat(a.value);
         });
         if (!_data.values) {
             console.warn('OWWW!');

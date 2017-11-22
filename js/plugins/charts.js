@@ -115,10 +115,10 @@ var lbvisCharts = (function (LBV, args) {
         //serie.gid = year;
         $.each(_data.cache[lbid][year], function (key, data) {
             serie.data.push({
-                //name: data.country.value,
-                name: LBVIS.countries().find(c => c.iso3 == data.country.value).name,
+                //name: data.country,
+                name: LBVIS.countries().find(c => c.iso3 == data.country).name,
                 //x: parseInt(year),
-                y: parseFloat(data.value.value),
+                y: parseFloat(data.value),
             });
         });
         return serie;
@@ -134,9 +134,9 @@ var lbvisCharts = (function (LBV, args) {
             if (data[iso3]) { //data[iso3].value) {
                 serie.data.push({
                     //id: iso3,
-                    name: data[iso3].country.value,
+                    name: data[iso3].country,
                     x: parseInt(key),
-                    y: parseFloat(data[iso3].value.value),// (data[iso3].value ? parseFloat(data[iso3].value.value) : 'NA'),
+                    y: parseFloat(data[iso3].value),// (data[iso3].value ? parseFloat(data[iso3].value) : 'NA'),
                 });
             }
         });
@@ -216,8 +216,8 @@ var lbvisCharts = (function (LBV, args) {
     // Drawing charts
     //
 
-    // var country = countries.find(function (lbc) { return (lbc.iso3 == d.country.value); });
-    // _data.countries[d.country.value] = country;
+    // var country = countries.find(function (lbc) { return (lbc.iso3 == d.country); });
+    // _data.countries[d.country] = country;
     var _draw = function () {
         var HCopts = {
             credits: { enabled: false },
