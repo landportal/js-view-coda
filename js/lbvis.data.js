@@ -23,19 +23,23 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \
 PREFIX dct: <http://purl.org/dc/terms/> \
 PREFIX sdmx-attribute: <http://purl.org/linked-data/sdmx/2009/attribute#> \
 ",
-        from : " \
-FROM <http://data.landportal.info> \
-FROM <http://countries.landportal.info> \
-FROM <http://datasets.landportal.info> \
-FROM <http://indicators.landportal.info> \
-FROM <http://organizations.landportal.info> \
-",
-        from_data : " \
-FROM <http://data.landportal.info> \
-"
+        graphs: {
+            data:               'http://data.landportal.info',
+            countries:          'http://countries.landportal.info',
+            indicators:         'http://indicators.landportal.info',
+            datasets:           'http://datasets.landportal.info',
+            organizations:      'http://organizations.landportal.info',
+            // data:               'http://data.landportal.info/lod',
+            // countries:          'http://data.landportal.info/lod/countries',
+            // indicators:         'http://data.landportal.info/lod/indicators',
+            // datasets:           'http://data.landportal.info/lod/datasets',
+            // organizations:      'http://data.landportal.info/lod/organizations',
+        },
     };
 
-
+    var _from = function (graphs) {
+        return ' FROM <' + graphs.join('> FROM <') + '>' ;
+    };
 
     /**************************************
      * Generic / basic queries
@@ -44,7 +48,7 @@ FROM <http://data.landportal.info> \
         return query.prefix + " \
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#> \
 SELECT DISTINCT ?id ?label \
-" + query.from + " \
+" + _from([query.graphs.datasets]) + " \
 WHERE { \
 ?dataset a qb:DataSet ; \
   skos:notation ?id ; \
@@ -54,7 +58,7 @@ WHERE { \
     var _countries = function () {
         return query.prefix + " \
 SELECT ?iso3 ?name \
-" + query.from + " \
+" + _from([query.graphs.countries]) + " \
 WHERE { \
 ?uri a <http://purl.org/weso/landbook/ontology#Country> ; \
   rdfs:label ?name . \
@@ -66,7 +70,7 @@ BIND (REPLACE(STR(?uri), '" + lod.uri.country + "','') AS ?iso3) \
     var _indicators = function () {
         return query.prefix + " \
 SELECT ?id ?label ?dataset ?unit ?description ?indicatorSeeAlso \
-" + query.from + " \
+" + _from([query.graphs.indicators, query.graphs.datasets]) + " \
 WHERE { \
 ?uri a cex:Indicator ; \
   skos:notation ?id ; \
@@ -82,7 +86,10 @@ WHERE { \
     var _countryIndicators = function(iso3) {
         return query.prefix + " \
 SELECT DISTINCT ?id ?label ?dataset ?unit ?description ?indicatorSeeAlso \
-" + query.from + " \
+" + _from([query.graphs.data,
+           query.graphs.indicators,
+           query.graphs.datasets,
+           query.graphs.countries]) + " \
 WHERE { \
 ?obs cex:ref-indicator ?uri ; \
   cex:ref-area <" + lod.uri.country + iso3 +"> ; \
@@ -102,7 +109,7 @@ WHERE { \
     var _indicatorCountries = function (indicator) {
         return query.prefix + " \
 SELECT DISTINCT ?iso3 ?name \
-" + query.from + " \
+" + _from([query.graphs.data, query.graphs.countries]) + " \
 WHERE { \
 ?obs cex:ref-indicator <" + lod.uri.indicator + indicator + "> ; \
 cex:ref-area ?countryURL . \
@@ -111,7 +118,29 @@ BIND (REPLACE(STR(?countryURL),'" + lod.uri.country + "','') AS ?iso3) \
 } ORDER BY ?name ";
     };
 
-
+    var _indicatorsInfo = function () {
+        return query.prefix + " \
+SELECT DISTINCT ?id \
+year(min(?dateTime)) AS ?minYear \
+year(max(?dateTime)) AS ?maxYear \
+COUNT(?obs) AS ?nObs \
+COUNT(DISTINCT(year(?dateTime))) AS ?nYears \
+COUNT(DISTINCT ?country) AS ?nCountryWithValue \
+min(?value) AS ?minValue \
+max(?value) AS ?maxValue \
+" + _from([query.graphs.data]) + " \
+WHERE{ \
+\
+?obs cex:ref-indicator ?indicatorURL  ; \
+cex:ref-area ?country ; \
+cex:value ?value; \
+cex:ref-time ?time . \
+\
+?time time:hasBeginning ?timeValue . \
+?timeValue time:inXSDDateTime ?dateTime . \
+BIND (REPLACE(STR(?indicatorURL), '" + lod.uri.indicator + "','') AS ?id) \
+}";
+    };
 
     /**************************************
      * Public methods
@@ -131,6 +160,7 @@ BIND (REPLACE(STR(?countryURL),'" + lod.uri.country + "','') AS ?iso3) \
             countryIndicators: function (iso3) { return _countryIndicators(iso3); },
             // List of available countries for a given indicator
             indicatorCountries: function(indicator) { return _indicatorCountries(indicator); },
+            indicatorsInfo: _indicatorsInfo(),
         },
 
         //
@@ -175,7 +205,7 @@ BIND (REPLACE(STR(?countryURL),'" + lod.uri.country + "','') AS ?iso3) \
             });
 
             var q = " SELECT ?" + columns.join(' ?')
-                + query.from_data
+                + " FROM <" + query.graphs.data + ">"
                 + " WHERE { ?obs " + obs.join('; ') + " . "
                 + " " + values.join(' ')
                 + " " + bind.join(' ')

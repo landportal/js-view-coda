@@ -47,9 +47,9 @@ var lbvis = (function (args) {
         'countries':  [],
         'indicatorsByCountry': {},
         'countriesByIndicator': {},
-        'info':         {},    // store by indicator id
-        'years':        {},    // store by indicator id
-        'period':       {},    // store by indicator id
+        // 'info':         {},    // store by indicator id
+        // 'years':        {},    // store by indicator id
+        // 'period':       {},    // store by indicator id
         'data': {},
     };
     // Data lib
@@ -76,7 +76,8 @@ var lbvis = (function (args) {
                 var iso3 = d.country.value;
                 if (!_cache.data[lbid]) _cache.data[lbid] = {};
                 if (!_cache.data[lbid][time]) _cache.data[lbid][time] = {};
-                _cache.data[lbid][time][iso3] = d;
+                var stuff = _marshallJSON(d);
+                _cache.data[lbid][time][iso3] = stuff;
             });
             //console.log('GOTCHA', data.results.bindings);
         });
@@ -129,6 +130,25 @@ var lbvis = (function (args) {
         return _getSPARQL(_DATA.queries.datasets, 'datasets');
     };
 
+    // Get indicators Info
+    var _getIndicatorsInfo = function () {
+        if (_defers['indicatorsInfo']) {
+            return _defers['indicatorsInfo'];
+        }
+        return _getSPARQL(_DATA.queries.indicatorsInfo, 'indicatorsInfo');
+    };
+
+    var _marshallJSON = function (item) {
+        var stuff = {};
+        Object.keys(item).forEach(function (prop) {
+            var v = item[prop].value;
+            stuff[prop] = (
+                (item[prop].datatype == 'http://www.w3.org/2001/XMLSchema#integer')
+                    ? parseFloat(v) : v);
+        });
+        return stuff;
+    };
+
     // Get JSON data from a SPARQL query
     //  - store jQuery deferred in _defer by type
     //  - turn results into a hash (named after query SELECTed 'columns'),
@@ -140,16 +160,7 @@ var lbvis = (function (args) {
         var url = _DATA.sparqlURL(query);
         var deferred = $.getJSON(url, function (data) {
             data.results.bindings.forEach(function (item) {
-                var stuff = {};
-                Object.keys(item).forEach(function (prop) {
-                    var v = item[prop].value;
-                    stuff[prop] = (
-                        (item[prop].datatype == 'http://www.w3.org/2001/XMLSchema#integer')
-                            ? parseFloat(v) : v);
-                });
-                // if (type == 'info') {
-                //     console.log(stuff);
-                // }
+                var stuff = _marshallJSON(item);
                 if (id) _cache[type][id].push(stuff);
                 else _cache[type].push(stuff);
             });
@@ -208,7 +219,7 @@ var lbvis = (function (args) {
         DATA: _DATA,
         defers: function (type) { return (type ? _defers[type] : _defers); },
         cache: function (type) { return (type ? _cache[type] : _cache); },
-        debug: function () { console.log(_options,  _cache, _defers); },
+        debug: function () { return {options: _options, cache:  _cache, defers: _defers}; },
         // maybe map those my 'id' / code
         countries: function () { return _cache['countries']; },
         indicators: function () { return _cache['indicators']; },
@@ -217,6 +228,7 @@ var lbvis = (function (args) {
         // Data / query
         loadData: _loadData,
         getIndicators: _getIndicators,
+        getIndicatorsInfo: _getIndicatorsInfo,
         getCountries: _getCountries,
 
         ready: function () {
