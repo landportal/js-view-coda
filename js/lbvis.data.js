@@ -97,7 +97,21 @@ WHERE { \
 ?datasetURL skos:notation ?dataset . \
 } ORDER BY ?label";
     };
-//BIND (REPLACE(STR(?uri), '" + lod.uri.indicator + "','') AS ?id) \
+
+    // Available countries for a given indicator
+    var _indicatorCountries = function (indicator) {
+        return query.prefix + " \
+SELECT DISTINCT ?iso3 ?name \
+" + query.from + " \
+WHERE { \
+?obs cex:ref-indicator <" + lod.uri.indicator + indicator + "> ; \
+cex:ref-area ?countryURL . \
+?countryURL rdfs:label ?name. \
+BIND (REPLACE(STR(?countryURL),'" + lod.uri.country + "','') AS ?iso3) \
+} ORDER BY ?name ";
+    };
+
+
 
     /**************************************
      * Indicators-based queries
@@ -240,19 +254,6 @@ VALUES (" + filters.join(' ') + ") { ( "+values.join(' ') +" ) } \
 } \
 BIND ((1-((xsd:float(?nObs))/xsd:float((?nYears*?nCountryWithValue))))*100 AS ?perMissingValue) \
 }";
-    };
-
-    // Available countries for a given indicator
-    var _indicatorCountries = function (indicator) {
-        return query.prefix + " \
-SELECT DISTINCT ?iso3 ?name \
-" + query.from + " \
-WHERE { \
-?obs cex:ref-indicator <" + lod.uri.indicator + indicator + "> ; \
-cex:ref-area ?countryURL . \
-?countryURL rdfs:label ?name. \
-BIND (REPLACE(STR(?countryURL),'" + lod.uri.country + "','') AS ?iso3) \
-} ORDER BY ?name ";
     };
 
 
