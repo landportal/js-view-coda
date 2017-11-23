@@ -71,7 +71,7 @@ var lbvisRanking = (function (LBV, args) {
         var rowClass = (_data.values.length > _options.expandThreshold && pos >= _options.expand && pos + _options.expand < length ? ' class="hidden"' : '');
         return '<li'+rowClass+'><div class="col-xs-8">' + flag + rank + (country ? country.name : ind.country) + '</div>'
             + '<div class="value col-xs-4 text-right"'
-            + (parseFloat(ind.value) && ind.value.indexOf('.') > -1 ? ' title="'+ind.value+'"' : '') + '>'
+            + (parseFloat(ind.value) && ind.value.toString().indexOf('.') > -1 ? ' title="'+ind.value+'"' : '') + '>'
             + (parseFloat(ind.value) ? LBVIS.round(ind.value, 2) : ind.value)
             + '</div></li>';
     };
