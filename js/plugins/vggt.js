@@ -182,8 +182,8 @@ WHERE { \
         init: function () {
             // Load indicators
             _getLaws();
-            $(_options.targetGraph + ' .countryInfo').empty()
-	    var law_list = $('<ul/>').appendTo(_options.targetGraph + ' .countryInfo')
+            $(_options.targetGraph + ' .countryInfo').empty();
+	    var law_list = $('<ul/>').appendTo(_options.targetGraph + ' .countryInfo');
 	    $.each(_data.laws, function( index, law ) {
 		if ("link" in law) {
 		    law_list.append('<li><a href="'+law['link']+'">'+law['title']+'</a></li>');
