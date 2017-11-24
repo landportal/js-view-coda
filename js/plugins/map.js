@@ -177,11 +177,11 @@ var lbvisMap = (function (MAP, LBV, args) {
         if (series) {
             if (_options.iso3) {
                 _data.chart.get(_options.iso3).select();
-            }
-            // If we have an init zoom option + iso3, zoom on that country
-            if (_options.map.zoom) {
-                _data.chart.get(_options.iso3).zoomTo();
-                _data.chart.mapZoom(_options.map.zoom);
+                // If we have an init zoom option + iso3, zoom on that country
+                if (_options.map.zoom) {
+                    _data.chart.get(_options.iso3).zoomTo();
+                    _data.chart.mapZoom(_options.map.zoom);
+                }
             }
         }
         return _data.chart;
