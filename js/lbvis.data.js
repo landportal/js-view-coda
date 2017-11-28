@@ -142,6 +142,10 @@ BIND (REPLACE(STR(?indicatorURL), '" + lod.uri.indicator + "','') AS ?id) \
 }";
     };
 
+    // Download a dataset data
+    var _datasetData = function () {
+    };
+
     /**************************************
      * Public methods
      */
