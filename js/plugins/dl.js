@@ -25,9 +25,11 @@ lbvis.dl = (function (LBV, args) {
     var _getData = function () {
         return LBV.loadData([_options.lbid]).done(function() {
             var d = LBV.cache('data');
-            console.log(' > got ', d);
+            //console.log(' > got ', d);
             _data.indicator = d[_options.lbid];
-            _buildCSV(d[_options.lbid]);
+            if (_data.indicator) {
+                _buildCSV(_data.indicator);
+            }
         });
     };
 
@@ -35,6 +37,7 @@ lbvis.dl = (function (LBV, args) {
     var _buildCSV = function(data) {
         var csv = [];
         var first = null;
+        
         Object.keys(data).forEach(function (y) {
             Object.keys(data[y]).forEach(function (c) {
                 if (!first) {
@@ -67,12 +70,15 @@ lbvis.dl = (function (LBV, args) {
     };
 
     var _buildLinks = function () {
-        return _linkCSV();
+        if (_data.indicator) {
+            return _linkCSV();
+        }
+        return 'data not available';b
     };
 
     var _bindUI = function () {
         var $el = $(_options.target);
-        console.log($el);
+        //console.log($el);
         w = $el.find(_options.target + '-wrapper');
         w.html(_buildLinks());
     };
@@ -81,7 +87,7 @@ lbvis.dl = (function (LBV, args) {
     return {
         debug: function () { console.log(_options, _data); },
         init: function () {
-            console.log('DL ' + _options.lbid);//, _options, _data);
+            //console.log('DL ' + _options.lbid);//, _options, _data);
             _getData().done(function () {
                 _bindUI();
             });
