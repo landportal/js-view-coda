@@ -225,10 +225,12 @@ var lbvisPie = (function (LBV, args) {
                 var tmp = LBVIS.cache('data');
                 //console.log(tmp);
                 _options.indicators.forEach(function (lbid) {
-                    var idata = _latestYear(tmp[lbid]);
-                    if (!_data.cache[idata.country]) _data.cache[idata.country] = {};
-                    _data.cache[idata.country][lbid] = idata;
-                    _data.countries = Object.keys(_data.cache);
+                    if (tmp[lbid]) {
+                        var idata = _latestYear(tmp[lbid]);
+                        if (!_data.cache[idata.country]) _data.cache[idata.country] = {};
+                        _data.cache[idata.country][lbid] = idata;
+                        _data.countries = Object.keys(_data.cache);
+                    }
                 });
 
                 if (_options.tree) {
