@@ -40,37 +40,6 @@ var lbvisPie = (function (LBV, args) {
         //indicators: args.cache  || {}   // Indicators metadata cache
     };
 
-
-
-    // /*
-    //  * Data & Series
-    //  */
-    // var _loadData = function () {
-    //     // If we don't load main indicator data, remove it from the serie
-    //     var filters = { indicator: _options.indicators };
-    //     if (!_options.loadMain) {
-    //         filters.indicators.splice(filters.indicators.indexOf(_options.main), 1);
-    //     }
-    //     if (_options.iso3 && !_options.loadCountries) filters.country = [ _options.iso3 ];
-    //     if (_options.year) filters.time = [ _options.year ];
-
-    //     var qvalues = LBVIS.DATA.obsValues(
-    //         ['indicator', 'country', 'time', 'value'],
-    //         filters
-    //     );
-    //     return $.getJSON(LBVIS.DATA.sparqlURL(qvalues), function (data) {
-    //         data.results.bindings.forEach(function (d, i) {
-    //             console(d);
-    //             var lbid = d.indicator;
-    //             if (!_data.cache[d.country]) _data.cache[d.country.value] = {};
-    //             _data.cache[d.country][lbid] = d; //parseFloat(d.value);
-    //         });
-    //         //console.log('GOTCHA', data.results.bindings);
-    //         _data.countries = Object.keys(_data.cache);
-    //     });
-    // };
-
-
     var _loadIndicator = function (lbid) {
         var ind = {
             id: lbid,
@@ -201,8 +170,13 @@ var lbvisPie = (function (LBV, args) {
         });
     };
 
-    var _latestYear = function (data) {
-        return data[Object.keys(data).sort().reverse()[0]][_options.iso3];
+    var _cacheData = function (data) {
+        var ydata = data[Object.keys(data).sort().reverse()[0]];//[_options.iso3];
+        //console.log(ydata);
+        Object.keys(ydata).forEach(function (iso3) {
+            if (!_data.cache[iso3]) _data.cache[iso3] = {};
+            _data.cache[iso3][ydata[iso3].indicator] = ydata[iso3];
+        });
     }
         
     // Public interfaces
@@ -219,16 +193,13 @@ var lbvisPie = (function (LBV, args) {
             if (!_options.loadMain) {
                 inds.splice(inds.indexOf(_options.main), 1);
             }
-            LBVIS.loadData(inds, [ _options.iso3 ]).done(function () {
+            LBVIS.loadData(inds).done(function () {
                 // Fill up pie cache
                 // @TODO: check, may have collision?
                 var tmp = LBVIS.cache('data');
-                //console.log(tmp);
                 _options.indicators.forEach(function (lbid) {
                     if (tmp[lbid]) {
-                        var idata = _latestYear(tmp[lbid]);
-                        if (!_data.cache[idata.country]) _data.cache[idata.country] = {};
-                        _data.cache[idata.country][lbid] = idata;
+                        var idata = _cacheData(tmp[lbid]);
                         _data.countries = Object.keys(_data.cache);
                     }
                 });
