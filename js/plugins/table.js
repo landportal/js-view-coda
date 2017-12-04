@@ -13,9 +13,10 @@ var lbvisTable = (function (LBV, args) {
     $.extend(true, _options, args); // true = deep merge
 
     var _data = {
+        indicators: [],
+        cache: {},
         // defers: [],
         // years: [],
-        indicators: [],
         // indicatorValues: [],
         // series: {},
     };
@@ -44,6 +45,7 @@ var lbvisTable = (function (LBV, args) {
     };
 
     var _latestYear = function (data) {
+        if (!data) return;
         return data[Object.keys(data).sort().reverse()[0]][_options.iso3];
     }
 
@@ -54,8 +56,10 @@ var lbvisTable = (function (LBV, args) {
                 if (str) str += ' / ';
                 str += _updateCell(c, data);
             });
-        } else {
+        } else if (data && data[cell]) {
             str = '<span class="' + data[cell] + '">' + data[cell] + '</span>';
+        } else {
+            str = '<span class="data-empty">N/A<span>';
         }
         return str;
     }
@@ -73,17 +77,26 @@ var lbvisTable = (function (LBV, args) {
     
     var _getData = function (indicators) {
         return LBVIS.getIndicatorsInfo(indicators).done(function () {
-            _data.cache = LBVIS.cache('indicatorsInfo');
-            console.log(_data.cache);
+            var cache = LBVIS.cache('indicatorsInfo');
+            _options.indicators.forEach(function (ind) {
+                _data.cache[ind] = cache.find(c => c.id == ind);
+            });
+            //console.log(_data.cache);
         });
     };
 
     var _getDataCountry = function (indicators, iso3) {
         return LBVIS.loadData(indicators, iso3).done(function () {
-            // grab data from cache
-            // @TODO: check, may have collision?
-            _data.cache = LBVIS.cache('data');
-            //console.log('  > got', _data.cache);
+            var cache = LBVIS.cache('data');
+            //console.log(cache);
+            _options.indicators.forEach(function (ind) {
+                if (!cache[ind]) {
+                    console.warn('No data for ', ind);
+                } else {
+                    _data.cache[ind] = cache[ind];
+                }
+            });
+            //console.log(_data.cache);
         });
     };
 
@@ -97,9 +110,8 @@ var lbvisTable = (function (LBV, args) {
                 _getDataCountry(_options.indicators, _options.iso3).done(function () {
                     // Process cache
                     _options.indicators.forEach(function (ind) {
-                        var indicator = _data.cache.find(c => c.id == ind);
                         // @todo: Use last year option
-                        var last = _latestYear(indicator);
+                        var last = _latestYear(_data.cache[ind]);
                         // Update row with [indicator, year, value]
                         _updateRow(ind, last, ['time', 'value']);
                     });
@@ -109,7 +121,7 @@ var lbvisTable = (function (LBV, args) {
                     // yoohoo
                     console.log('all done!');
                     _options.indicators.forEach(function (ind) {
-                        _updateRow(ind, _data.cache.find(c => c.id == ind), [
+                        _updateRow(ind, _data.cache[ind], [
                             ['minYear', 'maxYear', 'nYears'],
                             ['nCountryWithValue', 'nObs'],
                             ['minValue', 'maxValue'],
