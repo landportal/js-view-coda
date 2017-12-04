@@ -118,7 +118,6 @@ var lbvis = (function (args) {
             return _defers[def];
         }
         return _getSPARQL(q, def, iso3).done(function () {
-            console.log('reprocess', def, iso3, _cache[def]);
             if (iso3) {
                 _cache[def][iso3] = _cache[def][iso3].map(x => _formatIndicatorLabel(x));
             } else {
