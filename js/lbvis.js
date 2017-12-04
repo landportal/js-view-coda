@@ -38,7 +38,8 @@ var lbvis = (function (args) {
         info: {},
         indicatorsByCountry: {},
         countriesByIndicator: {},
-        years: {}
+        years: {},
+        dataset: {}, // DS data
     };
     // Internal cache
     var _cache = {
@@ -51,11 +52,13 @@ var lbvis = (function (args) {
         // 'years':        {},    // store by indicator id
         // 'period':       {},    // store by indicator id
         'data': {},
+        'dataset': {}, // DS data
     };
     // Data lib
     var _DATA = args.data || new lbvisDATA(args);
 
     // New Method (> 1.2.x)
+    // Load indicator-based obs/series
     var _loadData = function (indicators, iso3=null, year=null) {
         if (!indicators) {
             console.warn('No data to load');
@@ -85,6 +88,16 @@ var lbvis = (function (args) {
         });
     };
 
+    var _loadDataset = function (id) {
+        if (_defers.dataset[id]) {
+            return _defers.dataset[id];
+        }
+        return _getSPARQL(_DATA.queries.datasetData(id), 'dataset', id);
+    };
+
+    //
+    // Getter for JS View Coda plugins
+    //
     // Get available indicators, can filter by country
     var _getIndicators = function (iso3=_options.iso3) {
         var def = 'indicators';
@@ -229,6 +242,7 @@ var lbvis = (function (args) {
 
         // Data / query
         loadData: _loadData,
+        loadDataset: _loadDataset,
         getIndicators: _getIndicators,
         getIndicatorsInfo: _getIndicatorsInfo,
         getCountries: _getCountries,

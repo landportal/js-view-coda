@@ -23,14 +23,24 @@ lbvis.dl = (function (LBV, args) {
     var _data = {};
 
     var _getData = function () {
-        return LBV.loadData([_options.lbid]).done(function() {
-            var d = LBV.cache('data');
-            //console.log(' > got ', d);
-            _data.indicator = d[_options.lbid];
-            if (_data.indicator) {
-                _buildCSV(_data.indicator);
-            }
-        });
+        if (_options.type == 'indicator') {
+            return LBV.loadData([_options.lbid]).done(function() {
+                var d = LBV.cache('data');
+                //console.log(' > got ', d);
+                _data.indicator = d[_options.lbid];
+                if (_data.indicator) {
+                    _buildCSV(_data.indicator);
+                }
+            });
+        } else if (_options.type == 'dataset') {
+            return LBV.loadDataset([_options.lbid]).done(function() {
+                var d = LBV.cache('dataset');
+                if (d) {
+                    _buildCSV(d);
+                }
+                //console.log(d);
+            });
+        }
     };
 
     // Quick 'n dirty CSV formater
@@ -53,27 +63,26 @@ lbvis.dl = (function (LBV, args) {
     };
 
     var _linkCSV = function () {
+        if (!_data.csv) return;
         var csv = '';
         _data.csv.forEach(function(row) {
-            csv += row.join(';');
-            csv += "\n";
+            csv += '"' + row.join('";"'); // foreach col replace " by \"
+            csv += '"' + "\n";
         });
 
         //console.log(csv);
         var link = document.createElement('a');
         link.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
         link.target = '_blank';
-        link.download = _options.lbid + '-lb.csv';
+        link.download = 'landportal-' + _options.lbid + '.csv';
         link.innerHTML = 'CSV file';
         return link;
         //hiddenElement.click();
     };
 
     var _buildLinks = function () {
-        if (_data.indicator) {
-            return _linkCSV();
-        }
-        return 'data not available';b
+        return _linkCSV();
+        //return 'data not available';b
     };
 
     var _bindUI = function () {
@@ -82,7 +91,7 @@ lbvis.dl = (function (LBV, args) {
         w = $el.find(_options.target + '-wrapper');
         w.html(_buildLinks());
     };
-    
+
     // Public methods
     return {
         debug: function () { console.log(_options, _data); },
