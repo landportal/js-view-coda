@@ -143,7 +143,27 @@ BIND (REPLACE(STR(?indicatorURL), '" + lod.uri.indicator + "','') AS ?id) \
     };
 
     // Download a dataset data
-    var _datasetData = function () {
+    var _datasetData = function (datasetID) {
+        return query.prefix + " \
+SELECT DISTINCT ?indicatorID ?countryISO3 (year(?dateTime) as ?year) (str(?value) as ?value) (str(?note) as ?note) \
+" + _from([query.graphs.data]) + " \
+WHERE { \
+?obs cex:ref-indicator ?indicator ; \
+cex:ref-area ?country ; \
+cex:ref-time ?time ; \
+cex:value ?value ; \
+qb:dataSet ?dataset. \
+\
+?time time:hasBeginning ?timeValue . \
+?timeValue time:inXSDDateTime ?dateTime . \
+\
+OPTIONAL{ ?obs rdfs:comment ?note} \
+VALUES ?dataset {<http://data.landportal.info/dataset/"+datasetID+'>} \
+BIND (REPLACE(STR(?country),'" + lod.uri.country + "','') AS ?countryISO3) \
+BIND (REPLACE(STR(?indicator), '" + lod.uri.indicator + "','') AS ?indicatorID) \
+\
+} ORDER BY ?year ?countryISO3 \
+}";
     };
 
     /**************************************
