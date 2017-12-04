@@ -46,6 +46,19 @@ var lbvisTable = (function (LBV, args) {
     var _latestYear = function (data) {
         return data[Object.keys(data).sort().reverse()[0]][_options.iso3];
     }
+
+    var _updateCell = function (cell, data) {
+        var str = '';
+        if ($.isArray(cell)) {
+            cell.forEach(function (c) {
+                if (str) str += ' / ';
+                str += _updateCell(c, data);
+            });
+        } else {
+            str = '<span class="' + data[cell] + '">' + data[cell] + '</span>';
+        }
+        return str;
+    }
     
     var _updateRow = function (id, data, cols) {
         var el = $(_options.target + ' tr[lbid="' + id + '"]');
@@ -53,7 +66,7 @@ var lbvisTable = (function (LBV, args) {
         //console.log(id, data);
         var str = '';//'<td class="empty">-</td><td class="empty">-</td>';
         cols.forEach(function (c) {
-            str += '<td>' + data[c] + '</td>';
+            str += '<td>' +  _updateCell(c, data) + '</td>';
         });
         el.append(str);
     }
@@ -79,13 +92,16 @@ var lbvisTable = (function (LBV, args) {
             return {options: _options, data: _data};
         },
         init: function () {
-
+            // Table with a country
             if (_options.iso3) {
                 _getDataCountry(_options.indicators, _options.iso3).done(function () {
-                    Object.keys(_data.cache).forEach(function (id) {
-                        var last = _latestYear(_data.cache[id]);
+                    // Process cache
+                    _options.indicators.forEach(function (ind) {
+                        var indicator = _data.cache.find(c => c.id == ind);
+                        // @todo: Use last year option
+                        var last = _latestYear(indicator);
                         // Update row with [indicator, year, value]
-                        _updateRow(id, last, ['time', 'value']);
+                        _updateRow(ind, last, ['time', 'value']);
                     });
                 });
             } else {
@@ -93,7 +109,11 @@ var lbvisTable = (function (LBV, args) {
                     // yoohoo
                     console.log('all done!');
                     _options.indicators.forEach(function (ind) {
-                        _updateRow(ind, _data.cache.find(c => c.id == ind), ['minYear', 'maxYear']);
+                        _updateRow(ind, _data.cache.find(c => c.id == ind), [
+                            ['minYear', 'maxYear', 'nYears'],
+                            ['nCountryWithValue', 'nObs'],
+                            ['minValue', 'maxValue'],
+                        ]);
                     });
                 });
             }
