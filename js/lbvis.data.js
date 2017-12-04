@@ -47,12 +47,14 @@ PREFIX sdmx-attribute: <http://purl.org/linked-data/sdmx/2009/attribute#> \
     var _datasets = function () {
         return query.prefix + " \
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#> \
-SELECT DISTINCT ?id ?label \
-" + _from([query.graphs.datasets]) + " \
+SELECT DISTINCT ?id ?label ?source \
+" + _from([query.graphs.datasets, query.graphs.organizations]) + " \
 WHERE { \
 ?dataset a qb:DataSet ; \
   skos:notation ?id ; \
-  rdfs:label ?label . \
+  rdfs:label ?label ; \
+  dct:publisher ?pubURI . \
+?pubURI rdfs:label ?source . \
 } ORDER BY ?label";
     };
     var _countries = function () {

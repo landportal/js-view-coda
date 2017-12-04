@@ -95,6 +95,14 @@ var lbvis = (function (args) {
         return _getSPARQL(_DATA.queries.datasetData(id), 'dataset', id);
     };
 
+    // Get all datasets
+    var _getDatasets = function () {
+        if (_defers['datasets']) {
+            return _defers['datasets'];
+        }
+        return _getSPARQL(_DATA.queries.datasets, 'datasets');
+    };
+
     //
     // Getter for JS View Coda plugins
     //
@@ -110,7 +118,7 @@ var lbvis = (function (args) {
             return _defers[def];
         }
         return _getSPARQL(q, def, iso3).done(function () {
-            //console.log('reprocess', def, iso3, _cache);
+            console.log('reprocess', def, iso3, _cache[def]);
             if (iso3) {
                 _cache[def][iso3] = _cache[def][iso3].map(x => _formatIndicatorLabel(x));
             } else {
@@ -135,14 +143,6 @@ var lbvis = (function (args) {
         }
         var q = _DATA.queries.countries;
         return _getSPARQL(q, 'countries');
-    };
-
-    // Get all datasets
-    var _getDatasets = function () {
-        if (_defers['datasets']) {
-            return _defers['datasets'];
-        }
-        return _getSPARQL(_DATA.queries.datasets, 'datasets');
     };
 
     // Get indicators Info
@@ -194,9 +194,16 @@ var lbvis = (function (args) {
     //
     //
     var _formatIndicatorLabel = function (indicator) {
-        indicator.render = '<span><a href="' + indicator.indicatorSeeAlso.replace(/.*\/\/landportal.info/, '') + '">' + indicator.label + '</a>'
+        var ds = _cache.datasets.find(d => d.id == indicator.dataset);
+        indicator.render = '<span class="indicator"><a href="' + indicator.indicatorSeeAlso.replace(/.*\/\/landportal.info/, '') + '">' + indicator.label + '</a>'
+            + ' <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="top" title="'
+            + indicator.description.replace(/"/g, "'") + '"></span>'
             + ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="'
-            + indicator.description.replace(/"/g, "'") + '"></span></span>';
+            + 'Unit: ' + indicator.unit
+            + "\nDataset: " + ds.label
+            + "\nSource: " + ds.source
+            + '"></span>'
+            + '</span>';
         return indicator;
     };
 
@@ -222,8 +229,10 @@ var lbvis = (function (args) {
 
     var _init = function () {
         _getCountries();
-        _getIndicators();
-        _getDatasets();
+        _getDatasets().done(function () {
+            //console.log('got DS, load IND');
+            _getIndicators();
+        });
     };
     // Automatically initialize
     _init();
