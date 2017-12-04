@@ -278,6 +278,7 @@ var lbvisCharts = (function (LBV, args) {
 //            console.log(' > adding', series.map(x => x.id));
             series.forEach(function (s) { if (!_data.chart.get(s.id)) _data.chart.addSeries(s, false); });
         });
+
         var cleanup = _data.chart.series.filter(function (serie) {
             //console.log(' > check', serie.options.id); //, serie.options);
             var cc = _data.selected.indicators.indexOf(serie.options.lbid);
@@ -293,7 +294,7 @@ var lbvisCharts = (function (LBV, args) {
         _data.chart.redraw();
 
         if (_data.chart.series.length) {
-            //console.log('SHOWIN', _data.chart.series);
+            //console.log('SHOWIN', _data.chart.series, _data.indicators);
             _setTitle();
             _setAxis(_options.main);
         }
@@ -389,7 +390,7 @@ var lbvisCharts = (function (LBV, args) {
                 }));
             }
         } else {
-            var unit = LBVIS.indicators().find(i => i.id == main).unit
+            var unit = _data.indicators[main].unit;
             _data.chart.yAxis[0].setTitle({text: unit});
         }
     };
