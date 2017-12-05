@@ -108,6 +108,7 @@ var lbvis = (function (args) {
     //
     // Get available indicators, can filter by country
     var _getIndicators = function (iso3=_options.iso3) {
+        _getDatasets();
         var def = 'indicators';
         var q = _DATA.queries.indicators;
         if (iso3) {
@@ -118,11 +119,13 @@ var lbvis = (function (args) {
             return _defers[def];
         }
         return _getSPARQL(q, def, iso3).done(function () {
-            if (iso3) {
-                _cache[def][iso3] = _cache[def][iso3].map(x => _formatIndicatorLabel(x));
-            } else {
-                _cache[def] = _cache[def].map(x => _formatIndicatorLabel(x));
-            }
+            _getDatasets().done(function () {
+                if (iso3) {
+                    _cache[def][iso3] = _cache[def][iso3].map(x => _formatIndicatorLabel(x));
+                } else {
+                    _cache[def] = _cache[def].map(x => _formatIndicatorLabel(x));
+                }
+            });
         });
     };
 
@@ -227,11 +230,9 @@ var lbvis = (function (args) {
     };
 
     var _init = function () {
+        console.log('LBVIS preload');
         _getCountries();
-        _getDatasets().done(function () {
-            //console.log('got DS, load IND');
-            _getIndicators();
-        });
+        _getIndicators();
     };
     // Automatically initialize
     _init();
@@ -256,10 +257,7 @@ var lbvis = (function (args) {
         getCountries: _getCountries,
 
         ready: function () {
-            if (_options.loadIndicators) {
-                return $.when(_defers['countries'], _defers['indicators']);
-            }
-            return _defers['countries'];
+            return $.when(_defers['countries'], _defers['indicators']);
         },
 
         // UI helpers
