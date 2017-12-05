@@ -43,12 +43,12 @@ lbvis.dl = (function (LBV, args) {
         var q = null;
         if (_options.type == 'dataset') {
             //q = LBV.DATA.lod.sparql.prefix +
-            q = LBV.DATA.queries.datasetData(_options.lbid);
+            q = LBVIS.DATA.queries.datasetData(_options.lbid);
         } else {
             // more generic query (works only on Computex-based data)
-            q = LBV.DATA.obsValues(['indicator', 'country', 'time', 'value'], { indicator: [_options.lbid] });
+            q = LBVIS.DATA.obsValues(['indicator', 'country', 'time', 'value'], { indicator: [_options.lbid] });
         }
-        q = LBV.DATA.sparqlURL(q);
+        q = LBVIS.DATA.sparqlURL(q);
         q = q.replace('format=json', 'format=html');
         //console.log(q);
         return q;
@@ -57,12 +57,12 @@ lbvis.dl = (function (LBV, args) {
     var _getData = function () {
         var defer;
         if (_options.type == 'indicator') {
-            defer = LBV.loadData([_options.lbid]).done(function() {
-                _data.cache = LBV.cache('data')[_options.lbid];
+            defer = LBVIS.loadData([_options.lbid]).done(function() {
+                _data.cache = LBVIS.cache('data')[_options.lbid];
             });
         } else if (_options.type == 'dataset') {
-            defer = LBV.loadDataset([_options.lbid]).done(function() {
-                _data.cache = LBV.cache('dataset')[_options.lbid];
+            defer = LBVIS.loadDataset([_options.lbid]).done(function() {
+                _data.cache = LBVIS.cache('dataset')[_options.lbid];
             });
         }
         return defer;
@@ -179,17 +179,6 @@ lbvis.dl = (function (LBV, args) {
         links.append(_linkJSON());
         links.append(' ');
         links.append(_linkSPARQL());
-        if (_options.type == 'dataset') {
-            LBVIS.getIndicatorsInfo().done(function () {
-                //links.append('<hr/>');
-                _getMetaQuery();
-                links.append('<h3>Get the meta data</h3>');
-                links.append('<p>All the information about this dataset and indicators</p>');
-                links.append(_linkMetaCSV());
-                links.append(' ');
-                links.append(_linkMetaJSON());
-            });
-        }
         return links;
         //return 'data not available';b
     };
@@ -199,6 +188,21 @@ lbvis.dl = (function (LBV, args) {
         //console.log($el);
         w = $el.find(_options.target + '-wrapper');
         w.append(_buildLinks());
+        console.log(_options);
+        if (_options.type == 'dataset') {
+            console.log('gogo dataset');
+            console.log(this);
+            LBVIS.getIndicatorsInfo().done(function () {
+                _getMetaQuery();
+                var links = $('<div/>');
+                links.append('<h3>Get the meta data</h3>');
+                links.append('<p>All the information about this dataset and indicators</p>');
+                links.append(_linkMetaCSV());
+                links.append(' ');
+                links.append(_linkMetaJSON());
+                w.append(links);
+            });
+        }
     };
 
     // Public methods
