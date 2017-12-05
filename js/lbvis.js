@@ -230,7 +230,7 @@ var lbvis = (function (args) {
     };
 
     var _init = function () {
-        console.log('LBVIS preload');
+        //console.log('LBVIS preload');
         _getCountries();
         _getIndicators();
     };

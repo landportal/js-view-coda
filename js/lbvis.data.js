@@ -150,7 +150,7 @@ BIND (REPLACE(STR(?indicatorURL), '" + lod.uri.indicator + "','') AS ?id) \
 SELECT DISTINCT ?indicator ?iso3 (year(?dateTime) as ?year) (str(?value) as ?value) (str(?note) as ?note) \
 " + _from([query.graphs.data]) + " \
 WHERE { \
-?obs cex:ref-indicator ?indicator ; \
+?obs cex:ref-indicator ?indicatorURI ; \
 cex:ref-area ?country ; \
 cex:ref-time ?time ; \
 cex:value ?value ; \
@@ -160,7 +160,7 @@ qb:dataSet ?dataset. \
 OPTIONAL{ ?obs rdfs:comment ?note} \
 VALUES ?dataset {<" + lod.uri.dataset + datasetID + ">} \
 BIND (REPLACE(STR(?country),'" + lod.uri.country + "','') AS ?iso3) \
-BIND (REPLACE(STR(?indicator), '" + lod.uri.indicator + "','') AS ?indicator) \
+BIND (REPLACE(STR(?indicatorURI), '" + lod.uri.indicator + "','') AS ?indicator) \
 } ORDER BY ?indicator ?year ?iso3";
     };
 

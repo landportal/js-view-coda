@@ -16,72 +16,181 @@ lbvis.dl = (function (LBV, args) {
     var _options = {
         target:         '#wrapper',
         type:           null,   // 'indicator' or 'dataset'
+        lbid:           null,   // LP id for IND or DS
         year:           null,
     };
     $.extend(_options, args);
     // Internal cache
-    var _data = {};
+    var _data = {
+        cache: {},
+        meta: {},
+    };
+
+    var _getMetaQuery = function () {
+        var inds = _data.cache.map(i => i.indicator).filter(function(ind, i, arr) {
+            return arr.indexOf(ind) == i;
+        });
+        //console.log(_data.cache, inds);
+        inds.forEach(function (id) {
+            _data.meta[id] = $.extend(
+                true,
+                LBVIS.cache('indicators').find(i => i.id == id),
+                LBVIS.cache('indicatorsInfo').find(i => i.id == id));
+        });
+    };
+
+    var _getQuery = function () {
+        var q = null;
+        if (_options.type == 'dataset') {
+            //q = LBV.DATA.lod.sparql.prefix +
+            q = LBV.DATA.queries.datasetData(_options.lbid);
+        } else {
+            // more generic query (works only on Computex-based data)
+            q = LBV.DATA.obsValues(['indicator', 'country', 'time', 'value'], { indicator: [_options.lbid] });
+        }
+        q = LBV.DATA.sparqlURL(q);
+        q = q.replace('format=json', 'format=html');
+        //console.log(q);
+        return q;
+    };
 
     var _getData = function () {
+        var defer;
         if (_options.type == 'indicator') {
-            return LBV.loadData([_options.lbid]).done(function() {
-                var d = LBV.cache('data');
-                //console.log(' > got ', d);
-                _data.indicator = d[_options.lbid];
-                if (_data.indicator) {
-                    _buildCSV(_data.indicator);
-                }
+            defer = LBV.loadData([_options.lbid]).done(function() {
+                _data.cache = LBV.cache('data')[_options.lbid];
             });
         } else if (_options.type == 'dataset') {
-            return LBV.loadDataset([_options.lbid]).done(function() {
-                var d = LBV.cache('dataset');
-                if (d) {
-                    _buildCSV(d);
-                }
-                //console.log(d);
+            defer = LBV.loadDataset([_options.lbid]).done(function() {
+                _data.cache = LBV.cache('dataset')[_options.lbid];
             });
         }
+        return defer;
     };
 
     // Quick 'n dirty CSV formater
     var _buildCSV = function(data) {
         var csv = [];
-        var first = null;
-        
-        Object.keys(data).forEach(function (y) {
-            Object.keys(data[y]).forEach(function (c) {
+        var first = null; // used to set header, based on 1st row obj keys
+        if (_options.type == 'indicator') {
+            // work by year + iso3
+            Object.keys(data).forEach(function (y) {
+                Object.keys(data[y]).forEach(function (c) {
+                    if (!first) {
+                        first = Object.keys(data[y][c]);
+                        csv.push(first);
+                    }
+                    csv.push(Object.values(data[y][c]));
+                });
+            });
+        } else {
+            Object.values(data).forEach(function (row) {
                 if (!first) {
-                    first = Object.keys(data[y][c]);
+                    first = Object.keys(row);
                     csv.push(first);
                 }
-                csv.push(Object.values(data[y][c]));
+                csv.push(Object.values(row));
             });
-        });
-        _data.csv = csv;
+        }
+        //_data.csv = csv;
         //var file = _dlCSV(csv);
-        //console.log('CSV', first, csv);
+        //console.log('CSV', csv);
+        var str = '';
+        csv.forEach(function(row) {
+            str += '"' + row.join('";"'); // foreach col replace " by \"
+            str += '"' + "\n";
+        });
+        return str;
     };
 
     var _linkCSV = function () {
-        if (!_data.csv) return;
-        var csv = '';
-        _data.csv.forEach(function(row) {
-            csv += '"' + row.join('";"'); // foreach col replace " by \"
-            csv += '"' + "\n";
-        });
-
         //console.log(csv);
-        var link = document.createElement('a');
-        link.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
-        link.target = '_blank';
-        link.download = 'landportal-' + _options.lbid + '.csv';
-        link.innerHTML = 'CSV file';
+        var link = $('<a/>', {
+            "target": "_blank",
+            "title": "Get the data in tabular format",
+            "download": 'landportal-' + _options.lbid + '.csv',
+            "href": 'data:text/csv;charset=utf-8,' + encodeURI(_buildCSV(_data.cache))
+        });
+        link.addClass('label label-default link-csv');
+        link.html('CSV');
         return link;
-        //hiddenElement.click();
+    };
+
+    var _linkJSON = function () {
+        //console.log(_data.cache);
+        var link = $('<a/>', {
+            "target": "_blank",
+            "title": "Re-use this data in your apps",
+            "download": 'landportal-' + _options.lbid + '.json',
+            "href": 'data:text/json;charset=utf-8,' + encodeURI(JSON.stringify(_data.cache))
+        });
+        link.addClass('label label-default link-json');
+        link.html('JSON');
+        return link;
+    };
+
+    var _linkSPARQL = function () {
+        //console.log(_data.cache);
+        var link = $('<a/>', {
+            "target": "_blank",
+            "title": "Direct query to our LOD endpoint, HTML table",
+            "rel": "nofollow",
+            //"download": 'landportal-' + _options.lbid + '.json',
+            "href": _getQuery()
+        });
+        link.addClass('label label-default link-html');
+        link.html('HTML');
+        return link;
+    };
+
+    var _linkMetaJSON = function () {
+        //console.log(_data.cache);
+        var link = $('<a/>', {
+            "target": "_blank",
+            "rel": "nofollow",
+            "download": 'landportal-' + _options.lbid + '.json',
+            "href": 'data:text/json;charset=utf-8,' + encodeURI(JSON.stringify(_data.meta))
+        });
+        link.addClass('label label-default link-html');
+        link.html('JSON');
+        return link;
+    };
+
+    var _linkMetaCSV = function () {
+        //console.log(_data.cache);
+        var link = $('<a/>', {
+            "target": "_blank",
+            "rel": "nofollow",
+            "download": 'landportal-' + _options.lbid + '.csv',
+            "href": 'data:text/csv;charset=utf-8,' + encodeURI(_buildCSV(_data.meta))
+        });
+        link.addClass('label label-default link-html');
+        link.html('CSV');
+        return link;
     };
 
     var _buildLinks = function () {
-        return _linkCSV();
+        // DL
+        var links = $('<div/>');
+        links.append('<h3>Get all the data</h3>');
+        links.append('<p>Choose your format:</p>');
+        links.append(_linkCSV());
+        links.append(' ');
+        links.append(_linkJSON());
+        links.append(' ');
+        links.append(_linkSPARQL());
+        if (_options.type == 'dataset') {
+            LBVIS.getIndicatorsInfo().done(function () {
+                //links.append('<hr/>');
+                _getMetaQuery();
+                links.append('<h3>Get the meta data</h3>');
+                links.append('<p>All the information about this dataset and indicators</p>');
+                links.append(_linkMetaCSV());
+                links.append(' ');
+                links.append(_linkMetaJSON());
+            });
+        }
+        return links;
         //return 'data not available';b
     };
 
@@ -89,7 +198,7 @@ lbvis.dl = (function (LBV, args) {
         var $el = $(_options.target);
         //console.log($el);
         w = $el.find(_options.target + '-wrapper');
-        w.html(_buildLinks());
+        w.append(_buildLinks());
     };
 
     // Public methods
