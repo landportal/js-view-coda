@@ -140,6 +140,7 @@ cex:ref-time ?time . \
 \
 ?time time:hasBeginning ?timeValue . \
 ?timeValue time:inXSDDateTime ?dateTime . \
+FILTER(?value != 'N/A'^^<http://www.w3.org/2001/XMLSchema#string>) \
 BIND (REPLACE(STR(?indicatorURL), '" + lod.uri.indicator + "','') AS ?id) \
 }";
     };
