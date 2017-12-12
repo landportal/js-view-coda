@@ -35,7 +35,11 @@ var lbvisVGGT = (function (LBV, args) {
 
     function _getLaws() {
         var vg = VGGT_laws.find(function(l) { return l.iso3 == _options.iso3 });
-        _data.laws = vg.laws;
+        if (typeof vg === "undefined") {
+            _data.laws = [];
+        } else {
+            _data.laws = vg.laws;
+        }
     }
     function _getGroupLabel(id){
 	return groupLabels.find(item => { return item.id == id	}).label
