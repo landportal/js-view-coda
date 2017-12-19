@@ -85,7 +85,7 @@ var lbvisRanking = (function (LBV, args) {
         var html = '<li><div class="col-xs-9"><h4>' + main.render + '</h4><p>Country / Rank</p></div>'
                  + '<div class="col-xs-3 text-right"><h4>'+ _options.year + '</h4><i>in ' + main.unit + '</i></div></li>';
         // Quickly test data values (first one) to see if it's numeric, NaN, reverse array
-        if (!parseFloat(_data.values[0])) _data.values = _data.values.reverse();
+        if (!parseFloat(_data.values[0].value)) _data.values = _data.values.reverse();
         // Fill up rows
         _data.values.forEach(function (ind, pos) {
             if (pos == _options.expand && _data.values.length > _options.expandThreshold) html += _expandRow();
@@ -107,7 +107,7 @@ var lbvisRanking = (function (LBV, args) {
     var _draw = function () {
         _data.values = Object.values(_data.cache[_options.main][_options.year]);
         _data.values.sort(function (a, b) { // sort descending
-            return parseFloat(b) - parseFloat(a);
+            return parseFloat(b.value) - parseFloat(a.value);
         });
         if (!_data.values) {
             console.warn('OWWW!');
