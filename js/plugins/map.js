@@ -162,6 +162,9 @@ var lbvisMap = (function (MAP, LBV, args) {
             },
             colorAxis: (_options.map.legend ? {} : null),
         });
+        if (_options.map.tooltip) {
+            chartOptions.plotOptions.map.tooltip = { pointFormatter: _options.map.tooltip }
+        }
         return chartOptions;
     };
 
