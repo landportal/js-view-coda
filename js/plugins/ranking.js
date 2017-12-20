@@ -106,11 +106,16 @@ var lbvisRanking = (function (LBV, args) {
 
     var _draw = function () {
         _data.values = Object.values(_data.cache[_options.main][_options.year]);
-        _data.values.sort(function (a, b) { // sort descending
-            return parseFloat(b.value) - parseFloat(a.value);
+        // Sort A...z / 1...42
+        // Note to self: RTFM
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+        _data.values.sort(function (a, b) {
+            return a.value < b.value ? 1
+                : a.value > b.value ? -1
+                : 0;
         });
         if (!_data.values) {
-            console.warn('OWWW!');
+            console.warn('OWWW! no data / values here');
             return false;
         }
         _formatList();
