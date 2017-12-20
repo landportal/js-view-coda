@@ -188,10 +188,8 @@ lbvis.dl = (function (LBV, args) {
         //console.log($el);
         w = $el.find(_options.target + '-wrapper');
         w.append(_buildLinks());
-        console.log(_options);
+        //console.log(_options);
         if (_options.type == 'dataset') {
-            console.log('gogo dataset');
-            console.log(this);
             LBVIS.getIndicatorsInfo().done(function () {
                 _getMetaQuery();
                 var links = $('<div/>');
