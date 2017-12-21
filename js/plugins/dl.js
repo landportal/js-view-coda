@@ -43,11 +43,14 @@ lbvis.dl = (function (LBV, args) {
     var _getQuery = function () {
         var q = null;
         if (_options.type == 'dataset') {
-            //q = LBV.DATA.lod.sparql.prefix +
             q = LBVIS.DATA.queries.datasetData(_options.lbid);
         } else {
+            _data.indicators = [_options.lbid];
+            if (_options.tree && _options.tree[_options.lbid]) {
+                _data.indicators = _options.tree[_options.lbid];
+            }
             // more generic query (works only on Computex-based data)
-            q = LBVIS.DATA.obsValues(['indicator', 'country', 'time', 'value'], { indicator: [_options.lbid] });
+            q = LBVIS.DATA.obsValues(['indicator', 'country', 'time', 'value'], { indicator: [_data.indicators] });
         }
         q = LBVIS.DATA.sparqlURL(q);
         q = q.replace('format=json', 'format=html');
