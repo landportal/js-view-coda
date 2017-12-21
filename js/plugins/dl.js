@@ -24,6 +24,7 @@ lbvis.dl = (function (LBV, args) {
     var _data = {
         cache: {},
         meta: {},
+        indicators: [],
     };
 
     var _getMetaQuery = function () {
@@ -57,12 +58,18 @@ lbvis.dl = (function (LBV, args) {
     var _getData = function () {
         var defer;
         if (_options.type == 'indicator') {
-            defer = LBVIS.loadData([_options.lbid]).done(function() {
-                _data.cache = LBVIS.cache('data')[_options.lbid];
+            _data.indicators = [_options.lbid];
+            if (_options.tree && _options.tree[_options.lbid]) {
+                _data.indicators = _options.tree[_options.lbid];
+            }
+            defer = LBVIS.loadData(_data.indicators).done(function() {
+                _data.indicators.forEach(function (i) {
+                    _data.cache[i] = LBVIS.cache('data')[i];
+                });
             });
         } else if (_options.type == 'dataset') {
             defer = LBVIS.loadDataset([_options.lbid]).done(function() {
-                _data.cache = LBVIS.cache('dataset')[_options.lbid];
+                _data.cache[_options.lbid] = LBVIS.cache('dataset')[_options.lbid];
             });
         }
         return defer;
@@ -73,18 +80,20 @@ lbvis.dl = (function (LBV, args) {
         var csv = [];
         var first = null; // used to set header, based on 1st row obj keys
         if (_options.type == 'indicator') {
-            // work by year + iso3
-            Object.keys(data).forEach(function (y) {
-                Object.keys(data[y]).forEach(function (c) {
-                    if (!first) {
-                        first = Object.keys(data[y][c]);
-                        csv.push(first);
-                    }
-                    csv.push(Object.values(data[y][c]));
+            _data.indicators.forEach(function (lbid) {
+                // work by year + iso3
+                Object.keys(data[lbid]).forEach(function (y) {
+                    Object.keys(data[lbid][y]).forEach(function (c) {
+                        if (!first) {
+                            first = Object.keys(data[lbid][y][c]);
+                            csv.push(first);
+                        }
+                        csv.push(Object.values(data[lbid][y][c]));
+                    });
                 });
             });
         } else {
-            Object.values(data).forEach(function (row) {
+            Object.values(data[_options.lbid]).forEach(function (row) {
                 if (!first) {
                     first = Object.keys(row);
                     csv.push(first);
