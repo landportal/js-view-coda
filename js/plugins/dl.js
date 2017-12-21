@@ -50,7 +50,7 @@ lbvis.dl = (function (LBV, args) {
                 _data.indicators = _options.tree[_options.lbid];
             }
             // more generic query (works only on Computex-based data)
-            q = LBVIS.DATA.obsValues(['indicator', 'country', 'time', 'value'], { indicator: [_data.indicators] });
+            q = LBVIS.DATA.obsValues(['indicator', 'country', 'time', 'value'], { indicator: _data.indicators });
         }
         q = LBVIS.DATA.sparqlURL(q);
         q = q.replace('format=json', 'format=html');
