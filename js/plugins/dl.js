@@ -49,7 +49,8 @@ lbvis.dl = (function (LBV, args) {
             q = LBVIS.DATA.queries.datasetData(_options.lbid);
         } else {
             _data.indicators = [_options.lbid];
-            if (_options.tree && _options.tree[_options.lbid]) {
+            if (_options.tree && _options.tree[_options.lbid]
+                && _options.tree[_options.lbid].constructor === Array) {
                 _data.indicators = _options.tree[_options.lbid];
             }
             // more generic query (works only on Computex-based data)
@@ -62,17 +63,22 @@ lbvis.dl = (function (LBV, args) {
     };
 
     var _getData = function () {
-        var defer;
+        var defer = $.when();
         if (_options.type == 'indicator') {
             _data.indicators = [_options.lbid];
             if (_options.tree && _options.tree[_options.lbid]) {
                 _data.indicators = _options.tree[_options.lbid];
             }
-            defer = LBVIS.loadData(_data.indicators).done(function() {
-                _data.indicators.forEach(function (i) {
-                    _data.cache[i] = LBVIS.cache('data')[i];
+            if (_data.indicators.constructor === Array) {
+                defer = LBVIS.loadData(_data.indicators).done(function() {
+                    _data.indicators.forEach(function (i) {
+                        _data.cache[i] = LBVIS.cache('data')[i];
+                    });
                 });
-            });
+            }
+            // else {
+            //     console.log(_data);
+            // }
         } else if (_options.type == 'dataset') {
             defer = LBVIS.loadDataset([_options.lbid]).done(function() {
                 _data.cache[_options.lbid] = LBVIS.cache('dataset')[_options.lbid];
@@ -86,6 +92,7 @@ lbvis.dl = (function (LBV, args) {
         var csv = [];
         var first = null; // used to set header, based on 1st row obj keys
         if (_options.type == 'indicator') {
+            if (!_data.indicators.length) return '';
             _data.indicators.forEach(function (lbid) {
                 // work by year + iso3
                 Object.keys(data[lbid]).forEach(function (y) {
