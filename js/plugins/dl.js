@@ -32,12 +32,15 @@ lbvis.dl = (function (LBV, args) {
             return arr.indexOf(ind) == i;
         });
         _data.meta[_options.lbid] = [];
-        console.log(_data.cache, inds);
         inds.forEach(function (id) {
-            _data.meta[_options.lbid][id] = $.extend(
+            var stuff = $.extend(
                 true,
                 LBVIS.cache('indicators').find(i => i.id == id),
                 LBVIS.cache('indicatorsInfo').find(i => i.id == id));
+            console.log(stuff);
+            delete stuff.render;
+            _data.meta[_options.lbid][id] = stuff;
+
         });
     };
 
