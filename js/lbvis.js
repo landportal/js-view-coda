@@ -197,15 +197,21 @@ var lbvis = (function (args) {
     //
     var _formatIndicatorLabel = function (indicator) {
         var ds = _cache.datasets.find(d => d.id == indicator.dataset);
-        indicator.render = '<span class="indicator"><a href="' + indicator.indicatorSeeAlso.replace(/.*\/\/landportal.info/, '') + '">' + indicator.label + '</a>'
+        var dsinfo = '';
+        if (ds) {
+            dsinfo = ''
+                + "\nDataset: " + ds.label
+                + "\nSource: " + ds.source
+            ;
+        }
+        indicator.render = '<span class="indicator"><a href="' + indicator.indicatorSeeAlso.replace(/.*\/\/landportal.(info|org)/, '') + '">' + indicator.label + '</a>'
             + ' <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="top" title="'
             + indicator.description.replace(/"/g, "'") + '"></span>'
             + ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="'
-            + 'Unit: ' + indicator.unit
-            + "\nDataset: " + ds.label
-            + "\nSource: " + ds.source
+            + 'Unit: ' + indicator.unit + dsinfo
             + '"></span>'
             + '</span>';
+        indicator.indicatorSeeAlso = indicator.indicatorSeeAlso.replace(/.info/, '.org');
         return indicator;
     };
 
