@@ -112,6 +112,11 @@ lbvis.dl = (function (LBV, args) {
         //console.log('CSV', csv);
         var str = '';
         csv.forEach(function(row) {
+            //Replace single quotes with double quotes.
+            replaceQuotes = function (v) {
+                return v.toString().replace(/"/g, '""');
+            }
+            row = row.map(replaceQuotes)
             str += '"' + row.join('";"'); // foreach col replace " by \"
             str += '"' + "\n";
         });
