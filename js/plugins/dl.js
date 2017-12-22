@@ -28,12 +28,13 @@ lbvis.dl = (function (LBV, args) {
     };
 
     var _getMetaQuery = function () {
-        var inds = _data.cache.map(i => i.indicator).filter(function(ind, i, arr) {
+        var inds = _data.cache[_options.lbid].map(i => i.indicator).filter(function(ind, i, arr) {
             return arr.indexOf(ind) == i;
         });
-        //console.log(_data.cache, inds);
+        _data.meta[_options.lbid] = [];
+        console.log(_data.cache, inds);
         inds.forEach(function (id) {
-            _data.meta[id] = $.extend(
+            _data.meta[_options.lbid][id] = $.extend(
                 true,
                 LBVIS.cache('indicators').find(i => i.id == id),
                 LBVIS.cache('indicatorsInfo').find(i => i.id == id));
