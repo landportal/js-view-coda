@@ -37,7 +37,6 @@ lbvis.dl = (function (LBV, args) {
                 true,
                 LBVIS.cache('indicators').find(i => i.id == id),
                 LBVIS.cache('indicatorsInfo').find(i => i.id == id));
-            console.log(stuff);
             delete stuff.render;
             _data.meta[_options.lbid][id] = stuff;
 
