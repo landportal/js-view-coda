@@ -49,8 +49,7 @@ lbvis.dl = (function (LBV, args) {
             q = LBVIS.DATA.queries.datasetData(_options.lbid);
         } else {
             _data.indicators = [_options.lbid];
-            if (_options.tree && _options.tree[_options.lbid]
-                && _options.tree[_options.lbid].constructor === Array) {
+            if (_options.tree && _options.tree[_options.lbid] && _options.tree[_options.lbid].length) {
                 _data.indicators = _options.tree[_options.lbid];
             }
             // more generic query (works only on Computex-based data)
