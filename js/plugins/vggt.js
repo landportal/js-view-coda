@@ -1097,6 +1097,14 @@ var VGGT_laws = [
                 "title": "Government of South Africa. 2013. Constitutional Court Decision. Agri South Africa v. Minister of Minerals and Energy (CCT 51/12) [2013]."
             }, 
             {
+                "link": "http://landportal.org/library/resources/interim-protection-information-land-rights-act-1996", 
+                "title": "Government of South Africa. 1996. Interim Protection of Information Land Rights Act (IPILRA)."
+            },
+            {
+                "link": "http://landportal.info/library/resources/case-cct-5-1-12-constitutional-court-south-africa",
+                "title": "Government of South Africa. 2013. Constitutional Court Decision. Agri South Africa v. Minister of Minerals and Energy (CCT 51/12) [2013]."
+            },
+            {
                 "link": "http://landportal.info/library/resources/property-valuation-act", 
                 "title": "Property Valuation Act, 2014 (No. 17 of 2014)."
             }, 
