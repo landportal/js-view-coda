@@ -63,7 +63,7 @@ var lbvisTable = (function (LBV, args) {
                 if (str) str += ' / ';
                 str += _updateCell(c, data);
             });
-        } else if (data && data[cell]) {
+        } else if (data && cell in data) {
             str = '<span class="' + data[cell] + '">' + data[cell] + '</span>';
         } else {
             str = '<span class="data-empty">N/A<span>';
