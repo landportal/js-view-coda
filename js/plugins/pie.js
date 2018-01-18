@@ -21,7 +21,7 @@ var lbvisPie = (function (LBV, args) {
     var _options = {
         target:         '#wrapper-piechart',
         legend:         false,
-        iso3:           '',
+        iso3:           null,
         colors:         ['#CA652D', '#13585D', '#9D9542', '#143D5D', '#E34A3A'],
         // Default FAO pie chart
         main:           'FAO-6601-5110',
@@ -193,7 +193,7 @@ var lbvisPie = (function (LBV, args) {
             if (!_options.loadMain) {
                 inds.splice(inds.indexOf(_options.main), 1);
             }
-            LBVIS.loadData(inds).done(function () {
+            LBVIS.loadData(inds, (_options.loadCountries ? null : _options.iso3)).done(function () {
                 // Fill up pie cache
                 // @TODO: check, may have collision?
                 var tmp = LBVIS.cache('data');
