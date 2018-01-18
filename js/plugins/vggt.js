@@ -1093,8 +1093,8 @@ var VGGT_laws = [
                 "title": "Government of South Africa. 1998. Prevention from and Illegal Eviction and Unlawful Occupation Act."
             }, 
             {
-                "link": "http://landportal.info/library/resources/case-cct-5-1-12-constitutional-court-south-africa", 
-                "title": "Government of South Africa. 2013. Constitutional Court Decision. Agri South Africa v. Minister of Minerals and Energy (CCT 51/12) [2013]."
+                "link": "https://landportal.org/ru/library/resources/restitution-land-rights-act-1994",
+                "title": "Government of South Africa. 1994. Restitution of Land Rights Act."
             }, 
             {
                 "link": "http://landportal.org/library/resources/interim-protection-information-land-rights-act-1996", 
