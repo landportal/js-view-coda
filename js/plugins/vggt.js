@@ -906,11 +906,15 @@ var VGGT_laws = [
             }, 
             {
                 "link": "http://landportal.info/library/resources/c%C3%B3digo-civil-rep%C3%BAblica-de-nicaragua", 
-                "title": "Government of Nicaragua. Civil Code."
+                "title": "Government of Nicaragua. 1904. Civil Code."
             }, 
             {
                 "link": "http://landportal.info/library/resources/ley-n%C2%BA-445-ley-de-r%C3%A9gimen-de-propiedad-comunal-de-los-pueblos-ind%C3%ADgenas-y", 
                 "title": "Government of Nicaragua. 2003. Ley N\u00ba 445 - Ley de r\u00e9gimen de propiedad comunal de los pueblos ind\u00edgenas y comunidades \u00e9tnicas."
+            },
+            {
+                "link": "https://landportal.org/library/resources/law-445-law-communal-property-regime-indigenous-peoples-and-ethnic-communities",
+                "title": "Government of Nicaragua. 2003. Law 445: Law of Communal Property Regime of the Indigenous Peoples and Ethnic Communities of the Autonomous Regions of the Atlantic Coast of Nicaragua and of the Rivers Bocay, Coco, Indio and Maiz."
             }
         ]
     }, 
