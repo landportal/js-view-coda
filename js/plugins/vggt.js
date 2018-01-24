@@ -567,6 +567,10 @@ var VGGT_laws = [
         "iso3": "HND", 
         "laws": [
             {
+                "link": "http://landportal.org/library/resources/constituteproject125/constitution-honduras-1982-rev-2013",
+                "title": "Government of Honduras. 1982. Constitution of Honduras 1982 (rev. 2013)."
+            },
+            {
                 "link": "http://landportal.info/library/resources/decreto-n%C2%BA-8204-ley-de-propiedad", 
                 "title": "Government of Honduras. 2004. Decreto N\u00ba 82/04 - Ley de propiedad."
             }, 
