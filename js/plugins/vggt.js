@@ -917,7 +917,7 @@ var VGGT_laws = [
                 "title": "Government of Nicaragua. 2003. Ley N\u00ba 445 - Ley de r\u00e9gimen de propiedad comunal de los pueblos ind\u00edgenas y comunidades \u00e9tnicas."
             },
             {
-                "link": "https://landportal.org/library/resources/law-445-law-communal-property-regime-indigenous-peoples-and-ethnic-communities",
+                "link": "http://landportal.org/library/resources/law-445-law-communal-property-regime-indigenous-peoples-and-ethnic-communities",
                 "title": "Government of Nicaragua. 2003. Law 445: Law of Communal Property Regime of the Indigenous Peoples and Ethnic Communities of the Autonomous Regions of the Atlantic Coast of Nicaragua and of the Rivers Bocay, Coco, Indio and Maiz."
             }
         ]
@@ -1101,7 +1101,7 @@ var VGGT_laws = [
                 "title": "Government of South Africa. 1998. Prevention from and Illegal Eviction and Unlawful Occupation Act."
             }, 
             {
-                "link": "https://landportal.org/ru/library/resources/restitution-land-rights-act-1994",
+                "link": "http://landportal.org/ru/library/resources/restitution-land-rights-act-1994",
                 "title": "Government of South Africa. 1994. Restitution of Land Rights Act."
             }, 
             {
