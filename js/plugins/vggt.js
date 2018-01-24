@@ -567,7 +567,7 @@ var VGGT_laws = [
         "iso3": "HND", 
         "laws": [
             {
-                "link": "http://landportal.info/library/resources/decreto-n%C2%BA-8204-ley-de-propiedad-0-", 
+                "link": "http://landportal.info/library/resources/decreto-n%C2%BA-8204-ley-de-propiedad", 
                 "title": "Government of Honduras. 2004. Decreto N\u00ba 82/04 - Ley de propiedad."
             }, 
             {
