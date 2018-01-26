@@ -995,6 +995,14 @@ var VGGT_laws = [
             {
                 "link": "http://landportal.info/library/resources/decree-1210", 
                 "title": "Government of Peru. 2015. Decree 1210 Decreto legislativo que modifica la décima disposición complementaria final del decreto legislativo nº 1192, que aprueba la ley marco de adquisición y expropiación de inmuebles, transferencia de inmuebles de propiedad del estado, liberación de interferencias y dicta otras medidas para la ejecución de obras de infraestructura"
+            },
+            {
+                "link": "http://landportal.org/library/resources/ley-de-la-inversion-privada-en-el-desarrollo-de-las-actividades-economicas-en-las",
+                "title": "Government of Peru. 1995. Ley de la inversion privada en el desarrollo de las actividades economicas en las tierras del territorio nacional y de las comunidades campesinas y nativas."
+            },
+            {
+                "link": "http://landportal.org/library/resources/law-right-prior-consultation-indigenous-or-native-peoples-recognized-convention",
+                "title": "Government of Peru. 2011. Law of the Right to Prior Consultation to Indigenous or Native Peoples, recognized in the Convention 169 of the International Labour Convention (ILO)"
             }
         ]
     }, 
