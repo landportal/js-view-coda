@@ -31,7 +31,7 @@ lbvis.dl = (function (LBV, args) {
         var inds = _data.cache[_options.lbid].map(i => i.indicator).filter(function(ind, i, arr) {
             return arr.indexOf(ind) == i;
         });
-        _data.meta[_options.lbid] = [];
+        _data.meta[_options.lbid] = {};
         inds.forEach(function (id) {
             var stuff = $.extend(
                 true,
