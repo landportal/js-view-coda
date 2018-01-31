@@ -65,7 +65,7 @@ lbvis.dl = (function (LBV, args) {
         var defer = $.when();
         if (_options.type == 'indicator') {
             _data.indicators = [_options.lbid];
-            if (_options.tree && _options.tree[_options.lbid]) {
+            if (_options.tree && _options.tree[_options.lbid] && _options.tree[_options.lbid].length) {
                 _data.indicators = _options.tree[_options.lbid];
             }
             if (_data.indicators.constructor === Array) {
