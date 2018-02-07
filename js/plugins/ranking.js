@@ -23,7 +23,8 @@ var lbvisRanking = (function (LBV, args) {
             _data.years = Object.keys(_data.cache[_options.main])
             _data.years.sort(function (a, b) { return b - a; });
             _setOptionsYears();
-            _options.year = _data.years[_data.years.length-1];
+            _options.year = _data.years.sort(function(a, b){return b-a})[0];//order higher first.
+
             //_options.year = Object.keys(_data.cache[_options.main])[0];
             //console.log('GOT', _data.cache, _data.years);
         });
