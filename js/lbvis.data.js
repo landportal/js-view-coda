@@ -148,8 +148,10 @@ BIND (REPLACE(STR(?indicatorURL), '" + lod.uri.indicator + "','') AS ?id) \
     // Download a dataset data
     var _datasetData = function (datasetID) {
         return query.prefix + " \
-SELECT DISTINCT ?indicator ?iso3 (year(?dateTime) as ?year) ?value (str(?note) as ?note) \
+SELECT DISTINCT ?indicatorID (str(?indicatorLabel) as ?indicatorLabel) ?country_iso3 (str(?countryLabel) as ?countryLabel) (year(?dateTime) as ?year) ?value (str(?note) as ?note) \
 " + _from([query.graphs.data]) + " \
+" + _from([query.graphs.countries]) + " \
+" + _from([query.graphs.indicators]) + " \
 WHERE { \
 ?obs cex:ref-indicator ?indicatorURI ; \
 cex:ref-area ?country ; \
@@ -158,12 +160,14 @@ cex:value ?rawValue ; \
 qb:dataSet ?dataset. \
 ?time time:hasBeginning ?timeValue . \
 ?timeValue time:inXSDDateTime ?dateTime . \
+?country rdfs:label ?countryLabel .\
+?indicatorURI rdfs:label ?indicatorLabel .\
 OPTIONAL{ ?obs rdfs:comment ?note} \
 VALUES ?dataset {<" + lod.uri.dataset + datasetID + ">} \
-BIND (REPLACE(STR(?country),'" + lod.uri.country + "','') AS ?iso3) \
-BIND (REPLACE(STR(?indicatorURI), '" + lod.uri.indicator + "','') AS ?indicator) \
+BIND (REPLACE(STR(?country),'" + lod.uri.country + "','') AS ?country_iso3) \
+BIND (REPLACE(STR(?indicatorURI), '" + lod.uri.indicator + "','') AS ?indicatorID) \
 BIND(if(datatype(?rawValue)=xsd:string, str(?rawValue), ?rawValue) as ?value) \
-} ORDER BY ?indicator ?year ?iso3";
+} ORDER BY ?indicatorID ?year ?country_iso3";
     };
 
     /**************************************
