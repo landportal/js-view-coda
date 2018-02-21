@@ -101,7 +101,7 @@ var lbvisRanking = (function (LBV, args) {
             if (e.target.name == 'show') {
                 $(_options.target + ' li').removeClass('hidden');
             } else {
-                $(_options.target + '-wrapper li:nth-child(n+8):nth-last-child(n+6)').addClass('hidden');
+                $(_options.target + ' li:nth-child(n+8):nth-last-child(n+6)').addClass('hidden');
             }
         });
     };
