@@ -28,7 +28,7 @@ lbvis.dl = (function (LBV, args) {
     };
 
     var _getMetaQuery = function () {
-        var inds = _data.cache[_options.lbid].map(i => i.indicator).filter(function(ind, i, arr) {
+        var inds = _data.cache[_options.lbid].map(i => i.indicatorID).filter(function(ind, i, arr) {
             return arr.indexOf(ind) == i;
         });
         _data.meta[_options.lbid] = {};
