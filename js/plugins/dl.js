@@ -219,7 +219,7 @@ lbvis.dl = (function (LBV, args) {
             LBVIS.getIndicatorsInfo().done(function () {
                 _getMetaQuery();
                 var links = $('<div/>');
-                links.append('<h3>Get the meta data</h3>');
+                links.append('<h3>Get the metadata</h3>');
                 links.append('<p>All the information about this dataset and indicators</p>');
                 links.append(_linkMetaCSV());
                 links.append(' ');
