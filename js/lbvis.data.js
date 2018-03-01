@@ -201,41 +201,60 @@ BIND(if(datatype(?rawValue)=xsd:string, str(?rawValue), ?rawValue) as ?value) \
             var crit = {};
             var values = [];
             var bind = [];
-            // Build up the VALUES conditions (WHERE)
-            $.each(where, function(c, v) {
-                //console.log(c, v);
-                var prefix = lod.uri[c] || '';
-                if ($.inArray(c, columns) != -1) c = 'b'+c; // for BIND
-                values.push("VALUES ?" + c + ' { <' + prefix + v.join('> <' + prefix) + '> }');
-            });
-            //console.log('VALUES', values);
-
             var dirtyObsMapping = {
                 indicator: 'cex:ref-indicator',
                 country: 'cex:ref-area',
                 value:   'cex:value',
                 time:   'cex:ref-time',
             };
+            var dirtyRevMapping = {
+                countryName: '?bcountry rdfs:label',
+                indicatorName: '?bindicator rdfs:label',
+            };
+            // Build up the VALUES conditions (WHERE)
+            $.each(where, function(c, v) {
+                var prefix = lod.uri[c] || '';
+                // if c is in the obs 'attr'
+                if (c in dirtyObsMapping) {
+                    if ($.inArray(c, columns) != -1) c = 'b'+c; // for BIND
+                    values.push("VALUES ?" + c + ' { <' + prefix + v.join('> <' + prefix) + '> }');
+                }
+                //console.log('WORKS? ' , c, c in dirtyObsMapping);
+            });
+            //console.log('VALUES', values);
+
             // 'main' obs (cex: indicator)
             var obs = [];
+            var rev = [];
             columns.forEach(function(c, i) {
-                var prefix = lod.uri[c];
-                if (prefix) {
-                    obs.push(dirtyObsMapping[c] + ' ?b' + c);
-                    bind.push("BIND (REPLACE(STR(?b" + c + "), '"+prefix+"', '') AS ?" + c + ")");
-                    // if (c == 'time') {
-                    //     // do something fuckedup
-                    //     obs.push('?time time:hasBeginning ?timeValue . ?timeValue time:inXSDDateTime ?dateTime . ');
-                    //     bind.push("BIND (REPLACE(STR(?b" + c + "), '"+prefix+"', '') AS ?" + c + ")");
-                    // }
-                } else {
-                    obs.push(dirtyObsMapping[c] + ' ?' + c);
+                var prefix = lod.uri[c] || '';
+                var s = null;
+                var o = null;
+                if (c in dirtyObsMapping) {
+                    s = dirtyObsMapping[c];
+                    o = (prefix ? 'b' : '') + c;
+                    obs.push(s + ' ?' + o);
                 }
+                if (c in dirtyRevMapping) {
+                    rev.push(dirtyRevMapping[c] + ' ?' + c);
+                }
+                //console.log(prefix, c);
+                if (prefix) {
+                        bind.push("BIND (REPLACE(STR(?b" + c + "), '"+prefix+"', '') AS ?" + c + ")");
+                }
+                // if (c == 'time') {
+                //     // do something fuckedup
+                //     obs.push('?time time:hasBeginning ?timeValue . ?timeValue time:inXSDDateTime ?dateTime . ');
+                //     bind.push("BIND (REPLACE(STR(?b" + c + "), '"+prefix+"', '') AS ?" + c + ")");
+                // }
+                //console.log(c);
             });
 
             var q = " SELECT ?" + columns.join(' ?')
                 + " FROM <" + query.graphs.data + ">"
+                + (rev ? " FROM <" + query.graphs.countries + "> FROM <" + query.graphs.indicators + ">" : '')
                 + " WHERE { ?obs " + obs.join('; ') + " . "
+                + rev.join('. ')
                 + " " + values.join(' ')
                 + " " + bind.join(' ')
                 + " } ORDER BY ?time";
