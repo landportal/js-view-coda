@@ -234,6 +234,12 @@ var lbvis = (function (args) {
         }
         return options;
     };
+    // From: https://stackoverflow.com/a/15030117/3248199
+    var _flattenTree = function (arr) {
+        return Object.values(arr).reduce(function (flat, toFlatten) {
+            return flat.concat(Array.isArray(toFlatten) ? _flattenTree(toFlatten) : toFlatten);
+        }, []);
+    };
 
     var _init = function () {
         //console.log('LBVIS preload');
@@ -296,6 +302,7 @@ var lbvis = (function (args) {
                 chart.setTitle(title, subtitle);
             }
         },
+        flattenTree: _flattenTree,
 
         // JS basics...
         // Correct rounding to 2 decimal after floating point (RTFM http://floating-point-gui.de/
