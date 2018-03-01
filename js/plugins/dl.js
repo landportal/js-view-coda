@@ -18,13 +18,15 @@ lbvis.dl = (function (LBV, args) {
         type:           null,   // 'indicator' or 'dataset'
         lbid:           null,   // LP id for IND or DS
         year:           null,
+        //tree:           true,
     };
     $.extend(_options, args);
     // Internal cache
     var _data = {
         cache: {},
+        countries: {},
         meta: {},
-        indicators: [],
+        indicators: {},
     };
 
     var _getMetaQuery = function () {
@@ -45,38 +47,59 @@ lbvis.dl = (function (LBV, args) {
 
     var _getQuery = function () {
         var q = null;
+        var inds = [_options.lbid];
         if (_options.type == 'dataset') {
             q = LBVIS.DATA.queries.datasetData(_options.lbid);
         } else {
-            _data.indicators = [_options.lbid];
-            if (_options.tree && _options.tree[_options.lbid] && _options.tree[_options.lbid].length) {
-                _data.indicators = _options.tree[_options.lbid];
+            if (_options.tree && _options.tree[_options.lbid] && _options.tree[_options.lbid].length != 0) {
+                inds = LBVIS.flattenTree(_options.tree[_options.lbid]);
             }
             // more generic query (works only on Computex-based data)
-            q = LBVIS.DATA.obsValues(['indicator', 'country', 'time', 'value'], { indicator: _data.indicators });
+            q = LBVIS.DATA.obsValues(['indicator', 'indicatorName', 'country', 'countryName', 'time', 'value'], { indicator: inds });
+            //q = LBVIS.DATA.obsValues(['indicator' => 'code', 'indicatorName' => 'indicator', 'country' => 'iso3', 'countryName' => 'Country', 'time' => 'year', 'value' => 'value'], { indicator: _data.indicators });
+            //console.log(q);
         }
         q = LBVIS.DATA.sparqlURL(q);
         q = q.replace('format=json', 'format=html');
-        //console.log(q);
         return q;
     };
 
     var _getData = function () {
         var defer = $.when();
+        var inds = [_options.lbid];
         if (_options.type == 'indicator') {
-            _data.indicators = [_options.lbid];
-            if (_options.tree && _options.tree[_options.lbid] && _options.tree[_options.lbid].length) {
-                _data.indicators = _options.tree[_options.lbid];
+            if (_options.tree && _options.tree[_options.lbid] && _options.tree[_options.lbid].length != 0) {
+                inds = LBVIS.flattenTree(_options.tree[_options.lbid]);
             }
-            if (_data.indicators.constructor === Array) {
-                defer = LBVIS.loadData(_data.indicators).done(function() {
-                    _data.indicators.forEach(function (i) {
-                        _data.cache[i] = LBVIS.cache('data')[i];
+            //console.log(inds, _options.tree[_options.lbid]);
+            defer = LBVIS.loadData(inds).done(function() {
+                _data.countries = LBVIS.cache('countries');
+                inds.forEach(function (i) {
+                    // stuff in meta info about indicators + country name
+                    _data.indicators[i] = LBVIS.cache('indicators').find(d => d.id == i); // by lbid
+                    var d = LBVIS.cache('data')[i];
+                    _data.cache[i] = {};
+                    //console.log(i, inds);
+                    Object.keys(d).forEach(function(y) { // year
+                        _data.cache[i][y] = {};
+                        Object.keys(d[y]).forEach(function(c) { // country
+                            _data.cache[i][y][c] = {};
+                            Object.keys(d[y][c]).forEach(function(a) { // attr
+                                if (a == 'country') {
+                                    _data.cache[i][y][c]['Country name'] = _data.countries.find(cc => cc.iso3 == c).name;
+                                }
+                                if (a == 'indicator') {
+                                    _data.cache[i][y][c]['Indicator name'] = _data.indicators[i].label;
+                                }
+                                _data.cache[i][y][c][a] = d[y][c][a];
+                            });
+                        });
                     });
+                    //console.log(_data.cache[i]);
                 });
-            }
+            });
+            //}
             // else {
-            //     console.log(_data);
             // }
         } else if (_options.type == 'dataset') {
             defer = LBVIS.loadDataset([_options.lbid]).done(function() {
@@ -91,9 +114,10 @@ lbvis.dl = (function (LBV, args) {
         var csv = [];
         var first = null; // used to set header, based on 1st row obj keys
         if (_options.type == 'indicator') {
-            if (!_data.indicators.length) return '';
-            _data.indicators.forEach(function (lbid) {
+            if (!Object.keys(_data.indicators).length) return '';
+            Object.keys(_data.indicators).forEach(function (lbid) {
                 // work by year + iso3
+                //console.log(lbid, data);
                 Object.keys(data[lbid]).forEach(function (y) {
                     Object.keys(data[lbid][y]).forEach(function (c) {
                         if (!first) {
