@@ -236,7 +236,8 @@ BIND(if(datatype(?rawValue)=xsd:string, str(?rawValue), ?rawValue) as ?value) \
                     obs.push(s + ' ?' + o);
                 }
                 if (c in dirtyRevMapping) {
-                    rev.push(dirtyRevMapping[c] + ' ?' + c);
+                    rev.push(dirtyRevMapping[c] + ' ?rev' + c);
+                    bind.push("BIND (STR(?rev" + c + ") AS ?" + c + ")");
                 }
                 //console.log(prefix, c);
                 if (prefix) {
