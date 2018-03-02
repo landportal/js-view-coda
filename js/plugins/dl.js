@@ -55,7 +55,7 @@ lbvis.dl = (function (LBV, args) {
                 inds = LBVIS.flattenTree(_options.tree[_options.lbid]);
             }
             // more generic query (works only on Computex-based data)
-            q = LBVIS.DATA.obsValues(['indicator', 'indicatorName', 'country', 'countryName', 'time', 'value'], { indicator: inds });
+            q = LBVIS.DATA.obsValues(['indicator', 'indicatorName', 'country', 'countryName', 'time', 'value', 'note'], { indicator: inds });
             //q = LBVIS.DATA.obsValues(['indicator' => 'code', 'indicatorName' => 'indicator', 'country' => 'iso3', 'countryName' => 'Country', 'time' => 'year', 'value' => 'value'], { indicator: _data.indicators });
             //console.log(q);
         }

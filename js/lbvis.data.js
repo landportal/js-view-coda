@@ -211,6 +211,9 @@ BIND(if(datatype(?rawValue)=xsd:string, str(?rawValue), ?rawValue) as ?value) \
                 countryName: '?bcountry rdfs:label',
                 indicatorName: '?bindicator rdfs:label',
             };
+            var dirtyOptional = {
+                note: '?obs rdfs:comment',
+            };
             // Build up the VALUES conditions (WHERE)
             $.each(where, function(c, v) {
                 var prefix = lod.uri[c] || '';
@@ -226,6 +229,7 @@ BIND(if(datatype(?rawValue)=xsd:string, str(?rawValue), ?rawValue) as ?value) \
             // 'main' obs (cex: indicator)
             var obs = [];
             var rev = [];
+            var opt = [];
             columns.forEach(function(c, i) {
                 var prefix = lod.uri[c] || '';
                 var s = null;
@@ -239,9 +243,12 @@ BIND(if(datatype(?rawValue)=xsd:string, str(?rawValue), ?rawValue) as ?value) \
                     rev.push(dirtyRevMapping[c] + ' ?rev' + c);
                     bind.push("BIND(STR(?rev" + c + ") AS ?" + c + ")");
                 }
+                if (c in dirtyOptional) {
+                    opt.push(dirtyOptional[c] + ' ?b' + c);
+                }
                 //console.log(prefix, c);
-                if (c == 'value') {
-                    bind.push('BIND(STR(IF(DATATYPE(?bvalue)=xsd:string, STR(?bvalue), ?bvalue)) AS ?value)');
+                if (c == 'value' || c == 'note') {
+                    bind.push('BIND(STR(IF(DATATYPE(?b' + c + ')=xsd:string, STR(?b' + c + '), ?b' + c + ')) AS ?' + c + ')');
                 }
                 else if (prefix) {
                     bind.push("BIND(REPLACE(STR(?b" + c + "), '"+prefix+"', '') AS ?" + c + ")");
@@ -259,6 +266,7 @@ BIND(if(datatype(?rawValue)=xsd:string, str(?rawValue), ?rawValue) as ?value) \
                 + (rev ? " FROM <" + query.graphs.countries + "> FROM <" + query.graphs.indicators + ">" : '')
                 + " WHERE { ?obs " + obs.join('; ') + " . "
                 + rev.join('. ')
+                + " OPTIONAL { " + opt.join('. ') + " }"
                 + " " + values.join(' ')
                 + " " + bind.join(' ')
                 + " } ORDER BY ?time";
