@@ -232,16 +232,19 @@ BIND(if(datatype(?rawValue)=xsd:string, str(?rawValue), ?rawValue) as ?value) \
                 var o = null;
                 if (c in dirtyObsMapping) {
                     s = dirtyObsMapping[c];
-                    o = (prefix ? 'b' : '') + c;
+                    o = (prefix || c == 'value' ? 'b' : '') + c;
                     obs.push(s + ' ?' + o);
                 }
                 if (c in dirtyRevMapping) {
                     rev.push(dirtyRevMapping[c] + ' ?rev' + c);
-                    bind.push("BIND (STR(?rev" + c + ") AS ?" + c + ")");
+                    bind.push("BIND(STR(?rev" + c + ") AS ?" + c + ")");
                 }
                 //console.log(prefix, c);
-                if (prefix) {
-                        bind.push("BIND (REPLACE(STR(?b" + c + "), '"+prefix+"', '') AS ?" + c + ")");
+                if (c == 'value') {
+                    bind.push('BIND(STR(IF(DATATYPE(?bvalue)=xsd:string, STR(?bvalue), ?bvalue)) AS ?value)');
+                }
+                else if (prefix) {
+                    bind.push("BIND(REPLACE(STR(?b" + c + "), '"+prefix+"', '') AS ?" + c + ")");
                 }
                 // if (c == 'time') {
                 //     // do something fuckedup
