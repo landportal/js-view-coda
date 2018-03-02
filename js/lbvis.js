@@ -68,7 +68,7 @@ var lbvis = (function (args) {
         if (iso3) filters.country = [ iso3 ];
         if (year) filters.time = [ year ];
         var qvalues = _DATA.obsValues(
-            ['indicator', 'country', 'time', 'value'], // computex data obs
+            ['indicator', 'country', 'time', 'value', 'note'], // computex data obs
             filters
         );
         //console.log('G', qvalues);
