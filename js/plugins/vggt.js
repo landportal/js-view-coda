@@ -281,6 +281,10 @@ var VGGT_laws = [
             {
                 "link": "http://landportal.org/library/resources/irrigation-restoration-and-development-project-resettlement-policy-framework", 
                 "title": "Afghanistan Ministry of Mineral and Water. 2010. Irrigation Restoration and Development Project Resettlement Policy Framework."
+            },
+            {
+                "link": "http://landportal.org/library/resources/law-land-acquisition-2017",
+                "title": "Government of Afghanistan. June 2017. Law on Land Acquisition"
             }
         ]
     }, 
@@ -1063,6 +1067,10 @@ var VGGT_laws = [
             {
                 "link": "http://landportal.org/library/resources/usaid-land-tenure-policy-research-brief-no-2-rwanda", 
                 "title": "Ikirezi Mireille, Dr. Fid\u00e8le Masengo and Anna Knox. July 2014. Implementation of Expropriation Law in Rwanda: Challenges and Ways Forward, LAND Project Policy Research Brief No.2, Kigali, Rwanda: USAID LAND Project. Research Brief No.2, Kigali, Rwanda: USAID LAND Project."
+            },
+            {
+                "link": "http://landportal.org/library/resources/law-n%C2%B0-322015-11062015-relating-expropriation-public-interest",
+                "title": "Government of Rwanda. April 2015. Law n° 32/2015 of 11/06/2015 relating to expropriation in the public interest"
             }
         ]
     }, 
