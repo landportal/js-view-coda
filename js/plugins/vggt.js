@@ -71,6 +71,7 @@ var lbvisVGGT = (function (LBV, args) {
             }
         });
         //console.log(_data.panels);
+        _data.panels[2016].sort(function(a,b) {return (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0);})
     }
 
     function _getValues() {
