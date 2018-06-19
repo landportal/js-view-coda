@@ -13,6 +13,12 @@ var lbvisVGGT = (function (LBV, args) {
 	},{
 		"id": "NKT-VGGT16-9",
 		"label": "VGGT 16.9 Resettlement and Rehabilitation Indicators"
+	},{
+		"id": "NKT-VGGT16-2",
+		"label": "VGGT 16.2 Transparent, participatory and sensitiviness in expropiation Indicators"
+	},{
+		"id": "NKT-VGGT16-5",
+		"label": "VGGT 16.5 First opportunity to re-acquire Indicators"
 	}
 	]
 
