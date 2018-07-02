@@ -434,7 +434,7 @@ var VGGT_laws = [
             }, 
             {
                 "link": "http://landportal.org/library/resources/tribal-land-act-chapter-3202-amended-1994", 
-                "title": "Government of Botswana. 1960. Tribal Land Regulations (Chapter 32:02)."
+                "title": "Government of Botswana. 1970. Tribal Land Regulations (Chapter 32:02)."
             }, 
             {
                 "title": "Ministry of Lands and Housing. 1977 (amended 2004). Compensation Guidelines"
