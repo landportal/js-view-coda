@@ -111,15 +111,22 @@ var lbvisRanking = (function (LBV, args) {
         // Sort A...z / 1...42
         // Note to self: RTFM
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
-        _data.values.sort(function (a, b) {
-            return a.value < b.value ? 1
-                : a.value > b.value ? -1
-                : 0;
-        });
         if (!_data.values) {
             console.warn('OWWW! no data / values here');
             return false;
         }
+
+		if (isNaN(_data.values[0].value)) { // strings
+			_data.values.sort(function (a, b) {
+				return a.value < b.value ? 1
+					: a.value > b.value ? -1
+					: 0;
+			});
+		} else { // numbers
+			_data.values.sort(function (a, b) {
+				return a.value - b.value;
+			});
+		}
         _formatList();
     };
 
