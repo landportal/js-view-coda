@@ -205,9 +205,9 @@ var lbvis = (function (args) {
             ;
         }
         indicator.render = '<span class="indicator"><a href="' + indicator.indicatorSeeAlso.replace(/.*\/\/landportal.(info|org)/, '') + '">' + indicator.label + '</a>'
-            + ' <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="top" title="'
+            + ' <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="bottom" title="'
             + indicator.description.replace(/"/g, "'") + '"></span>'
-            + ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="top" title="'
+            + ' <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="bottom" title="'
             + 'Unit: ' + indicator.unit + dsinfo
             + '"></span>'
             + '</span>';
