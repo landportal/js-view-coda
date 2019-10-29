@@ -6,7 +6,7 @@
         "test": "echo \"Warning: no tests\""
     },
     "dependencies": {
-        "jquery": "1.11.*",
+        "jquery": "3.4.*",
         "bootstrap-sass": "3.3.*",
         "highcharts-release": "4.2.*",
         "highstock-release": "4.2.*",
